@@ -1,0 +1,55 @@
+<section class="institutions" aria-labelledby="institutions-title">
+  <div class="institutions__inner">
+    <div class="institutions__header">
+      <h2 class="institutions__title" id="institutions-title">Nossa Realidade</h2>
+
+      <div class="institutions__anchors" aria-label="Navegacao do carousel">
+        <button
+          type="button"
+          class="institutions__anchor-btn"
+          (click)="scrollPrevious(carouselTrack)"
+          aria-label="Cartao anterior"
+        >
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <button
+          type="button"
+          class="institutions__anchor-btn"
+          (click)="scrollNext(carouselTrack)"
+          aria-label="Proximo cartao"
+        >
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <p class="institutions__subtitle">Trabalhamos juntos para transformar vidas no sertao.</p>
+
+    <ul
+      #carouselTrack
+      class="institutions__carousel"
+      role="list"
+      (pointerdown)="onPointerDown(carouselTrack, $event)"
+      (pointermove)="onPointerMove(carouselTrack, $event)"
+      (pointerup)="onPointerUp(carouselTrack, $event)"
+      (pointercancel)="onPointerUp(carouselTrack, $event)"
+      (pointerleave)="onPointerUp(carouselTrack, $event)"
+      aria-label="Carousel de instituicoes"
+    >
+      @for (inst of institutions; track inst.id) {
+        <li
+          class="institution-card"
+          [style.background-image]="'url(' + inst.image + ')'"
+          [style.background-position]="inst.imagePosition"
+        >
+          <div class="institution-card__overlay" aria-hidden="true"></div>
+
+          <div class="institution-card__content">
+            <h3 class="institution-card__name">{{ inst.name }}</h3>
+            <p class="institution-card__description">{{ inst.description }}</p>
+          </div>
+        </li>
+      }
+    </ul>
+  </div>
+</section>

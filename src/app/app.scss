@@ -1,0 +1,64 @@
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Literata', Georgia, serif;
+  background-color: #FDF5E6;
+}
+
+:root {
+  --primary: #D35400;
+  --secondary: #2D5A27;
+  --accent: #F39C12;
+  --background: #FDF5E6;
+  --border-radius: 20px;
+}
+
+app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-shell {
+  min-height: 100vh;
+  background: #fdf5e6;
+}
+
+.app-shell__content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-sidenav {
+  width: min(84vw, 320px);
+  padding: 1.5rem 1rem;
+  background: #fdf5e6;
+}
+
+.app-sidenav__nav {
+  display: grid;
+  gap: 1rem;
+}
+
+.app-sidenav__nav a {
+  color: #2d5a27;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.main-content {
+  flex: 1;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;
+}
+
+footer {
+  flex-shrink: 0;
+}

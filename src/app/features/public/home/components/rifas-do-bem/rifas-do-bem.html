@@ -1,0 +1,30 @@
+<section class="rifas" aria-labelledby="rifas-title">
+  <div class="rifas__inner">
+    <div class="rifas__header">
+      <h2 class="rifas__title" id="rifas-title">Rifas do Bem</h2>
+      <a routerLink="/public/raffles" class="rifas__see-all">ver todas</a>
+    </div>
+
+    <ul class="rifas__grid" role="list">
+      @for (rifa of rifas; track rifa.id) {
+        <li class="rifa-card">
+          <div class="rifa-card__badge" [class.rifa-card__badge--completed]="rifa.status === 'concluída'">
+            {{ rifa.status }}
+          </div>
+
+          <h3 class="rifa-card__title">{{ rifa.title }}</h3>
+          <p class="rifa-card__description">{{ rifa.description }}</p>
+
+          <mat-progress-bar mode="determinate" [value]="getProgress(rifa)"
+            [attr.aria-label]="rifa.title + ': ' + getProgress(rifa) + '% dos pontos vendidos'">
+          </mat-progress-bar>
+
+          <div class="rifa-card__footer">
+            <span class="rifa-card__point-price">R$ {{ rifa.pointPrice }} por ponto</span>
+            <button class="rifa-card__btn">Participar</button>
+          </div>
+        </li>
+      }
+    </ul>
+  </div>
+</section>

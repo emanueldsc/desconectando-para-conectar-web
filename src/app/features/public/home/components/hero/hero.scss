@@ -1,0 +1,70 @@
+.hero {
+  position: relative;
+  min-height: 90vh;
+  background-color: #2a2119;
+  background-image: url('../../../../../../assets/sertao_landscape.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(211, 84, 0, 0.75) 0%,
+      rgba(45, 90, 39, 0.6) 100%
+    );
+  }
+}
+
+.hero__content {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  color: #fff;
+}
+
+.hero__title {
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-family: 'Literata', Georgia, serif;
+  font-weight: 700;
+  margin: 0 0 1rem;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  line-height: normal;
+}
+
+.hero__subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  max-width: 680px;
+  margin: 0 auto 2rem;
+  opacity: 0.95;
+  line-height: 1.6;
+}
+
+.hero__cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 2.5rem;
+  background: var(--mat-sys-primary, #d35400) !important;
+  color: var(--mat-sys-on-primary, #ffffff) !important;
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-radius: var(--border-radius, 20px);
+  text-decoration: none;
+  transition: opacity 0.2s;
+  margin: 0 auto;
+
+  &:hover {
+    opacity: 0.88;
+  }
+}

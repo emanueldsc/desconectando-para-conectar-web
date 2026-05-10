@@ -1,0 +1,35 @@
+@use '@angular/material' as mat;
+
+html {
+  @include mat.theme(
+    (
+      color: (
+        theme-type: light,
+        primary: mat.$orange-palette,
+        tertiary: mat.$green-palette,
+      ),
+      typography: Literata,
+      density: 0,
+    )
+  );
+}
+
+:root {
+  /* Design system: Estetica Sertaneja Moderna */
+  --mat-sys-primary: #d35400;
+  --mat-sys-on-primary: #ffffff;
+  --mat-sys-secondary: #2d5a27;
+  --mat-sys-tertiary: #2d5a27;
+  --mat-sys-surface: #fdf5e6;
+  --mat-sys-background: #fdf5e6;
+  --mat-sys-on-surface: #2a2119;
+  --mat-sys-on-background: #2a2119;
+  --app-topbar-text-color: #9e3d00;
+}
+
+body {
+  color-scheme: light;
+  background-color: var(--mat-sys-background);
+  color: var(--mat-sys-on-background);
+  font: var(--mat-sys-body-medium);
+}

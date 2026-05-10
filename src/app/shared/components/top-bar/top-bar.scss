@@ -1,0 +1,42 @@
+.topbar {
+  background: var(--mat-sys-on-primary);
+  color: var(--app-topbar-text-color);
+}
+
+.topbar__inner {
+  min-height: 64px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.topbar__menu-btn {
+  color: var(--app-topbar-text-color);
+}
+
+.topbar__brand {
+  color: var(--app-topbar-text-color);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: large;
+}
+
+.topbar__nav {
+  margin-left: auto;
+  display: flex;
+  gap: 1rem;
+}
+
+.topbar__nav a {
+  color: var(--app-topbar-text-color);
+  text-decoration: none;
+}
+
+@media (max-width: 768px) {
+  .topbar__nav {
+    display: none;
+  }
+}
