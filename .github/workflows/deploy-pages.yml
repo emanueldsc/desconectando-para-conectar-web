@@ -3,7 +3,7 @@ name: Deploy Angular to GitHub Pages
 on:
   push:
     branches:
-      - main
+      - master
   workflow_dispatch:
 
 permissions:
@@ -33,7 +33,7 @@ jobs:
         run: npm ci
 
       - name: Build Angular app
-        run: npx ng build --configuration production --base-href "/desconectando-para-conectar-web/"
+        run: npm run build:pages
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
