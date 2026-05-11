@@ -1,0 +1,30 @@
+<section class="raffle-empty">
+  <div class="raffle-empty__hero">
+    <div class="raffle-empty__icon-wrap" aria-hidden="true">
+      <mat-icon class="raffle-empty__hero-icon">local_florist</mat-icon>
+    </div>
+    <h2 class="raffle-empty__title">O sertão está à espera...</h2>
+    <p class="raffle-empty__description">
+      Parece que ainda não temos nenhuma rifa por aqui. Que tal começar agora e plantar a
+      semente da sua primeira campanha solidária?
+    </p>
+    <button type="button" class="raffle-empty__cta" (click)="create.emit()">
+      <mat-icon aria-hidden="true">add_circle</mat-icon>
+      Criar Primeira Rifa
+    </button>
+  </div>
+
+  <div class="raffle-empty__tips">
+    <article class="raffle-empty__tip-card raffle-empty__tip-card--strong">
+      <mat-icon aria-hidden="true">help</mat-icon>
+      <h3>Como funciona?</h3>
+      <p>Configure prêmios, valores e números em poucos cliques e acompanhe tudo em tempo real.</p>
+    </article>
+
+    <article class="raffle-empty__tip-card">
+      <mat-icon aria-hidden="true">group</mat-icon>
+      <h3>Comunidade Viva</h3>
+      <p>Conecte-se com pessoas e mobilize apoio para sua causa de forma transparente e segura.</p>
+    </article>
+  </div>
+</section>

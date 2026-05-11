@@ -1,0 +1,31 @@
+<div
+  class="content-modal-overlay"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="delete-modal-title"
+  (click)="cancel.emit()"
+  (keydown.escape)="cancel.emit()"
+>
+  <div class="content-modal" (click)="$event.stopPropagation()">
+    <div class="content-modal__accent-bar" aria-hidden="true"></div>
+    <div class="content-modal__body">
+      <div class="content-modal__icon-wrap" aria-hidden="true">
+        <mat-icon class="content-modal__warning-icon">warning</mat-icon>
+      </div>
+      <h3 class="content-modal__title" id="delete-modal-title">Deseja excluir esta publicação?</h3>
+      <p class="content-modal__text">
+        A publicação <strong>{{ publication().title }}</strong> será removida permanentemente.
+      </p>
+      <div class="content-modal__actions">
+        <button type="button" class="content-modal__confirm-btn" (click)="confirm.emit()">
+          <mat-icon aria-hidden="true">delete_forever</mat-icon>
+          Excluir Publicação
+        </button>
+        <button type="button" class="content-modal__cancel-btn" (click)="cancel.emit()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+    <div class="content-modal__footer-texture" aria-hidden="true"></div>
+  </div>
+</div>

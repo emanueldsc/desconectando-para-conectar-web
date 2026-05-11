@@ -1,0 +1,228 @@
+:host {
+  display: block;
+}
+
+.content-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 640px;
+  margin: 0 auto;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  &__heading {
+    font-family: 'Literata', Georgia, serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #9e3d00;
+    margin: 0;
+  }
+
+  &__image-upload {
+    background: #ffffff;
+    border: 1px solid #e0c0b2;
+    border-radius: 0.75rem;
+    padding: 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 0.5rem;
+    min-height: 200px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+
+    &:hover { background: #fff1ec; }
+  }
+
+  &__upload-icon {
+    font-size: 2.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    line-height: 2.5rem;
+    color: #d35400;
+  }
+
+  &__upload-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    color: #594238;
+    margin: 0;
+  }
+
+  &__upload-hint {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    color: #8c7166;
+    margin: 0;
+  }
+
+  &__file-input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+  }
+
+  &__form {
+    background: #ffffff;
+    border: 1px solid #e0c0b2;
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #2d5a27;
+  }
+
+  &__input {
+    width: 100%;
+    padding: 0.75rem;
+    background: #ffffff;
+    border: 1px solid #e0c0b2;
+    border-radius: 0.5rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    color: #251913;
+    outline: none;
+    box-sizing: border-box;
+
+    &:focus {
+      border-color: #d35400;
+      box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.1);
+    }
+
+    &[aria-invalid='true'] {
+      border-color: #ba1a1a;
+    }
+  }
+
+  &__editor {
+    border: 1px solid #e0c0b2;
+    border-radius: 0.5rem;
+    overflow: hidden;
+
+    &:focus-within {
+      border-color: #d35400;
+      box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.1);
+    }
+  }
+
+  &__toolbar {
+    background: #fff1ec;
+    border-bottom: 1px solid #e0c0b2;
+    padding: 0.5rem;
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  &__toolbar-btn {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.25rem;
+    background: none;
+    border: none;
+    color: #594238;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    &:hover { background: #f6ddd4; }
+  }
+
+  &__toolbar-divider {
+    width: 1px;
+    height: 1.5rem;
+    background: #e0c0b2;
+    margin: 0 0.25rem;
+  }
+
+  &__textarea {
+    width: 100%;
+    background: #ffffff;
+    border: none;
+    padding: 0.75rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    color: #251913;
+    outline: none;
+    resize: vertical;
+    min-height: 150px;
+    box-sizing: border-box;
+  }
+
+  &__submit-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e0c0b2;
+
+    @media (min-width: 480px) {
+      flex-direction: row;
+    }
+  }
+
+  &__draft-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    background: transparent;
+    border: 1px solid #d35400;
+    color: #d35400;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+
+    &:hover { background: #f6ddd4; }
+  }
+
+  &__publish-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    background: #d35400;
+    border: none;
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+  }
+}

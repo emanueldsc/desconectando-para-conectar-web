@@ -1,0 +1,12 @@
+:host {
+	display: block;
+}
+
+.raffle-page {
+	padding: 1.5rem 1.25rem 5rem;
+	background:
+		radial-gradient(circle at 8px 8px, rgba(224, 192, 178, 0.5) 1px, transparent 0),
+		#fff8f6;
+	background-size: 24px 24px;
+	min-height: 100%;
+}

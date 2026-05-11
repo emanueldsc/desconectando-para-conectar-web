@@ -1,0 +1,124 @@
+:host {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+.content-modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: rgba(37, 25, 19, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.content-modal {
+  position: relative;
+  background: #fff8f6;
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  max-width: 24rem;
+  overflow: hidden;
+  border: 1px solid #e0c0b2;
+
+  &__accent-bar {
+    height: 0.5rem;
+    background: #d35400;
+    width: 100%;
+  }
+
+  &__body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  &__icon-wrap {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    background: #fce3da;
+    border: 2px dashed #d35400;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__warning-icon {
+    font-size: 2rem;
+    width: 2rem;
+    height: 2rem;
+    line-height: 2rem;
+    color: #d35400;
+  }
+
+  &__title {
+    font-family: 'Literata', Georgia, serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #251913;
+    margin: 0;
+  }
+
+  &__text {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.875rem;
+    color: #594238;
+    margin: 0;
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  &__confirm-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-radius: 9999px;
+    background: #9e3d00;
+    border: none;
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+  }
+
+  &__cancel-btn {
+    padding: 1rem;
+    border-radius: 9999px;
+    background: transparent;
+    border: 2px solid #8c7166;
+    color: #594238;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+
+    &:hover { background: #fce3da; }
+  }
+
+  &__footer-texture {
+    height: 3rem;
+    width: 100%;
+    background-image: radial-gradient(#e0c0b2 0.5px, transparent 0.5px);
+    background-size: 12px 12px;
+    opacity: 0.3;
+  }
+}

@@ -1,0 +1,35 @@
+<div class="raffle-page">
+	@if (view() === 'empty') {
+		<dashboard-raffle-empty-state (create)="openCreate()"></dashboard-raffle-empty-state>
+	}
+
+	@if (view() === 'list') {
+		<dashboard-raffle-list
+			[raffles]="raffles()"
+			[search]="search()"
+			[filter]="filter()"
+			(searchChange)="search.set($event)"
+			(filterChange)="filter.set($event)"
+			(create)="openCreate()"
+			(edit)="openEdit($event)"
+			(delete)="deleteRaffle($event)"
+			(draw)="openDraw($event)"
+		></dashboard-raffle-list>
+	}
+
+	@if (view() === 'create') {
+		<dashboard-raffle-create-form
+			[editingRaffle]="editingRaffle()"
+			(cancel)="backToList()"
+			(save)="saveRaffle($event)"
+		></dashboard-raffle-create-form>
+	}
+
+	@if (drawRaffle(); as raffleToDraw) {
+		<dashboard-raffle-draw-confirm
+			[raffle]="raffleToDraw"
+			(cancel)="closeDraw()"
+			(confirm)="confirmDraw()"
+		></dashboard-raffle-draw-confirm>
+	}
+</div>

@@ -1,0 +1,79 @@
+<div class="content-edit">
+  <header class="content-edit__header">
+    <button
+      type="button"
+      mat-icon-button
+      class="content-edit__back-btn"
+      aria-label="Voltar para lista"
+      (click)="cancel.emit()"
+    >
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h2 class="content-edit__heading">{{ heading() }}</h2>
+  </header>
+
+  <div class="content-edit__image-upload">
+    <mat-icon class="content-edit__upload-icon" aria-hidden="true">add_photo_alternate</mat-icon>
+    <p class="content-edit__upload-label">Adicionar Imagem de Capa</p>
+    <p class="content-edit__upload-hint">Recomendado: 1200×630px</p>
+    <input
+      type="file"
+      class="content-edit__file-input"
+      accept="image/*"
+      aria-label="Upload de imagem de capa"
+    />
+  </div>
+
+  <form [formGroup]="form" class="content-edit__form" (ngSubmit)="submitPublish()">
+    <div class="content-edit__field">
+      <label class="content-edit__label" for="post-title">Título da Publicação</label>
+      <input
+        id="post-title"
+        type="text"
+        class="content-edit__input"
+        placeholder="Ex: Encontro de Vaqueiros 2024"
+        formControlName="title"
+        [attr.aria-invalid]="form.controls.title.invalid && form.controls.title.touched"
+      />
+    </div>
+
+    <div class="content-edit__field">
+      <label class="content-edit__label" for="post-content">Conteúdo</label>
+      <div class="content-edit__editor">
+        <div class="content-edit__toolbar" role="toolbar" aria-label="Barra de ferramentas de edição">
+          <button type="button" class="content-edit__toolbar-btn" aria-label="Negrito">
+            <mat-icon aria-hidden="true">format_bold</mat-icon>
+          </button>
+          <button type="button" class="content-edit__toolbar-btn" aria-label="Itálico">
+            <mat-icon aria-hidden="true">format_italic</mat-icon>
+          </button>
+          <div class="content-edit__toolbar-divider" aria-hidden="true"></div>
+          <button type="button" class="content-edit__toolbar-btn" aria-label="Lista com marcadores">
+            <mat-icon aria-hidden="true">format_list_bulleted</mat-icon>
+          </button>
+          <button type="button" class="content-edit__toolbar-btn" aria-label="Adicionar link">
+            <mat-icon aria-hidden="true">link</mat-icon>
+          </button>
+        </div>
+        <textarea
+          id="post-content"
+          class="content-edit__textarea"
+          placeholder="Escreva a história aqui..."
+          formControlName="content"
+          rows="8"
+        ></textarea>
+      </div>
+    </div>
+
+    <div class="content-edit__submit-row">
+      <button type="button" class="content-edit__draft-btn" (click)="submitDraft()">
+        <mat-icon aria-hidden="true">save</mat-icon>
+        Salvar Rascunho
+      </button>
+      <button type="submit" class="content-edit__publish-btn">
+        <mat-icon aria-hidden="true">publish</mat-icon>
+        Publicar
+      </button>
+    </div>
+  </form>
+</div>

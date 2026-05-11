@@ -1,0 +1,151 @@
+:host {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+}
+
+.draw-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(37, 25, 19, 0.64);
+  backdrop-filter: blur(3px);
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.draw-modal {
+  width: min(680px, 100%);
+  border-radius: 1rem;
+  border: 2px solid #2d5a27;
+  background: #fff;
+  padding: 1.1rem;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.25);
+  display: grid;
+  gap: 1rem;
+
+  &__header {
+    text-align: center;
+
+    mat-icon {
+      color: #d35400;
+      font-size: 2rem;
+      width: 2rem;
+      height: 2rem;
+    }
+
+    h2 {
+      margin: 0.25rem 0 0;
+      color: #2d5a27;
+      font-family: 'Literata', serif;
+    }
+
+    p {
+      margin: 0.4rem 0 0;
+      color: #594238;
+    }
+  }
+
+  &__stats {
+    display: grid;
+    gap: 0.6rem;
+
+    @media (min-width: 640px) {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    article {
+      background: #fff1ec;
+      border: 1px solid #e0c0b2;
+      border-radius: 0.7rem;
+      padding: 0.7rem;
+
+      span {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #594238;
+        font-weight: 700;
+      }
+
+      strong {
+        display: block;
+        margin-top: 0.2rem;
+        color: #2d5a27;
+      }
+    }
+  }
+
+  &__warning {
+    border: 2px solid #ba1a1a;
+    background: #ffdad6;
+    border-radius: 0.75rem;
+    padding: 0.75rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.55rem;
+
+    mat-icon {
+      color: #ba1a1a;
+      width: 1.25rem;
+      height: 1.25rem;
+      font-size: 1.25rem;
+      line-height: 1.25rem;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      color: #93000a;
+      text-transform: uppercase;
+    }
+
+    p {
+      margin: 0.3rem 0 0;
+      color: #93000a;
+      font-size: 0.88rem;
+    }
+  }
+
+  &__actions {
+    display: grid;
+    gap: 0.55rem;
+
+    @media (min-width: 640px) {
+      grid-template-columns: 1fr 1.4fr;
+    }
+  }
+
+  &__btn {
+    border: 0;
+    border-radius: 999px;
+    padding: 0.9rem 1rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.4rem;
+
+    mat-icon {
+      width: 1rem;
+      height: 1rem;
+      font-size: 1rem;
+      line-height: 1rem;
+    }
+
+    &--ghost {
+      background: transparent;
+      color: #594238;
+      border: 2px solid #8c7166;
+    }
+
+    &--primary {
+      background: #d35400;
+      color: #fff;
+    }
+  }
+}

@@ -1,0 +1,35 @@
+<div class="content-page">
+  @if (view() === 'list') {
+    @if (isGloballyEmpty()) {
+      <dashboard-content-empty-state [query]="searchQuery()" (create)="openEdit()"></dashboard-content-empty-state>
+    } @else {
+      <dashboard-content-list
+        [publications]="publications()"
+        [query]="searchQuery()"
+        [filter]="activeFilter()"
+        (queryChange)="searchQuery.set($event)"
+        (filterChange)="setFilter($event)"
+        (create)="openEdit()"
+        (edit)="openEdit($event)"
+        (delete)="openDeleteModal($event)"
+      ></dashboard-content-list>
+    }
+  }
+
+  @if (view() === 'edit') {
+    <dashboard-content-editor
+      [publication]="editingPublication()"
+      (cancel)="cancelEdit()"
+      (saveDraft)="saveAsDraft($event)"
+      (publish)="publish($event)"
+    ></dashboard-content-editor>
+  }
+
+  @if (publicationToDelete(); as publication) {
+    <dashboard-content-delete-confirm
+      [publication]="publication"
+      (cancel)="closeDeleteModal()"
+      (confirm)="confirmDelete()"
+    ></dashboard-content-delete-confirm>
+  }
+</div>

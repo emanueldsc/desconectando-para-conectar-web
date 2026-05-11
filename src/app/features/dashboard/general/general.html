@@ -1,0 +1,45 @@
+<section class="dashboard" aria-labelledby="dashboard-title">
+	<main class="dashboard__content">
+		<section class="dashboard__welcome">
+			<h2 id="dashboard-title">Visao Geral</h2>
+			<p>Acompanhe o desempenho das suas campanhas em tempo real.</p>
+		</section>
+
+		<section class="dashboard__grid" aria-label="Indicadores da dashboard">
+			@for (card of cards; track card.title) {
+				<article class="dashboard-card">
+					<mat-icon class="dashboard-card__bg-icon" aria-hidden="true">{{ card.icon }}</mat-icon>
+
+					<div class="dashboard-card__head">
+						<span class="dashboard-card__icon-wrap">
+							<mat-icon class="dashboard-card__icon">{{ card.icon }}</mat-icon>
+						</span>
+						<span class="dashboard-card__label">{{ card.title }}</span>
+					</div>
+
+					@if (card.progress === undefined) {
+						<div class="dashboard-card__body">
+							<p class="dashboard-card__value">{{ card.value }}</p>
+							<p class="dashboard-card__meta" [class.dashboard-card__meta--green]="card.accent === 'green'">
+								@if (card.trendIcon) {
+									<mat-icon>{{ card.trendIcon }}</mat-icon>
+								}
+								{{ card.subtitle }}
+							</p>
+						</div>
+					} @else {
+						<div class="dashboard-card__body dashboard-card__body--goal">
+							<div class="dashboard-card__goal-row">
+								<p class="dashboard-card__value">{{ card.value }}</p>
+								<p class="dashboard-card__target">{{ card.target }}</p>
+							</div>
+							<div class="dashboard-card__progress">
+								<div class="dashboard-card__progress-fill" [style.width.%]="card.progress"></div>
+							</div>
+						</div>
+					}
+				</article>
+			}
+		</section>
+	</main>
+</section>

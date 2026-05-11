@@ -1,0 +1,100 @@
+<section class="raffle-list">
+  <header class="raffle-list__header">
+    <div>
+      <h2>Gestão de Rifas</h2>
+      <p>Acompanhe o engajamento e gerencie prêmios.</p>
+    </div>
+    <div class="raffle-list__kpi">
+      <span>Arrecadação Total</span>
+      <strong>{{ totalRaised() | currency: 'BRL':'symbol':'1.2-2':'pt-BR' }}</strong>
+    </div>
+  </header>
+
+  <section class="raffle-list__controls">
+    <div class="raffle-list__search-wrap">
+      <mat-icon aria-hidden="true">search</mat-icon>
+      <input
+        type="text"
+        [value]="search()"
+        (input)="onSearch($event)"
+        placeholder="Buscar rifas por nome..."
+        aria-label="Buscar rifas"
+      />
+      @if (search()) {
+        <button type="button" aria-label="Limpar busca" (click)="searchChange.emit('')">
+          <mat-icon aria-hidden="true">close</mat-icon>
+        </button>
+      }
+    </div>
+
+    <div class="raffle-list__chips" role="group" aria-label="Filtros de status de rifas">
+      <button type="button" [class.raffle-list__chip--active]="filter() === 'all'" (click)="filterChange.emit('all')">Todas</button>
+      <button type="button" [class.raffle-list__chip--active]="filter() === 'active'" (click)="filterChange.emit('active')">Ativas</button>
+      <button type="button" [class.raffle-list__chip--active]="filter() === 'closed'" (click)="filterChange.emit('closed')">Concluídas</button>
+      <button type="button" [class.raffle-list__chip--active]="filter() === 'draft'" (click)="filterChange.emit('draft')">Rascunhos</button>
+    </div>
+  </section>
+
+  @if (filtered().length > 0) {
+    <section class="raffle-list__cards" aria-label="Lista de rifas cadastradas">
+      @for (raffle of filtered(); track raffle.id) {
+        <article class="raffle-list__card">
+          <div class="raffle-list__image" aria-hidden="true">
+            @if (raffle.imageUrl) {
+              <img [src]="raffle.imageUrl" [alt]="raffle.title" />
+            } @else {
+              <div class="raffle-list__image-placeholder"><mat-icon>image</mat-icon></div>
+            }
+          </div>
+
+          <div class="raffle-list__content">
+            <div class="raffle-list__content-top">
+              <div>
+                <h3>{{ raffle.title }}</h3>
+                <p>{{ raffle.description }}</p>
+              </div>
+              <span class="raffle-list__status {{ statusClass(raffle.status) }}">{{ statusLabel(raffle.status) }}</span>
+            </div>
+
+            <div class="raffle-list__progress">
+              <div class="raffle-list__progress-head">
+                <span>{{ progress(raffle) }}% vendido</span>
+                <span>{{ raffle.soldTickets }}/{{ raffle.rangeEnd - raffle.rangeStart + 1 }} números</span>
+              </div>
+              <div class="raffle-list__bar">
+                <span class="raffle-list__bar-value" [style.width.%]="progress(raffle)"></span>
+              </div>
+            </div>
+
+            <div class="raffle-list__footer">
+              <div>
+                <span>Valor unitário</span>
+                <strong>{{ raffle.ticketPrice | currency: 'BRL':'symbol':'1.2-2':'pt-BR' }}</strong>
+              </div>
+
+              <div class="raffle-list__actions">
+                <button type="button" class="raffle-list__btn raffle-list__btn--ghost" (click)="edit.emit(raffle.id)">
+                  <mat-icon aria-hidden="true">edit</mat-icon>
+                  Editar
+                </button>
+                <button type="button" class="raffle-list__btn raffle-list__btn--danger" (click)="delete.emit(raffle.id)">
+                  <mat-icon aria-hidden="true">delete</mat-icon>
+                </button>
+                <button type="button" class="raffle-list__btn raffle-list__btn--primary" [disabled]="!canDraw(raffle)" (click)="draw.emit(raffle.id)">
+                  <mat-icon aria-hidden="true">auto_awesome</mat-icon>
+                  Sorteio
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+      }
+    </section>
+  } @else {
+    <section class="raffle-list__no-results">
+      <mat-icon aria-hidden="true">search_off</mat-icon>
+      <p>Nenhuma rifa encontrada para "{{ search() }}".</p>
+      <button type="button" (click)="create.emit()">Criar nova campanha</button>
+    </section>
+  }
+</section>

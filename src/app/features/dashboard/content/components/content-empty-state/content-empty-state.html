@@ -1,0 +1,17 @@
+<section class="content-empty" aria-live="polite">
+  <div class="content-empty__icon-wrap" aria-hidden="true">
+    <mat-icon class="content-empty__icon">search_off</mat-icon>
+  </div>
+  <h3 class="content-empty__title">Nenhuma publicação encontrada</h3>
+  <p class="content-empty__text">
+    @if (query()) {
+      Não encontramos resultados para "{{ query() }}".
+    } @else {
+      Parece que o sertão está silencioso por aqui. Crie a primeira publicação.
+    }
+  </p>
+  <button type="button" class="content-empty__cta" (click)="create.emit()">
+    <mat-icon aria-hidden="true">add_circle</mat-icon>
+    <span>Nova Publicação</span>
+  </button>
+</section>

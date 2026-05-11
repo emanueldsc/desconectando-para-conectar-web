@@ -1,0 +1,88 @@
+<div class="content-mgmt">
+  <section class="content-mgmt__header">
+    <h2 class="content-mgmt__title">Gestão de Conteúdo</h2>
+    <p class="content-mgmt__subtitle">Gerencie artigos, histórias e atualizações da plataforma.</p>
+  </section>
+
+  <button type="button" class="content-mgmt__new-btn" (click)="create.emit()">
+    <mat-icon aria-hidden="true">add</mat-icon>
+    <span>Nova Publicação</span>
+  </button>
+
+  <section class="content-mgmt__search-section">
+    <div class="content-mgmt__search-wrap">
+      <mat-icon class="content-mgmt__search-icon" aria-hidden="true">search</mat-icon>
+      <input
+        class="content-mgmt__search-input"
+        type="text"
+        placeholder="Buscar publicações..."
+        [value]="query()"
+        (input)="onSearch($event)"
+        aria-label="Buscar publicações"
+      />
+      @if (query()) {
+        <button type="button" class="content-mgmt__search-clear" aria-label="Limpar busca" (click)="queryChange.emit('')">
+          <mat-icon aria-hidden="true">cancel</mat-icon>
+        </button>
+      }
+    </div>
+
+    <div class="content-mgmt__filters" role="group" aria-label="Filtros de publicação">
+      <button type="button" class="content-mgmt__filter-chip" [class.content-mgmt__filter-chip--active]="filter() === 'all'" (click)="filterChange.emit('all')">Todos</button>
+      <button type="button" class="content-mgmt__filter-chip" [class.content-mgmt__filter-chip--active]="filter() === 'published'" (click)="filterChange.emit('published')">Publicados</button>
+      <button type="button" class="content-mgmt__filter-chip" [class.content-mgmt__filter-chip--active]="filter() === 'draft'" (click)="filterChange.emit('draft')">Rascunhos</button>
+    </div>
+  </section>
+
+  @if (filteredPublications().length > 0) {
+    <section class="content-mgmt__list" aria-label="Lista de publicações">
+      @for (pub of filteredPublications(); track pub.id) {
+        <article class="content-card">
+          <div class="content-card__thumbnail" aria-hidden="true">
+            @if (pub.thumbnail) {
+              <img [src]="pub.thumbnail" [alt]="pub.title" class="content-card__img" />
+            } @else {
+              <div class="content-card__thumbnail-placeholder">
+                <mat-icon>image</mat-icon>
+              </div>
+            }
+          </div>
+
+          <div class="content-card__body">
+            <div class="content-card__meta">
+              <span class="content-card__status content-card__status--{{ pub.status }}" [attr.aria-label]="'Status: ' + statusLabel[pub.status]">
+                <mat-icon class="content-card__status-icon" aria-hidden="true">{{ statusIcon[pub.status] }}</mat-icon>
+                {{ statusLabel[pub.status] }}
+              </span>
+            </div>
+
+            <h3 class="content-card__title">{{ pub.title }}</h3>
+            <p class="content-card__byline">{{ pub.date }} • Por {{ pub.author }}</p>
+
+            <div class="content-card__actions">
+              <button type="button" class="content-card__action-btn" [attr.aria-label]="'Editar ' + pub.title" (click)="edit.emit(pub)">
+                <mat-icon aria-hidden="true">edit</mat-icon>
+              </button>
+              <button type="button" class="content-card__action-btn content-card__action-btn--delete" [attr.aria-label]="'Excluir ' + pub.title" (click)="delete.emit(pub)">
+                <mat-icon aria-hidden="true">delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </article>
+      }
+    </section>
+  } @else {
+    <section class="content-mgmt__no-results" aria-live="polite">
+      <mat-icon class="content-mgmt__no-results-icon" aria-hidden="true">search_off</mat-icon>
+      <h3 class="content-mgmt__no-results-title">Nenhuma publicação encontrada</h3>
+      <p class="content-mgmt__no-results-text">
+        @if (query()) {
+          Não encontramos resultados para "{{ query() }}".
+        } @else {
+          Você ainda não possui publicações com esse filtro.
+        }
+      </p>
+      <button type="button" class="content-mgmt__no-results-action" (click)="create.emit()">Nova Publicação</button>
+    </section>
+  }
+</div>

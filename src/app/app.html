@@ -2,8 +2,13 @@
   <mat-drawer #appSidenav class="app-sidenav" mode="over" position="start">
     <div class="app-sidenav__header">
       <div class="app-sidenav__brand-block">
-        <p class="app-sidenav__eyebrow">Navegacao</p>
-        <h2 class="app-sidenav__title">Desconectando<br />para Conectar</h2>
+        @if (isDashboard()) {
+          <p class="app-sidenav__eyebrow">Painel de Controle</p>
+          <h2 class="app-sidenav__title">Dashboard</h2>
+        } @else {
+          <p class="app-sidenav__eyebrow">Navegacao</p>
+          <h2 class="app-sidenav__title">Desconectando<br />para Conectar</h2>
+        }
       </div>
 
       <button
@@ -17,22 +22,25 @@
       </button>
     </div>
 
-    <div class="app-sidenav__quick-actions" aria-label="Atalhos rapidos">
-      <button type="button" class="app-sidenav__quick-chip" (click)="appSidenav.close()" routerLink="/public/home">
-        <mat-icon>home</mat-icon>
-        <span>Inicio</span>
-      </button>
-      <button type="button" class="app-sidenav__quick-chip" (click)="appSidenav.close()" routerLink="/public/blog">
-        <mat-icon>auto_stories</mat-icon>
-        <span>Blog</span>
-      </button>
-    </div>
+    @if (!isDashboard()) {
+      <div class="app-sidenav__quick-actions" aria-label="Atalhos rapidos">
+        <button type="button" class="app-sidenav__quick-chip" (click)="appSidenav.close()" routerLink="/public/home">
+          <mat-icon>home</mat-icon>
+          <span>Inicio</span>
+        </button>
+        <button type="button" class="app-sidenav__quick-chip" (click)="appSidenav.close()" routerLink="/public/blog">
+          <mat-icon>auto_stories</mat-icon>
+          <span>Blog</span>
+        </button>
+      </div>
+    }
 
-    <nav class="app-sidenav__nav" aria-label="Navegacao principal">
-      @for (item of menuItems(); track item.id) {
+    <nav class="app-sidenav__nav" [attr.aria-label]="isDashboard() ? 'Navegacao do painel' : 'Navegacao principal'">
+      @for (item of activeMenuItems(); track item.id) {
         <a
           [routerLink]="item.route"
           routerLinkActive="app-sidenav__link--active"
+          [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
           (click)="appSidenav.close()"
           class="app-sidenav__link"
         >
@@ -41,7 +49,13 @@
           </span>
           <span class="app-sidenav__link-content">
             <span class="app-sidenav__link-label">{{ item.label }}</span>
-            <span class="app-sidenav__link-hint">Acessar {{ item.label.toLowerCase() }}</span>
+            <span class="app-sidenav__link-hint">
+              @if (isDashboard()) {
+                {{ menuHint(item.id) }}
+              } @else {
+                Acessar {{ item.label.toLowerCase() }}
+              }
+            </span>
           </span>
           <mat-icon class="app-sidenav__link-arrow" aria-hidden="true">chevron_right</mat-icon>
         </a>
@@ -53,7 +67,11 @@
     }
 
     <div class="app-sidenav__footer">
-      <a routerLink="/public/raffles" (click)="appSidenav.close()" class="app-sidenav__cta">Quero participar da rifa</a>
+      @if (isDashboard()) {
+        <a routerLink="/public/home" (click)="appSidenav.close()" class="app-sidenav__cta">Voltar ao site</a>
+      } @else {
+        <a routerLink="/public/raffles" (click)="appSidenav.close()" class="app-sidenav__cta">Quero participar da rifa</a>
+      }
     </div>
   </mat-drawer>
 
