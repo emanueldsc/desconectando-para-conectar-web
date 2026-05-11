@@ -1,0 +1,21 @@
+<mat-card class="blog-card" appearance="raised">
+  <img
+    class="blog-card__image"
+    ngSrc="{{ post().image }}"
+    [alt]="post().imageAlt"
+    width="380"
+    height="216"
+  />
+  <mat-card-content class="blog-card__content">
+    <p class="blog-card__eyebrow">{{ post().eyebrow }}</p>
+    <h3 class="blog-card__description">{{ post().description }}</h3>
+    <a
+      class="blog-card__link"
+      [routerLink]="['/public/blog', post().id]"
+      [attr.aria-label]="'Ler artigo ' + post().description"
+    >
+      <span>LER ARTIGO</span>
+      <mat-icon>arrow_right_alt</mat-icon>
+    </a>
+  </mat-card-content>
+</mat-card>

@@ -1,24 +1,13 @@
 <section class="blog-preview" aria-labelledby="blog-preview-title">
   <div class="blog-preview__inner">
-    <h2 class="blog-preview__title" id="blog-preview-title">Do Blog</h2>
-    <p class="blog-preview__subtitle">Histórias, guias e inspirações do sertão para o mundo.</p>
+    <h2 class="blog-preview__title" id="blog-preview-title">Histórias que Conectam</h2>
 
     <ul class="blog-preview__grid" role="list">
       @for (post of posts; track post.id) {
-        <li class="blog-card">
-          <span class="blog-card__category">{{ post.category }}</span>
-          <h3 class="blog-card__title">{{ post.title }}</h3>
-          <p class="blog-card__excerpt">{{ post.excerpt }}</p>
-          <div class="blog-card__footer">
-            <time class="blog-card__date">{{ post.date }}</time>
-            <a class="blog-card__link" [routerLink]="['/public/blog', post.id]">Ler mais</a>
-          </div>
+        <li>
+          <blog-card [post]="post" />
         </li>
       }
     </ul>
-
-    <div class="blog-preview__cta">
-      <a routerLink="/public/blog" class="blog-preview__all-link">Ver todos os artigos</a>
-    </div>
   </div>
 </section>

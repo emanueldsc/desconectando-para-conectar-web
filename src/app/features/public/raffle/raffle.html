@@ -1,1 +1,72 @@
-<p>raffle works!</p>
+<section class="raffle-detail">
+  <!-- Hero Section -->
+  <div class="raffle-detail__hero">
+    <img class="raffle-detail__hero-img" [src]="data().image" [alt]="data().title" />
+    <div class="raffle-detail__hero-overlay"></div>
+    <div class="raffle-detail__hero-content">
+      <span class="raffle-detail__badge">Ação Solidária</span>
+      <h1 class="raffle-detail__title">{{ data().title }}</h1>
+      <p class="raffle-detail__draw-date">
+        <span class="material-symbols-outlined">calendar_month</span>
+        Sorteio: {{ data().drawDate }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Details Panel -->
+  <section class="raffle-detail__panel">
+    <div class="raffle-detail__panel-header">
+      <div>
+        <h2 class="raffle-detail__subtitle">Sobre o Prêmio</h2>
+        <p class="raffle-detail__desc">{{ data().description }}</p>
+      </div>
+      <div class="raffle-detail__ticket-price">
+        <span class="raffle-detail__ticket-label">Valor do Bilhete</span>
+        <span class="raffle-detail__ticket-value">R$ {{ data().ticketPrice }}</span>
+      </div>
+    </div>
+    <div class="raffle-detail__progress">
+      <div class="raffle-detail__progress-header">
+        <span>Progresso da Rifa</span>
+        <span>{{ data().progress }}% ({{ data().sold }}/{{ data().total }})</span>
+      </div>
+      <div class="raffle-detail__progress-bar">
+        <div class="raffle-detail__progress-bar-inner" [style.width.%]="data().progress"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Number Selector -->
+  <section class="raffle-detail__numbers">
+    <div class="raffle-detail__numbers-header">
+      <div>
+        <h2 class="raffle-detail__subtitle">Escolha seus Números</h2>
+        <p class="raffle-detail__desc">Selecione os números disponíveis no painel abaixo.</p>
+      </div>
+      <div class="raffle-detail__legend">
+        <div><span class="raffle-detail__legend-dot raffle-detail__legend-dot--available"></span>Livre</div>
+        <div><span class="raffle-detail__legend-dot raffle-detail__legend-dot--selected"></span>Seu</div>
+        <div><span class="raffle-detail__legend-dot raffle-detail__legend-dot--occupied"></span>Ocupado</div>
+      </div>
+    </div>
+    <div class="raffle-detail__numbers-grid">
+      @for (num of data().numbers; track num.number) {
+        @if (num.status === 'occupied') {
+          <div class="raffle-detail__number raffle-detail__number--occupied">{{ num.number | number:'2.0' }}</div>
+        } @else {
+          <button
+            type="button"
+            class="raffle-detail__number"
+            [class.raffle-detail__number--selected]="isSelected(num.number)"
+            [class.raffle-detail__number--available]="num.status === 'available' && !isSelected(num.number)"
+            (click)="toggleNumber(num)"
+            [attr.aria-pressed]="isSelected(num.number)"
+            [disabled]="false"
+          >
+            {{ num.number | number:'2.0' }}
+          </button>
+        }
+      }
+    </div>
+  </section>
+</section>

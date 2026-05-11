@@ -3,8 +3,24 @@
 html,
 body {
   height: 100%;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
   margin: 0;
+}
+
+/* MatDrawer usa estrutura interna fora do escopo do componente (Emulated), por isso o fix deve ser global. */
+.app-sidenav .mat-drawer-inner-container {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.app-sidenav .mat-drawer-inner-container > * {
+  max-width: 100%;
+  box-sizing: border-box;
 }

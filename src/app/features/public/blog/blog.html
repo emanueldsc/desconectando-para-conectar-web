@@ -1,1 +1,34 @@
-<p>blog works!</p>
+<section class="blog-page">
+  <div class="blog-page__inner">
+    <h1 class="blog-page__title">Blog</h1>
+
+    <div class="blog-page__search-container">
+      <div class="blog-page__search-wrapper">
+        <mat-icon class="blog-page__search-icon">search</mat-icon>
+        <input
+          class="blog-page__search-input"
+          type="text"
+          placeholder="Pesquisar artigos..."
+          [value]="searchQuery()"
+          (input)="onSearchChange($event.target.value)"
+          aria-label="Pesquisar artigos do blog"
+        />
+      </div>
+    </div>
+
+    <ul class="blog-page__grid" role="list">
+      @if (filteredPosts().length > 0) {
+        @for (post of filteredPosts(); track post.id) {
+          <li>
+            <blog-card [post]="post" />
+          </li>
+        }
+      } @else {
+        <div class="blog-page__empty">
+          <p>Nenhum artigo encontrado para sua busca.</p>
+        </div>
+      }
+    </ul>
+  </div>
+</section>
+
