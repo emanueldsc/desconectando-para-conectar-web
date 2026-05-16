@@ -1,1 +1,99 @@
-<p>cms works!</p>
+<section class="cms-page">
+	<div class="cms-page__header">
+		<h2>Gestão do Portal</h2>
+		<p>Personalize os elementos visuais, frases de impacto e formas de contato que representam a nossa comunidade.</p>
+		<button type="button" class="cms-page__save" (click)="save()">
+			<mat-icon aria-hidden="true">save</mat-icon>
+			Salvar Alterações
+		</button>
+	</div>
+
+	<div class="cms-page__grid">
+		<!-- Banners da Home -->
+		<section class="cms-bento cms-bento--banners">
+			<div class="cms-bento__header">
+				<div class="cms-bento__icon cms-bento__icon--banners">
+					<mat-icon aria-hidden="true">view_carousel</mat-icon>
+				</div>
+				<h3>Banners da Home</h3>
+			</div>
+			<div class="cms-banners__list">
+				<div class="cms-banner-card" *ngFor="let banner of banners(); let i = index">
+					<img [src]="banner.url" [alt]="banner.alt" class="cms-banner-card__img" />
+					<div class="cms-banner-card__overlay">
+						<span class="cms-banner-card__label">{{ banner.label }}</span>
+						<div class="cms-banner-card__actions">
+							<button type="button" (click)="editBanner(i)"><mat-icon>edit</mat-icon></button>
+							<button type="button" (click)="deleteBanner(i)"><mat-icon>delete</mat-icon></button>
+						</div>
+					</div>
+				</div>
+				<div class="cms-banner-card cms-banner-card--add" (click)="addBanner()">
+					<mat-icon>add_photo_alternate</mat-icon>
+					<span>Adicionar Novo Banner</span>
+				</div>
+			</div>
+		</section>
+
+		<!-- Frases de Impacto -->
+		<section class="cms-bento cms-bento--phrases">
+			<div class="cms-bento__header">
+				<div class="cms-bento__icon cms-bento__icon--phrases">
+					<mat-icon aria-hidden="true">format_quote</mat-icon>
+				</div>
+				<h3>Frases de Impacto</h3>
+			</div>
+			<div class="cms-phrases__list">
+				<div class="cms-phrase-card" *ngFor="let phrase of phrases(); let i = index">
+					<textarea class="cms-phrase-card__input">{{ phrase }}</textarea>
+					<button type="button" (click)="deletePhrase(i)"><mat-icon>delete</mat-icon></button>
+				</div>
+				<button type="button" class="cms-phrases__add" (click)="addPhrase()">
+					<mat-icon>add</mat-icon> Adicionar Nova Frase
+				</button>
+			</div>
+		</section>
+
+		<!-- Informações de Contato -->
+		<section class="cms-bento cms-bento--contact">
+			<div class="cms-bento__header">
+				<div class="cms-bento__icon cms-bento__icon--contact">
+					<mat-icon aria-hidden="true">contact_support</mat-icon>
+				</div>
+				<h3>Informações de Contato</h3>
+			</div>
+			<div class="cms-contact__fields">
+				<label>E-mail de Suporte
+					<input type="email" [value]="contact().email" />
+				</label>
+				<label>WhatsApp Principal
+					<input type="tel" [value]="contact().whatsapp" />
+				</label>
+				<label>Telefone Fixo
+					<input type="tel" [value]="contact().phone" />
+				</label>
+			</div>
+		</section>
+
+		<!-- Redes Sociais -->
+		<section class="cms-bento cms-bento--socials">
+			<div class="cms-bento__header">
+				<div class="cms-bento__icon cms-bento__icon--socials">
+					<mat-icon aria-hidden="true">share</mat-icon>
+				</div>
+				<h3>Redes Sociais</h3>
+			</div>
+			<div class="cms-socials__fields">
+				<label>Instagram
+					<input type="url" [value]="socials().instagram" />
+				</label>
+				<label>Facebook
+					<input type="url" [value]="socials().facebook" />
+				</label>
+				<label>YouTube
+					<input type="url" [value]="socials().youtube" />
+				</label>
+			</div>
+		</section>
+	</div>
+</section>
