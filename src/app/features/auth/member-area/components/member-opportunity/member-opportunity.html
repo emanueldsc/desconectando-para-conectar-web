@@ -1,0 +1,35 @@
+<section class="member-opportunity" aria-label="Oportunidade para participar agora">
+  <h2>Participar Agora</h2>
+
+  <article class="member-opportunity__card">
+    <div class="member-opportunity__hero">
+      <img
+        [ngSrc]="opportunity().imageUrl"
+        width="1200"
+        height="560"
+        alt="Imagem da oportunidade"
+        class="member-opportunity__image"
+      />
+      <div class="member-opportunity__hero-overlay"></div>
+      <h3>{{ opportunity().title }}</h3>
+    </div>
+
+    <div class="member-opportunity__body">
+      <p>{{ opportunity().description }}</p>
+
+      <div class="member-opportunity__progress-head">
+        <span>Progresso</span>
+        <span>{{ opportunity().progress }}%</span>
+      </div>
+
+      <div class="member-opportunity__progress-track" role="progressbar" [attr.aria-valuenow]="opportunity().progress" aria-valuemin="0" aria-valuemax="100" aria-label="Progresso da arrecadacao">
+        <span class="member-opportunity__progress-fill" [style]="progressStyle()"></span>
+      </div>
+
+      <button type="button" class="member-opportunity__cta">
+        Participar
+        <mat-icon aria-hidden="true">arrow_forward</mat-icon>
+      </button>
+    </div>
+  </article>
+</section>

@@ -1,0 +1,105 @@
+:host {
+  display: block;
+}
+
+.member-opportunity {
+  h2 {
+    margin: 0 0 1rem;
+    font-family: 'Literata', serif;
+    color: #9e3d00;
+    border-bottom: 1px solid #e0c0b2;
+    padding-bottom: 0.5rem;
+  }
+
+  &__card {
+    border-radius: 1.25rem;
+    border: 2px solid #2d5a27;
+    background: #ffffff;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(45, 90, 39, 0.08);
+  }
+
+  &__hero {
+    position: relative;
+    height: 10rem;
+
+    h3 {
+      position: absolute;
+      left: 1rem;
+      right: 1rem;
+      bottom: 1rem;
+      margin: 0;
+      color: #ffffff;
+      font-family: 'Literata', serif;
+      font-size: 1.25rem;
+      z-index: 2;
+    }
+  }
+
+  &__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.65) 0%, transparent 100%);
+    z-index: 1;
+  }
+
+  &__body {
+    padding: 1rem;
+
+    p {
+      margin: 0 0 1rem;
+      color: #594238;
+      font-size: 0.9rem;
+    }
+  }
+
+  &__progress-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #594238;
+  }
+
+  &__progress-track {
+    margin-top: 0.35rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: #f6ddd4;
+    overflow: hidden;
+  }
+
+  &__progress-fill {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #3b6934 0%, #f39c12 100%);
+  }
+
+  &__cta {
+    margin-top: 1rem;
+    width: 100%;
+    border: 0;
+    border-radius: 1.25rem;
+    background: #d35400;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    cursor: pointer;
+  }
+}

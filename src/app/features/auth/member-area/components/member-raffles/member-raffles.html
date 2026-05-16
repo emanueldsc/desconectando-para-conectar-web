@@ -1,0 +1,60 @@
+<section class="member-raffles" aria-label="Rifas do usuario">
+  <h2>Minhas Rifas</h2>
+
+  <div class="member-raffles__list">
+    @for (raffle of activeRaffles(); track raffle.id) {
+      <article class="member-raffles__item">
+        <div class="member-raffles__thumb-wrap">
+          <img
+            [ngSrc]="raffle.imageUrl"
+            width="160"
+            height="160"
+            alt="Imagem da rifa ativa"
+            class="member-raffles__thumb"
+          />
+        </div>
+
+        <div class="member-raffles__body">
+          <div class="member-raffles__heading">
+            <h3>{{ raffle.title }}</h3>
+            <span class="member-raffles__status member-raffles__status--active">Ativa</span>
+          </div>
+
+          <p class="member-raffles__date">Sorteio: {{ raffle.drawDate }}</p>
+
+          <div class="member-raffles__numbers">
+            @for (number of raffle.numbers ?? []; track number) {
+              <span>{{ number }}</span>
+            }
+          </div>
+        </div>
+      </article>
+    }
+
+    @for (raffle of completedRaffles(); track raffle.id) {
+      <article class="member-raffles__item member-raffles__item--completed">
+        <div class="member-raffles__thumb-wrap member-raffles__thumb-wrap--completed">
+          <img
+            [ngSrc]="raffle.imageUrl"
+            width="160"
+            height="160"
+            alt="Imagem da rifa finalizada"
+            class="member-raffles__thumb"
+          />
+        </div>
+
+        <div class="member-raffles__body">
+          <div class="member-raffles__heading">
+            <h3>{{ raffle.title }}</h3>
+            <span class="member-raffles__status member-raffles__status--completed">Finalizada</span>
+          </div>
+
+          <p class="member-raffles__date">Sorteio: {{ raffle.drawDate }}</p>
+          @if (raffle.summary) {
+            <p class="member-raffles__summary">{{ raffle.summary }}</p>
+          }
+        </div>
+      </article>
+    }
+  </div>
+</section>

@@ -1,0 +1,18 @@
+<section class="member-area">
+  <div class="member-area__shell">
+    <auth-member-side-menu class="member-area__sidemenu" />
+
+    <main class="member-area__content" aria-label="Conteudo do painel doador">
+      <auth-member-greeting [userName]="userName()" />
+
+      <auth-member-impact-stats
+        [totalDonated]="stats().totalDonated"
+        [livesImpacted]="stats().livesImpacted"
+      />
+
+      <auth-member-raffles [raffles]="raffles()" />
+
+      <auth-member-opportunity [opportunity]="opportunity()" />
+    </main>
+  </div>
+</section>

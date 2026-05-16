@@ -1,0 +1,35 @@
+:host {
+  display: block;
+}
+
+.member-side-menu {
+  height: 100%;
+  background: #ffffff;
+  border-right: 1px solid #e0c0b2;
+  padding: 1.25rem 0.75rem;
+
+  &__nav {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  &__item {
+    border: 0;
+    width: 100%;
+    border-radius: 0.75rem;
+    padding: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: transparent;
+    color: #594238;
+    text-align: left;
+    font-weight: 700;
+    cursor: pointer;
+
+    &--active {
+      background: #c64f00;
+      color: #fffbff;
+    }
+  }
+}

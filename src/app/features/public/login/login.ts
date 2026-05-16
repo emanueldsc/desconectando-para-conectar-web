@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'login',
@@ -11,6 +11,7 @@ import { RouterLink } from '@angular/router';
 })
 export class Login {
   private readonly fb = inject(FormBuilder);
+  private readonly router = inject(Router);
 
   protected readonly isSubmitting = signal(false);
   protected readonly submitted = signal(false);
@@ -45,6 +46,7 @@ export class Login {
 
     setTimeout(() => {
       this.isSubmitting.set(false);
+      void this.router.navigate(['/login/member']);
     }, 700);
   }
 
