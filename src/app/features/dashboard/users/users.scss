@@ -1,0 +1,35 @@
+:host {
+	display: block;
+}
+
+.users-page {
+	padding: 1.5rem 1.25rem 5.5rem;
+	min-height: 100%;
+	background: #fdf5e6;
+
+	&__tabs {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.5rem;
+		margin-bottom: 1rem;
+
+		button {
+			border: 1px solid #e0c0b2;
+			background: #fff;
+			color: #594238;
+			border-radius: 999px;
+			padding: 0.6rem 0.85rem;
+			text-transform: uppercase;
+			letter-spacing: 0.04em;
+			font-size: 0.72rem;
+			font-weight: 700;
+			cursor: pointer;
+		}
+	}
+
+	&__tab--active {
+		background: #2d5a27 !important;
+		border-color: #2d5a27 !important;
+		color: #fff !important;
+	}
+}

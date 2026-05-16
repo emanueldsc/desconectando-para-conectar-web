@@ -11,6 +11,8 @@ import { RaffleCampaign } from '../../raffle.models';
 })
 export class RaffleDrawConfirm {
   readonly raffle = input.required<RaffleCampaign>();
+  readonly loading = input(false);
+  readonly errorMessage = input<string | null>(null);
   readonly confirm = output<void>();
   readonly cancel = output<void>();
 

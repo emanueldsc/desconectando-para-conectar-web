@@ -1,1 +1,111 @@
-<p>donations works!</p>
+<section class="donations-page" aria-label="Gestão de doações">
+	<header class="donations-page__header">
+		<h2>Gestão de Doações</h2>
+		<button type="button" class="donations-page__create" (click)="openModal()">
+			<mat-icon aria-hidden="true">add</mat-icon>
+			Nova doação
+		</button>
+	</header>
+
+	<section class="donations-page__metrics" aria-label="Resumo financeiro">
+		<article class="metric-card">
+			<div>
+				<p>Total arrecadado</p>
+				<strong>{{ totalRaised() | currency: 'BRL':'symbol':'1.2-2':'pt-BR' }}</strong>
+			</div>
+			<mat-icon aria-hidden="true">payments</mat-icon>
+		</article>
+
+		<article class="metric-card metric-card--green">
+			<div>
+				<p>Doadores ativos</p>
+				<strong>{{ activeDonors() }}</strong>
+			</div>
+			<mat-icon aria-hidden="true">group</mat-icon>
+		</article>
+
+		<article class="metric-card metric-card--gold">
+			<div>
+				<p>Doações pendentes</p>
+				<strong>{{ pendingTotal() | currency: 'BRL':'symbol':'1.2-2':'pt-BR' }}</strong>
+			</div>
+			<mat-icon aria-hidden="true">pending_actions</mat-icon>
+		</article>
+	</section>
+
+	<section class="donations-page__actions" aria-label="Filtros e busca">
+		<button type="button" class="donations-page__manual" (click)="openModal()">
+			<mat-icon aria-hidden="true">add_circle</mat-icon>
+			Registrar doação manual
+		</button>
+
+		<div class="donations-page__search-wrap">
+			<mat-icon aria-hidden="true">search</mat-icon>
+			<input
+				type="text"
+				[value]="query()"
+				(input)="onQueryInput($event)"
+				placeholder="Buscar doador, forma de pagamento..."
+				aria-label="Buscar doações"
+			/>
+		</div>
+
+		<div class="donations-page__filters" role="group" aria-label="Filtrar doações">
+			<button type="button" [class.donations-page__filter--active]="filter() === 'all'" (click)="setFilter('all')">Todos</button>
+			<button type="button" [class.donations-page__filter--active]="filter() === 'confirmed'" (click)="setFilter('confirmed')">Confirmado</button>
+			<button type="button" [class.donations-page__filter--active]="filter() === 'pending'" (click)="setFilter('pending')">Pendente</button>
+		</div>
+	</section>
+
+	<section class="donations-page__history" aria-label="Histórico recente">
+		<header class="donations-page__history-header">
+			<h3>Histórico Recente</h3>
+			<button type="button">
+				<mat-icon aria-hidden="true">download</mat-icon>
+				Exportar
+			</button>
+		</header>
+
+		@if (hasResults()) {
+			<ul>
+				@for (donation of filteredDonations(); track donation.id) {
+					<li>
+						<div class="donations-page__donor">
+							<div class="donations-page__avatar" aria-hidden="true">{{ initials(donation.donorName) }}</div>
+							<div>
+								<p>{{ donation.donorName }}</p>
+								<small>
+									<mat-icon aria-hidden="true">calendar_today</mat-icon>
+									{{ formatDate(donation.date) }}
+								</small>
+							</div>
+						</div>
+
+						<div class="donations-page__amount">
+							<p>{{ donation.amount | currency: 'BRL':'symbol':'1.2-2':'pt-BR' }}</p>
+							<small>{{ paymentLabel(donation.paymentMethod) }}</small>
+						</div>
+
+						<span
+							class="donations-page__badge"
+							[class.donations-page__badge--confirmed]="donation.status === 'confirmed'"
+							[class.donations-page__badge--pending]="donation.status === 'pending'"
+						>
+							<mat-icon aria-hidden="true">{{ donation.status === 'confirmed' ? 'check_circle' : 'schedule' }}</mat-icon>
+							{{ statusLabel(donation.status) }}
+						</span>
+					</li>
+				}
+			</ul>
+		} @else {
+			<div class="donations-page__empty">
+				<mat-icon aria-hidden="true">search_off</mat-icon>
+				<p>Nenhuma doação encontrada para os filtros atuais.</p>
+			</div>
+		}
+	</section>
+</section>
+
+@if (isModalOpen()) {
+	<dashboard-donation-create-modal (cancel)="closeModal()" (save)="saveDonation($event)"></dashboard-donation-create-modal>
+}

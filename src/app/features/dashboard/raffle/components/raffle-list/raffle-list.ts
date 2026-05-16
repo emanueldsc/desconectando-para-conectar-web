@@ -18,6 +18,7 @@ export class RaffleList {
   readonly searchChange = output<string>();
   readonly filterChange = output<RaffleStatus | 'all'>();
   readonly create = output<void>();
+  readonly details = output<number>();
   readonly edit = output<number>();
   readonly delete = output<number>();
   readonly draw = output<number>();

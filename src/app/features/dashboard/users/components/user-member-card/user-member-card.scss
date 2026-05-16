@@ -1,0 +1,121 @@
+:host {
+  display: block;
+}
+
+.member-card {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: #fff;
+  border: 1px solid #e0c0b2;
+  border-radius: 0.75rem;
+  padding: 0.8rem;
+  box-shadow: 0 2px 8px rgba(45, 90, 39, 0.08);
+
+  &__icon {
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 999px;
+    background: #bcf0ae;
+    color: #23501e;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+
+    mat-icon {
+      width: 1.2rem;
+      height: 1.2rem;
+      font-size: 1.2rem;
+      line-height: 1.2rem;
+    }
+  }
+
+  &__content {
+    min-width: 0;
+    flex: 1;
+  }
+
+  &__name {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #251913;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__meta {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 0.2rem;
+  }
+
+  &__chip {
+    border-radius: 999px;
+    background: #f6ddd4;
+    color: #594238;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+    padding: 0.15rem 0.45rem;
+  }
+
+  &__contact {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    color: #594238;
+    font-size: 0.76rem;
+
+    mat-icon {
+      width: 0.85rem;
+      height: 0.85rem;
+      font-size: 0.85rem;
+      line-height: 0.85rem;
+    }
+  }
+
+  &__address {
+    margin: 0.2rem 0 0 0;
+    color: #594238;
+    font-size: 0.75rem;
+    line-height: 1.3;
+    word-break: break-word;
+  }
+
+  &__role {
+    display: inline-block;
+    margin-top: 0.2rem;
+    color: #9e3d00;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+  }
+
+  &--buyer {
+    padding: 0.7rem 0.8rem;
+  }
+
+  &__more {
+    border: 0;
+    background: transparent;
+    color: #8c7166;
+    border-radius: 999px;
+    width: 2rem;
+    height: 2rem;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    flex-shrink: 0;
+
+    &:hover {
+      color: #d35400;
+      background: #fff1ec;
+    }
+  }
+}

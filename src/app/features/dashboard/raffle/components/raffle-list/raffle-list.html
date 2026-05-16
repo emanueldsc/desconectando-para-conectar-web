@@ -4,11 +4,21 @@
       <h2>Gestão de Rifas</h2>
       <p>Acompanhe o engajamento e gerencie prêmios.</p>
     </div>
-    <div class="raffle-list__kpi">
-      <span>Arrecadação Total</span>
-      <strong>{{ totalRaised() | currency: 'BRL':'symbol':'1.2-2':'pt-BR' }}</strong>
+
+    <div class="raffle-list__summary">
+      <div class="raffle-list__kpi">
+        <span>Arrecadação Total</span>
+        <strong>{{ totalRaised() | currency: 'BRL':'symbol':'1.2-2':'pt-BR' }}</strong>
+      </div>
+
+      <button type="button" class="raffle-list__create" (click)="create.emit()">
+        <mat-icon aria-hidden="true">add_circle</mat-icon>
+        Criar Rifa
+      </button>
     </div>
   </header>
+
+  <p class="raffle-list__crud-hint">CRUD: Criar, Visualizar, Editar e Excluir campanhas.</p>
 
   <section class="raffle-list__controls">
     <div class="raffle-list__search-wrap">
@@ -73,6 +83,10 @@
               </div>
 
               <div class="raffle-list__actions">
+                <button type="button" class="raffle-list__btn raffle-list__btn--outline" (click)="details.emit(raffle.id)">
+                  <mat-icon aria-hidden="true">visibility</mat-icon>
+                  Ver detalhes
+                </button>
                 <button type="button" class="raffle-list__btn raffle-list__btn--ghost" (click)="edit.emit(raffle.id)">
                   <mat-icon aria-hidden="true">edit</mat-icon>
                   Editar

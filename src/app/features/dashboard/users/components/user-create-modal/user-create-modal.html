@@ -1,0 +1,67 @@
+<div class="member-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="member-modal-title" (click)="cancel.emit()">
+  <section class="member-modal" (click)="$event.stopPropagation()">
+    <header class="member-modal__header">
+      <h3 id="member-modal-title">
+        <mat-icon aria-hidden="true">person_add</mat-icon>
+        {{ title() }}
+      </h3>
+      <button type="button" aria-label="Fechar" (click)="cancel.emit()">
+        <mat-icon aria-hidden="true">close</mat-icon>
+      </button>
+    </header>
+
+    <form class="member-modal__form" [formGroup]="form" (ngSubmit)="submit()">
+      <label>
+        <span>Nome Completo</span>
+        <input type="text" formControlName="fullName" placeholder="Ex: Maria Joaquina" />
+      </label>
+
+      <label>
+        <span>Telefone / Contato</span>
+        <input type="tel" formControlName="phone" placeholder="(00) 00000-0000" />
+      </label>
+
+      <label>
+        <span>Endereço</span>
+        <input type="text" formControlName="address" placeholder="Rua, número, complemento..." />
+      </label>
+
+      @if (isUsersSection()) {
+        <div class="member-modal__users-note">
+          <mat-icon aria-hidden="true">confirmation_number</mat-icon>
+          <span>Este cadastro será criado como usuário comprador de rifa.</span>
+        </div>
+      } @else {
+        <div class="member-modal__grid">
+          <label>
+            <span>Categoria</span>
+            <select formControlName="category">
+              <option value="child">Criança</option>
+              <option value="volunteer">Voluntário</option>
+              <option value="collaborator">Colaborador</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Perfil no Portal</span>
+            <select formControlName="portalRole">
+              <option value="manager">Gestor</option>
+              <option value="publisher">Publicador</option>
+              <option value="buyer">Comprador de rifa</option>
+            </select>
+          </label>
+        </div>
+      }
+
+      <label>
+        <span>Observações (Opcional)</span>
+        <textarea rows="3" formControlName="notes" placeholder="Informações adicionais..."></textarea>
+      </label>
+
+      <footer class="member-modal__actions">
+        <button type="button" class="member-modal__btn member-modal__btn--ghost" (click)="cancel.emit()">Cancelar</button>
+        <button type="submit" class="member-modal__btn member-modal__btn--primary">{{ submitLabel() }}</button>
+      </footer>
+    </form>
+  </section>
+</div>

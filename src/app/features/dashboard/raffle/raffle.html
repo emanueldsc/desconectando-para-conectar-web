@@ -1,4 +1,8 @@
 <div class="raffle-page">
+	@if (drawError()) {
+		<p class="raffle-page__error" role="alert">{{ drawError() }}</p>
+	}
+
 	@if (view() === 'empty') {
 		<dashboard-raffle-empty-state (create)="openCreate()"></dashboard-raffle-empty-state>
 	}
@@ -11,6 +15,7 @@
 			(searchChange)="search.set($event)"
 			(filterChange)="filter.set($event)"
 			(create)="openCreate()"
+			(details)="openDetails($event)"
 			(edit)="openEdit($event)"
 			(delete)="deleteRaffle($event)"
 			(draw)="openDraw($event)"
@@ -25,9 +30,21 @@
 		></dashboard-raffle-create-form>
 	}
 
+	@if (view() === 'details' && detailsRaffle(); as raffleDetails) {
+		<dashboard-raffle-details
+			[raffle]="raffleDetails"
+			(back)="backToList()"
+			(edit)="openEdit($event)"
+			(delete)="deleteRaffle($event)"
+			(draw)="openDraw($event)"
+		></dashboard-raffle-details>
+	}
+
 	@if (drawRaffle(); as raffleToDraw) {
 		<dashboard-raffle-draw-confirm
 			[raffle]="raffleToDraw"
+			[loading]="isDrawing()"
+			[errorMessage]="drawError()"
 			(cancel)="closeDraw()"
 			(confirm)="confirmDraw()"
 		></dashboard-raffle-draw-confirm>

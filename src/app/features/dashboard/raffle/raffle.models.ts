@@ -21,3 +21,9 @@ export interface CreateRafflePayload {
   rangeEnd: number;
   ticketPrice: number;
 }
+
+export interface DrawRaffleResult {
+  winnerName: string;
+  winnerNumber: number;
+  processedAt: string;
+}

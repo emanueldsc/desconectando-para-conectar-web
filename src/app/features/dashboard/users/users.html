@@ -1,1 +1,30 @@
-<p>users works!</p>
+<section class="users-page">
+	<div class="users-page__tabs" role="tablist" aria-label="Alternar área de gestão">
+		<button type="button" role="tab" [class.users-page__tab--active]="activeSection() === 'members'" (click)="setSection('members')">
+			Membros
+		</button>
+		<button type="button" role="tab" [class.users-page__tab--active]="activeSection() === 'users'" (click)="setSection('users')">
+			Usuários
+		</button>
+	</div>
+
+	<dashboard-users-members-list
+		[members]="filteredMembers()"
+		[query]="query()"
+		[filter]="filter()"
+		[section]="activeSection()"
+		(queryChange)="setQuery($event)"
+		(filterChange)="setFilter($event)"
+		(createMember)="openCreateModal()"
+		(editMember)="openEditModal($event)"
+	></dashboard-users-members-list>
+</section>
+
+@if (showCreateModal()) {
+	<dashboard-user-create-modal
+		[member]="editingMember()"
+		[section]="activeSection()"
+		(cancel)="closeCreateModal()"
+		(save)="saveMember($event)"
+	></dashboard-user-create-modal>
+}

@@ -1,0 +1,367 @@
+:host {
+	display: block;
+}
+
+.donations-page {
+	display: grid;
+	gap: 1rem;
+	padding: 1.5rem 1.25rem 5rem;
+	min-height: 100%;
+	background:
+		radial-gradient(circle at 8px 8px, rgba(224, 192, 178, 0.35) 1px, transparent 0),
+		#fff8f6;
+	background-size: 24px 24px;
+
+	&__header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.8rem;
+		flex-wrap: wrap;
+
+		h2 {
+			margin: 0;
+			font-family: 'Literata', serif;
+			color: #251913;
+			font-size: clamp(1.45rem, 3.2vw, 2rem);
+		}
+	}
+
+	&__create {
+		border: 0;
+		border-radius: 999px;
+		background: #d35400;
+		color: #fff;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		font-weight: 700;
+		cursor: pointer;
+		padding: 0.7rem 1rem;
+
+		mat-icon {
+			width: 1rem;
+			height: 1rem;
+			font-size: 1rem;
+			line-height: 1rem;
+		}
+	}
+
+	&__metrics {
+		display: grid;
+		gap: 0.75rem;
+
+		@media (min-width: 900px) {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+	}
+
+	&__actions {
+		display: grid;
+		gap: 0.7rem;
+	}
+
+	&__manual {
+		width: 100%;
+		border: 2px dashed #8c7166;
+		border-radius: 1rem;
+		background: #fff1ec;
+		color: #9e3d00;
+		padding: 0.85rem;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		font-weight: 700;
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		gap: 0.35rem;
+		cursor: pointer;
+	}
+
+	&__search-wrap {
+		position: relative;
+
+		mat-icon {
+			position: absolute;
+			left: 0.8rem;
+			top: 50%;
+			transform: translateY(-50%);
+			color: #8c7166;
+			width: 1.1rem;
+			height: 1.1rem;
+			font-size: 1.1rem;
+			line-height: 1.1rem;
+		}
+
+		input {
+			width: 100%;
+			border-radius: 999px;
+			border: 1px solid #e0c0b2;
+			background: #fff;
+			padding: 0.75rem 0.85rem 0.75rem 2.5rem;
+			box-sizing: border-box;
+			font: inherit;
+
+			&:focus {
+				outline: none;
+				border-color: #d35400;
+				box-shadow: 0 0 0 2px rgba(211, 84, 0, 0.18);
+			}
+		}
+	}
+
+	&__filters {
+		display: flex;
+		gap: 0.45rem;
+		overflow-x: auto;
+		padding-bottom: 0.15rem;
+
+		button {
+			border: 1px solid #8c7166;
+			background: #fff;
+			color: #594238;
+			border-radius: 999px;
+			padding: 0.42rem 0.8rem;
+			text-transform: uppercase;
+			letter-spacing: 0.04em;
+			font-weight: 700;
+			white-space: nowrap;
+			cursor: pointer;
+			font-size: 0.72rem;
+		}
+	}
+
+	&__filter--active {
+		background: #9e3d00 !important;
+		border-color: #9e3d00 !important;
+		color: #fff !important;
+	}
+
+	&__history {
+		background: #fff;
+		border: 1px solid #e0c0b2;
+		border-radius: 1rem;
+		overflow: hidden;
+	}
+
+	&__history-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 0.7rem;
+		padding: 0.85rem 1rem;
+		background: #fff1ec;
+		border-bottom: 1px solid #e0c0b2;
+
+		h3 {
+			margin: 0;
+			font-family: 'Literata', serif;
+			color: #9e3d00;
+		}
+
+		button {
+			border: 0;
+			background: transparent;
+			color: #9e3d00;
+			text-transform: uppercase;
+			letter-spacing: 0.04em;
+			font-weight: 700;
+			display: inline-flex;
+			align-items: center;
+			gap: 0.2rem;
+			cursor: pointer;
+		}
+	}
+
+	ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	li {
+		display: grid;
+		gap: 0.75rem;
+		padding: 0.85rem 1rem;
+		border-bottom: 1px solid #e0c0b2;
+
+		@media (min-width: 760px) {
+			grid-template-columns: 1.2fr auto auto;
+			align-items: center;
+		}
+	}
+
+	li:last-child {
+		border-bottom: 0;
+	}
+
+	&__donor {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		align-items: center;
+		gap: 0.7rem;
+		min-width: 0;
+
+		p {
+			margin: 0;
+			font-weight: 700;
+			color: #251913;
+		}
+
+		small {
+			margin-top: 0.15rem;
+			color: #594238;
+			display: inline-flex;
+			align-items: center;
+			gap: 0.25rem;
+
+			mat-icon {
+				width: 0.85rem;
+				height: 0.85rem;
+				font-size: 0.85rem;
+				line-height: 0.85rem;
+			}
+		}
+	}
+
+	&__avatar {
+		width: 2.5rem;
+		height: 2.5rem;
+		border-radius: 999px;
+		background: #ffe9e1;
+		border: 2px solid #f6ddd4;
+		color: #9e3d00;
+		font-weight: 700;
+		display: grid;
+		place-items: center;
+		text-transform: uppercase;
+	}
+
+	&__amount {
+		p {
+			margin: 0;
+			color: #2d5a27;
+			font-weight: 700;
+		}
+
+		small {
+			color: #594238;
+			text-transform: uppercase;
+			letter-spacing: 0.04em;
+			font-size: 0.68rem;
+			font-weight: 700;
+		}
+	}
+
+	&__badge {
+		justify-self: start;
+		border-radius: 999px;
+		padding: 0.25rem 0.55rem;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.2rem;
+		font-size: 0.66rem;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		font-weight: 700;
+
+		mat-icon {
+			width: 0.8rem;
+			height: 0.8rem;
+			font-size: 0.8rem;
+			line-height: 0.8rem;
+		}
+	}
+
+	&__badge--confirmed {
+		background: #bcf0ae;
+		color: #23501e;
+		border: 1px solid #a1d494;
+	}
+
+	&__badge--pending {
+		background: #f6ddd4;
+		color: #594238;
+		border: 1px solid #e0c0b2;
+	}
+
+	&__empty {
+		padding: 1.5rem;
+		display: grid;
+		place-items: center;
+		gap: 0.4rem;
+		text-align: center;
+		color: #594238;
+
+		mat-icon {
+			color: #8c7166;
+		}
+
+		p {
+			margin: 0;
+		}
+	}
+}
+
+.metric-card {
+	background: #fff;
+	border: 1px solid #e0c0b2;
+	border-radius: 0.85rem;
+	padding: 0.9rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.7rem;
+
+	p {
+		margin: 0;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		font-size: 0.68rem;
+		font-weight: 700;
+		color: #594238;
+	}
+
+	strong {
+		display: block;
+		margin-top: 0.2rem;
+		color: #d35400;
+		font-family: 'Literata', serif;
+		font-size: 1.3rem;
+	}
+
+	mat-icon {
+		background: rgba(198, 79, 0, 0.1);
+		color: #d35400;
+		border-radius: 999px;
+		width: 2.2rem;
+		height: 2.2rem;
+		font-size: 1.25rem;
+		line-height: 2.2rem;
+		text-align: center;
+	}
+
+	&--green {
+		strong {
+			color: #2d5a27;
+		}
+
+		mat-icon {
+			background: rgba(45, 90, 39, 0.12);
+			color: #2d5a27;
+		}
+	}
+
+	&--gold {
+		strong {
+			color: #8f6700;
+		}
+
+		mat-icon {
+			background: rgba(243, 156, 18, 0.15);
+			color: #8f6700;
+		}
+	}
+}

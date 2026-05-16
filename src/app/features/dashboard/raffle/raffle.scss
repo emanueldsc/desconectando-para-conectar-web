@@ -9,4 +9,14 @@
 		#fff8f6;
 	background-size: 24px 24px;
 	min-height: 100%;
+
+	&__error {
+		margin: 0 0 1rem;
+		background: #ffdad6;
+		border: 2px solid #ba1a1a;
+		border-radius: 0.75rem;
+		padding: 0.65rem 0.8rem;
+		color: #93000a;
+		font-size: 0.92rem;
+	}
 }

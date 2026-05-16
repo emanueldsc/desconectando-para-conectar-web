@@ -1,0 +1,64 @@
+<section class="raffle-details" aria-label="Detalhes da rifa">
+  <header class="raffle-details__header">
+    <button type="button" class="raffle-details__back" (click)="back.emit()">
+      <mat-icon aria-hidden="true">arrow_back</mat-icon>
+      Voltar para lista
+    </button>
+
+    <div class="raffle-details__title-wrap">
+      <h2>{{ raffle().title }}</h2>
+      <span class="raffle-details__status">{{ raffle().status === 'active' ? 'Ativa' : raffle().status === 'closed' ? 'Concluida' : 'Rascunho' }}</span>
+    </div>
+
+    <p>{{ raffle().description }}</p>
+  </header>
+
+  <section class="raffle-details__grid">
+    <article>
+      <span>Faixa de numeros</span>
+      <strong>{{ raffle().rangeStart }} ate {{ raffle().rangeEnd }}</strong>
+    </article>
+    <article>
+      <span>Valor por bilhete</span>
+      <strong>{{ raffle().ticketPrice | currency: 'BRL':'symbol':'1.2-2':'pt-BR' }}</strong>
+    </article>
+    <article>
+      <span>Bilhetes vendidos</span>
+      <strong>{{ raffle().soldTickets }} / {{ totalTickets() }}</strong>
+    </article>
+    <article>
+      <span>Progresso</span>
+      <strong>{{ progress() }}%</strong>
+    </article>
+  </section>
+
+  @if (raffle().status === 'closed') {
+    <article class="raffle-details__winner">
+      <mat-icon aria-hidden="true">emoji_events</mat-icon>
+      <div>
+        <span>Resultado recebido do backend</span>
+        <strong>{{ raffle().winnerName }} (n. {{ raffle().winnerNumber }})</strong>
+      </div>
+    </article>
+  }
+
+  <footer class="raffle-details__actions">
+    <button type="button" class="raffle-details__btn raffle-details__btn--ghost" (click)="edit.emit(raffle().id)">
+      <mat-icon aria-hidden="true">edit</mat-icon>
+      Editar
+    </button>
+    <button type="button" class="raffle-details__btn raffle-details__btn--danger" (click)="delete.emit(raffle().id)">
+      <mat-icon aria-hidden="true">delete</mat-icon>
+      Excluir
+    </button>
+    <button
+      type="button"
+      class="raffle-details__btn raffle-details__btn--primary"
+      [disabled]="!canDraw()"
+      (click)="draw.emit(raffle().id)"
+    >
+      <mat-icon aria-hidden="true">auto_awesome</mat-icon>
+      Solicitar sorteio
+    </button>
+  </footer>
+</section>

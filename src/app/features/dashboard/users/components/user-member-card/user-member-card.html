@@ -1,0 +1,33 @@
+<article class="member-card" [class.member-card--buyer]="isBuyer()" aria-label="Membro cadastrado">
+  @if (!isBuyer()) {
+    <div class="member-card__icon">
+      <mat-icon aria-hidden="true">{{ iconName() }}</mat-icon>
+    </div>
+  }
+
+  <div class="member-card__content">
+    <p class="member-card__name">{{ member().fullName }}</p>
+
+    <div class="member-card__meta">
+      @if (!isBuyer()) {
+        <span class="member-card__chip">{{ categoryLabel() }}</span>
+      }
+      <span class="member-card__contact">
+        <mat-icon aria-hidden="true">call</mat-icon>
+        {{ member().phone }}
+      </span>
+    </div>
+
+    @if (isBuyer() && member().address) {
+      <p class="member-card__address">{{ member().address }}</p>
+    }
+
+    @if (!isBuyer()) {
+      <span class="member-card__role">{{ roleLabel() }}</span>
+    }
+  </div>
+
+  <button type="button" class="member-card__more" aria-label="Editar membro" (click)="requestEdit()">
+    <mat-icon aria-hidden="true">edit</mat-icon>
+  </button>
+</article>

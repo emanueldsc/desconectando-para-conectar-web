@@ -1,0 +1,50 @@
+<section class="members-list">
+  <header class="members-list__header">
+    <h2>{{ heading() }}</h2>
+  </header>
+
+  @if (section() === 'members') {
+    <button type="button" class="members-list__create-inline" (click)="createMember.emit()">
+      <mat-icon aria-hidden="true">add_circle</mat-icon>
+      {{ createLabel() }}
+    </button>
+  } @else {
+    <div class="members-list__external-note" role="note" aria-label="Cadastro externo de compradores">
+      <mat-icon aria-hidden="true">info</mat-icon>
+      <span>Usuários compradores são cadastrados somente pela área externa do portal.</span>
+    </div>
+  }
+
+  <div class="members-list__search-wrap">
+    <mat-icon aria-hidden="true">search</mat-icon>
+    <input
+      type="text"
+      [value]="query()"
+      (input)="onSearch($event)"
+      [placeholder]="searchPlaceholder()"
+      aria-label="Buscar membros"
+    />
+  </div>
+
+  @if (section() === 'members') {
+    <div class="members-list__chips" role="group" aria-label="Filtrar membros">
+      <button type="button" [class.members-list__chip--active]="filter() === 'all'" (click)="filterChange.emit('all')">Todos</button>
+      <button type="button" [class.members-list__chip--active]="filter() === 'child'" (click)="filterChange.emit('child')">Crianças</button>
+      <button type="button" [class.members-list__chip--active]="filter() === 'volunteer'" (click)="filterChange.emit('volunteer')">Voluntários</button>
+      <button type="button" [class.members-list__chip--active]="filter() === 'collaborator'" (click)="filterChange.emit('collaborator')">Colaboradores</button>
+    </div>
+  }
+
+  @if (members().length > 0) {
+    <div class="members-list__grid">
+      @for (member of members(); track member.id) {
+        <dashboard-user-member-card [member]="member" (edit)="onEditMember($event)"></dashboard-user-member-card>
+      }
+    </div>
+  } @else {
+    <div class="members-list__empty">
+      <mat-icon aria-hidden="true">group_off</mat-icon>
+      <p>Nenhum membro encontrado para os filtros atuais.</p>
+    </div>
+  }
+</section>

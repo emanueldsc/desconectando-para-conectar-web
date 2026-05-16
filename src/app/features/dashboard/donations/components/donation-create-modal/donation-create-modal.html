@@ -1,0 +1,76 @@
+<div
+  class="modal-overlay"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="donation-modal-title"
+  (click)="cancel.emit()"
+>
+  <section class="donation-modal" (click)="$event.stopPropagation()">
+    <header class="donation-modal__header">
+      <h3 id="donation-modal-title">Registrar Doação</h3>
+      <button type="button" aria-label="Fechar modal" (click)="cancel.emit()">
+        <mat-icon aria-hidden="true">close</mat-icon>
+      </button>
+    </header>
+
+    <form class="donation-modal__form" [formGroup]="form" (ngSubmit)="submit()">
+      <div class="donation-modal__field">
+        <label for="donorName">Doador</label>
+        <div class="donation-modal__field-icon-wrap">
+          <mat-icon aria-hidden="true">person_search</mat-icon>
+          <input id="donorName" type="text" formControlName="donorName" placeholder="Buscar por nome ou CPF..." />
+        </div>
+      </div>
+
+      <div class="donation-modal__grid">
+        <div class="donation-modal__field">
+          <label for="amount">Valor (R$)</label>
+          <input id="amount" type="number" min="0.01" step="0.01" formControlName="amount" />
+        </div>
+
+        <div class="donation-modal__field">
+          <label for="date">Data</label>
+          <input id="date" type="date" formControlName="date" />
+        </div>
+      </div>
+
+      <fieldset class="donation-modal__payment">
+        <legend>Forma de Pagamento</legend>
+        <label>
+          <input type="radio" formControlName="paymentMethod" value="pix" />
+          <span><mat-icon aria-hidden="true">qr_code_2</mat-icon>Pix</span>
+        </label>
+        <label>
+          <input type="radio" formControlName="paymentMethod" value="card" />
+          <span><mat-icon aria-hidden="true">credit_card</mat-icon>Cartão</span>
+        </label>
+        <label>
+          <input type="radio" formControlName="paymentMethod" value="boleto" />
+          <span><mat-icon aria-hidden="true">description</mat-icon>Boleto</span>
+        </label>
+        <label>
+          <input type="radio" formControlName="paymentMethod" value="cash" />
+          <span><mat-icon aria-hidden="true">payments</mat-icon>Dinheiro</span>
+        </label>
+      </fieldset>
+
+      <label class="donation-modal__status">
+        <div>
+          <strong>Pagamento Confirmado?</strong>
+          <small>Ative se o valor já estiver em conta</small>
+        </div>
+        <input type="checkbox" formControlName="isConfirmed" />
+      </label>
+
+      <div class="donation-modal__actions">
+        <button type="submit" class="donation-modal__save">
+          <mat-icon aria-hidden="true">save</mat-icon>
+          Salvar doação
+        </button>
+        <button type="button" class="donation-modal__cancel" (click)="cancel.emit()">Cancelar</button>
+      </div>
+    </form>
+
+    <div class="donation-modal__accent" aria-hidden="true"></div>
+  </section>
+</div>
