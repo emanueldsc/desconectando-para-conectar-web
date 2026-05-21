@@ -5,7 +5,7 @@ import { RaffleDetails } from './components/raffle-details/raffle-details';
 import { RaffleDrawConfirm } from './components/raffle-draw-confirm/raffle-draw-confirm';
 import { RaffleEmptyState } from './components/raffle-empty-state/raffle-empty-state';
 import { RaffleList } from './components/raffle-list/raffle-list';
-import { CreateRafflePayload, RaffleStatus } from './raffle.models';
+import { CreateRafflePayload, DrawRafflePayload, RaffleStatus } from './raffle.models';
 import { RaffleStore } from './raffle.store';
 
 type RaffleView = 'empty' | 'list' | 'create' | 'details';
@@ -49,6 +49,10 @@ export class Raffle {
   });
 
   protected readonly hasRaffles = computed(() => this.raffles().length > 0);
+
+  public constructor() {
+    this.loadRaffles();
+  }
 
   protected openCreate(): void {
     this.editingId.set(null);
@@ -109,7 +113,7 @@ export class Raffle {
     this.drawError.set(null);
   }
 
-  protected async confirmDraw(): Promise<void> {
+  protected async confirmDraw(payload: DrawRafflePayload): Promise<void> {
     const id = this.drawId();
     if (id === null) return;
 
@@ -117,14 +121,24 @@ export class Raffle {
     this.drawError.set(null);
 
     try {
-      const result = await firstValueFrom(this.raffleStore.requestDrawFromBackend(id));
+      const result = await firstValueFrom(this.raffleStore.requestDrawFromBackend(id, payload));
       this.raffleStore.applyDrawResult(id, result);
       this.closeDraw();
       this.view.set('list');
     } catch {
-      this.drawError.set('Nao foi possivel concluir o sorteio. Tente novamente com o backend disponível.');
+      this.drawError.set('Nao foi possivel concluir o sorteio. Verifique o numero e o comentario informado.');
     } finally {
       this.isDrawing.set(false);
+    }
+  }
+
+  private async loadRaffles(): Promise<void> {
+    try {
+      await firstValueFrom(this.raffleStore.loadFromBackend());
+      this.view.set(this.hasRaffles() ? 'list' : 'empty');
+    } catch {
+      this.drawError.set('Nao foi possivel carregar as rifas do backend.');
+      this.view.set(this.hasRaffles() ? 'list' : 'empty');
     }
   }
 }

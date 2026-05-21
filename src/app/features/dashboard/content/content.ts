@@ -1,4 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { finalize } from 'rxjs';
+import { AdminBlogApiService, AdminBlogPost } from '../../../shared/services/admin-blog-api.service';
 import { ContentDeleteConfirm } from './components/content-delete-confirm/content-delete-confirm';
 import { ContentEditor } from './components/content-editor/content-editor';
 import { ContentEmptyState } from './components/content-empty-state/content-empty-state';
@@ -39,14 +43,24 @@ const MOCK_PUBLICATIONS: Publication[] = [
   styleUrl: './content.scss',
 })
 export class Content {
-  protected readonly publications = signal<Publication[]>([...MOCK_PUBLICATIONS]);
+  private readonly blogApi = inject(AdminBlogApiService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  protected readonly publications = signal<Publication[]>([]);
   protected readonly view = signal<ViewType>('list');
   protected readonly searchQuery = signal('');
   protected readonly activeFilter = signal<PublicationFilter>('all');
   protected readonly publicationToDelete = signal<Publication | null>(null);
   protected readonly editingPublication = signal<Publication | null>(null);
+  protected readonly loading = signal(true);
+  protected readonly saving = signal(false);
+  protected readonly feedback = signal<{ text: string; isError: boolean } | null>(null);
 
   protected readonly isGloballyEmpty = computed(() => this.publications().length === 0);
+
+  public constructor() {
+    this.loadPublications();
+  }
 
   protected setFilter(filter: PublicationFilter): void {
     this.activeFilter.set(filter);
@@ -86,41 +100,64 @@ export class Content {
   protected confirmDelete(): void {
     const toDelete = this.publicationToDelete();
     if (toDelete) {
-      this.publications.update((pubs) => pubs.filter((p) => p.id !== toDelete.id));
+      this.blogApi
+        .deletePost(toDelete.id)
+        .pipe(
+          takeUntilDestroyed(this.destroyRef),
+          finalize(() => this.saving.set(false))
+        )
+        .subscribe({
+          next: (response) => {
+            this.feedback.set({
+              text: response.message,
+              isError: false,
+            });
+            this.loadPublications();
+          },
+          error: (error: unknown) => {
+            this.feedback.set({
+              text: this.extractApiErrorMessage(error),
+              isError: true,
+            });
+          }
+        });
     }
     this.closeDeleteModal();
   }
 
   private savePublication(payload: PublicationPayload, status: 'draft' | 'published'): void {
-    const editing = this.editingPublication();
-    if (editing) {
-      this.publications.update((pubs) =>
-        pubs.map((pub) =>
-          pub.id === editing.id
-            ? {
-                ...pub,
-                title: payload.title,
-                status,
-                date: this.formatDateLabel(new Date()),
-              }
-            : pub
-        )
-      );
-    } else {
-      this.publications.update((pubs) => {
-        const nextId = Math.max(0, ...pubs.map((p) => p.id)) + 1;
-        const created: Publication = {
-          id: nextId,
-          title: payload.title,
-          author: 'Equipe DPC',
-          date: this.formatDateLabel(new Date()),
-          status,
-        };
-        return [created, ...pubs];
-      });
+    if (this.saving()) {
+      return;
     }
 
-    this.cancelEdit();
+    const editing = this.editingPublication();
+    const request = editing
+      ? this.blogApi.updatePost(editing.id, payload, status)
+      : this.blogApi.createPost(payload, status);
+
+    this.saving.set(true);
+
+    request
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.saving.set(false))
+      )
+      .subscribe({
+        next: (response) => {
+          this.feedback.set({
+            text: response.message,
+            isError: false,
+          });
+          this.cancelEdit();
+          this.loadPublications();
+        },
+        error: (error: unknown) => {
+          this.feedback.set({
+            text: this.extractApiErrorMessage(error),
+            isError: true,
+          });
+        }
+      });
   }
 
   private formatDateLabel(date: Date): string {
@@ -131,5 +168,58 @@ export class Content {
     }).format(date);
 
     return formatted.replace('.', '');
+  }
+
+  private loadPublications(): void {
+    this.loading.set(true);
+
+    this.blogApi
+      .getPosts()
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.loading.set(false))
+      )
+      .subscribe({
+        next: (response) => {
+          this.publications.set(response.data.map((post) => this.mapPublication(post)));
+        },
+        error: (error: unknown) => {
+          this.feedback.set({
+            text: this.extractApiErrorMessage(error),
+            isError: true,
+          });
+        }
+      });
+  }
+
+  private mapPublication(post: AdminBlogPost): Publication {
+    return {
+      id: post.id,
+      title: post.title,
+      author: post.author,
+      date: this.formatDateLabel(new Date(post.date)),
+      status: post.status,
+      thumbnail: post.thumbnail,
+      content: post.content,
+      excerpt: post.excerpt,
+      publishedAt: post.publishedAt,
+      updatedAt: post.updatedAt,
+    };
+  }
+
+  private extractApiErrorMessage(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      const errorMessage = error.error?.message;
+
+      if (typeof errorMessage === 'string' && errorMessage.trim().length > 0) {
+        return errorMessage;
+      }
+    }
+
+    if (error instanceof Error && error.message.trim().length > 0) {
+      return error.message;
+    }
+
+    return 'Nao foi possivel salvar a publicacao agora.';
   }
 }

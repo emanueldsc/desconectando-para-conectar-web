@@ -3,7 +3,7 @@
     <h2 class="blog-preview__title" id="blog-preview-title">Histórias que Conectam</h2>
 
     <ul class="blog-preview__grid" role="list">
-      @for (post of posts; track post.id) {
+      @for (post of posts(); track post.id) {
         <li>
           <blog-card [post]="post" />
         </li>

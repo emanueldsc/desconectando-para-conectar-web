@@ -6,12 +6,13 @@
     width="380"
     height="216"
   />
+  <div class="blog-card__overlay" aria-hidden="true"></div>
   <mat-card-content class="blog-card__content">
     <p class="blog-card__eyebrow">{{ post().eyebrow }}</p>
     <h3 class="blog-card__description">{{ post().description }}</h3>
     <a
       class="blog-card__link"
-      [routerLink]="['/public/blog', post().id]"
+      [routerLink]="['/public/blog', post().slug ?? post().id]"
       [attr.aria-label]="'Ler artigo ' + post().description"
     >
       <span>LER ARTIGO</span>

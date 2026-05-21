@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { BlogCardComponent, BlogCardData } from '../../../shared/components/blog-card/blog-card';
+import { PublicBlogApiService } from '../../../shared/services/public-blog-api.service';
 
 @Component({
   selector: 'app-blog',
@@ -11,64 +13,60 @@ import { BlogCardComponent, BlogCardData } from '../../../shared/components/blog
   styleUrl: './blog.scss',
 })
 export class Blog {
+  private readonly blogApi = inject(PublicBlogApiService);
+  private readonly destroyRef = inject(DestroyRef);
+
   readonly searchQuery = signal('');
+  readonly loading = signal(true);
+  readonly error = signal<string | null>(null);
+  readonly posts = signal<BlogCardData[]>([]);
 
-  private readonly allPosts: BlogCardData[] = [
-    {
-      id: 1,
-      image: 'assets/sertao_landscape.png',
-      imageAlt: 'Paisagem do sertão com árvores e céu aberto',
-      eyebrow: 'Histórias',
-      description: 'Como a solidariedade transformou o Sertão'
-    },
-    {
-      id: 2,
-      image: 'assets/sertao_landscape.png',
-      imageAlt: 'Vista de vegetação da caatinga ao entardecer',
-      eyebrow: 'Guias',
-      description: 'Rifa do Bem: como funciona e como participar'
-    },
-    {
-      id: 3,
-      image: 'assets/sertao_landscape.png',
-      imageAlt: 'Cenário natural da caatinga com vegetação nativa',
-      eyebrow: 'Natureza',
-      description: 'Caatinga viva: natureza que inspira resistência'
-    },
-    {
-      id: 4,
-      image: 'assets/sertao_landscape.png',
-      imageAlt: 'Comunidade sertaneja trabalhando em conjunto',
-      eyebrow: 'Histórias',
-      description: 'Educação transformadora no interior nordestino'
-    },
-    {
-      id: 5,
-      image: 'assets/sertao_landscape.png',
-      imageAlt: 'Recursos de água e sustentabilidade',
-      eyebrow: 'Recursos',
-      description: 'Água: o recurso vital do semiárido'
-    },
-  ];
+  protected readonly filteredPosts = computed(() => {
+    const query = this.searchQuery().trim().toLowerCase();
 
-  protected readonly filteredPosts = signal<BlogCardData[]>(this.allPosts);
+    if (!query) {
+      return this.posts();
+    }
+
+    return this.posts().filter((post) =>
+      post.description.toLowerCase().includes(query)
+      || post.eyebrow.toLowerCase().includes(query)
+    );
+  });
+
+  public constructor() {
+    this.loadBlogPosts();
+  }
 
   onSearchChange(value: string): void {
     this.searchQuery.set(value);
-    this.updateFilteredPosts();
   }
 
-  private updateFilteredPosts(): void {
-    const query = this.searchQuery().toLowerCase();
-    if (!query.trim()) {
-      this.filteredPosts.set(this.allPosts);
-    } else {
-      this.filteredPosts.set(
-        this.allPosts.filter(post =>
-          post.description.toLowerCase().includes(query) ||
-          post.eyebrow.toLowerCase().includes(query)
-        )
-      );
-    }
+  private loadBlogPosts(): void {
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.blogApi
+      .getBlogList({ sort: 'newest', limit: 24 })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.posts.set(
+            response.data.map((post) => ({
+              id: post.id,
+              slug: post.slug,
+              image: post.image,
+              imageAlt: post.imageAlt,
+              eyebrow: post.eyebrow,
+              description: post.description
+            }))
+          );
+          this.loading.set(false);
+        },
+        error: () => {
+          this.error.set('Nao foi possivel carregar os artigos do blog.');
+          this.loading.set(false);
+        }
+      });
   }
 }

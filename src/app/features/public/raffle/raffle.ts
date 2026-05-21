@@ -1,12 +1,13 @@
-
 import { DecimalPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-
-
-interface RaffleNumber {
-  number: number;
-  status: 'available' | 'selected' | 'occupied';
-}
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { catchError, map, of, switchMap } from 'rxjs';
+import {
+    RaffleDetailResponse,
+    RaffleListItem,
+    RaffleNumber
+} from '../../../shared/models/api-contracts.models';
+import { PublicRaffleApiService } from '../../../shared/services/public-raffle-api.service';
 
 interface RaffleDetailData {
   title: string;
@@ -15,53 +16,124 @@ interface RaffleDetailData {
   drawDate: string;
   ticketPrice: number;
   numbers: RaffleNumber[];
-  progress: number; // 0-100
+  progress: number;
   total: number;
   sold: number;
 }
 
-const MOCK_DATA: RaffleDetailData = {
-  title: 'Cesta Regional Nordestina',
-  description: 'Participe da nossa rifa solidária e concorra a uma linda cesta repleta de produtos artesanais da região do Sertão. Tudo preparado com muito carinho por produtores locais.',
-  image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAyVRdAZ0tP2CcbF-p37kz9TGoNpeUPXfKjXYG-qU4PMMcuyvde3HYWkl15dWkwTYntvZQpb4IoABjuhV0JIxoQmRxghpBef7bYrggGkz8m2QQRan-oMnOlwe5pqDWTDgRMIPMpNWKoXgNDkHC9kKGG4-e2Ss0JouKfVbLMebmMSSpk3g8iHsPNw-aF6O8hjubvKoJiPpPbRAZ-GpvKtO-QqleQ3cMhvLLPpwwdUfGnIcEBrD8W_95RuBT4SlQd1hGnNneJZQgkj18X',
-  drawDate: '15 de Dezembro',
-  ticketPrice: 10,
-  numbers: Array.from({ length: 30 }, (_, i) => {
-    if ([4, 5, 9, 12, 16, 17].includes(i + 1)) return { number: i + 1, status: 'occupied' };
-    if ([2, 8].includes(i + 1)) return { number: i + 1, status: 'selected' };
-    return { number: i + 1, status: 'available' };
-  }),
-  progress: 65,
-  total: 100,
-  sold: 65,
-};
-
 @Component({
   selector: 'app-raffle',
-  standalone: true,
   imports: [DecimalPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./raffle.scss'],
   templateUrl: './raffle.html'
 })
 export class Raffle {
+  private readonly raffleApi = inject(PublicRaffleApiService);
+  private readonly destroyRef = inject(DestroyRef);
 
-  readonly data = signal<RaffleDetailData>(MOCK_DATA);
+  readonly loading = signal(true);
+  readonly error = signal<string | null>(null);
+  readonly data = signal<RaffleDetailData | null>(null);
   readonly selectedNumbers = signal<number[]>([]);
+
+  public constructor() {
+    this.loadRaffle();
+  }
 
   isSelected(num: number): boolean {
     return this.selectedNumbers().includes(num);
   }
 
-  toggleNumber(n: RaffleNumber) {
-    if (n.status === 'occupied') return;
+  toggleNumber(n: RaffleNumber): void {
+    if (n.status === 'occupied') {
+      return;
+    }
+
     const current = this.selectedNumbers();
+
     if (current.includes(n.number)) {
-      this.selectedNumbers.set(current.filter(x => x !== n.number));
+      this.selectedNumbers.set(current.filter((value) => value !== n.number));
     } else {
       this.selectedNumbers.set([...current, n.number]);
     }
   }
 
+  private loadRaffle(): void {
+    this.loading.set(true);
+    this.error.set(null);
 
+    this.raffleApi
+      .getRaffleList({ limit: 1, status: 'active', sort: 'newest' })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        switchMap((response) => {
+          const firstRaffle = response.data[0];
+
+          if (!firstRaffle) {
+            return of(null);
+          }
+
+          return this.raffleApi.getRaffleByIdOrSlug(firstRaffle.slug).pipe(
+            map((detail) => this.mapFromDetail(detail)),
+            catchError(() => of(this.mapFromListItem(firstRaffle)))
+          );
+        })
+      )
+      .subscribe({
+        next: (raffle) => {
+          if (!raffle) {
+            this.error.set('Nenhuma rifa disponivel no momento.');
+            this.loading.set(false);
+            return;
+          }
+
+          this.data.set(raffle);
+          this.selectedNumbers.set([]);
+          this.loading.set(false);
+        },
+        error: () => {
+          this.error.set('Nao foi possivel carregar os dados das rifas.');
+          this.loading.set(false);
+        }
+      });
+  }
+
+  private mapFromDetail(raffle: RaffleDetailResponse): RaffleDetailData {
+    return {
+      title: raffle.title,
+      description: raffle.description,
+      image: raffle.image,
+      drawDate: raffle.drawDate,
+      ticketPrice: raffle.ticketPrice,
+      numbers: raffle.numbers,
+      progress: raffle.progress,
+      total: raffle.ticketsAvailable,
+      sold: raffle.ticketsSold
+    };
+  }
+
+  private mapFromListItem(raffle: RaffleListItem): RaffleDetailData {
+    return {
+      title: raffle.title,
+      description: raffle.description,
+      image: raffle.image,
+      drawDate: raffle.drawDate,
+      ticketPrice: raffle.ticketPrice,
+      numbers: this.generateFallbackNumbers(raffle.ticketsAvailable, raffle.ticketsSold),
+      progress: raffle.progress,
+      total: raffle.ticketsAvailable,
+      sold: raffle.ticketsSold
+    };
+  }
+
+  private generateFallbackNumbers(total: number, sold: number): RaffleNumber[] {
+    const safeTotal = Math.min(Math.max(total, 1), 120);
+    const safeSold = Math.min(Math.max(sold, 0), safeTotal);
+
+    return Array.from({ length: safeTotal }, (_, index) => ({
+      number: index + 1,
+      status: index < safeSold ? 'occupied' : 'available'
+    }));
+  }
 }

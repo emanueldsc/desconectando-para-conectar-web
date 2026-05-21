@@ -12,6 +12,7 @@ export interface RaffleCampaign {
   imageUrl?: string;
   winnerName?: string;
   winnerNumber?: number;
+  winnerSourceComment?: string;
 }
 
 export interface CreateRafflePayload {
@@ -25,5 +26,11 @@ export interface CreateRafflePayload {
 export interface DrawRaffleResult {
   winnerName: string;
   winnerNumber: number;
+  winnerSourceComment?: string;
   processedAt: string;
+}
+
+export interface DrawRafflePayload {
+  winnerNumber: number;
+  sourceComment: string;
 }

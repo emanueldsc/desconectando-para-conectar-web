@@ -48,13 +48,30 @@
   line-height: 1.6;
 }
 
+.hero__impact-phrases {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  align-items: center;
+  max-width: 760px;
+  margin: 0 auto 2rem;
+}
+
+.hero__impact-line {
+  margin: 0;
+  font-size: clamp(1rem, 2.2vw, 1.35rem);
+  line-height: 1.5;
+  opacity: 0.95;
+  text-wrap: balance;
+}
+
 .hero__cta {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 1rem 2.5rem;
-  background: var(--mat-sys-primary, #d35400) !important;
-  color: var(--mat-sys-on-primary, #ffffff) !important;
+  background: var(--mat-sys-primary, #d35400);
+  color: var(--mat-sys-on-primary, #ffffff);
   font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
   font-size: 1.1rem;
   text-transform: uppercase;

@@ -6,6 +6,7 @@ import { RouterLink } from '@angular/router';
 
 export interface BlogCardData {
   id: number;
+  slug?: string;
   image: string;
   imageAlt: string;
   eyebrow: string;

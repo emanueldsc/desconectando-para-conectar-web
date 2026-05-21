@@ -12,9 +12,9 @@ export class MenuEffects {
   public readonly loadMenu$ = createEffect(() =>
     this.actions$.pipe(
       ofType(MenuActions.loadMenu),
-      switchMap(({ profile }) =>
-        this.menuService.getMenuByProfile(profile).pipe(
-          map((menuItems) => MenuActions.loadMenuSuccess({ menuItems, profile })),
+      switchMap(({ profile, scope }) =>
+        this.menuService.getMenuByProfile(profile, scope).pipe(
+          map((menuItems) => MenuActions.loadMenuSuccess({ menuItems, profile, scope })),
           catchError((error: unknown) => {
             const message = error instanceof Error ? error.message : 'Falha ao carregar menu';
             return of(MenuActions.loadMenuFailure({ error: message }));

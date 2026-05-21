@@ -1,5 +1,13 @@
-<home-hero />
-<home-institution-carousel />
-<home-rifas-do-bem />
-<home-blog-preview />
+@if (error(); as errorMessage) {
+	<p>{{ errorMessage }}</p>
+} @else {
+	@if (loading()) {
+		<p>Carregando conteudo da home...</p>
+	}
+
+	<home-hero [heroData]="hero()" [impactPhrases]="impactPhrases()" />
+	<home-reality-section [section]="realitySection()" />
+	<home-rifas-do-bem [rifas]="featuredRaffles()" />
+	<home-blog-preview [posts]="blogPreview()" />
+}
 

@@ -1,0 +1,53 @@
+<section class="reality" aria-labelledby="reality-title">
+  <div class="reality__inner">
+    @if (section(); as reality) {
+      <div class="reality__header">
+        <div>
+          <h2 class="reality__title" id="reality-title">{{ reality.title }}</h2>
+          <p class="reality__subtitle">{{ reality.subtitle }}</p>
+        </div>
+
+        <div class="reality__header-actions">
+          @if (reality.displayMode === 'latest') {
+            <span class="reality__badge">Exibindo as 4 últimas publicações</span>
+          }
+
+          @if (reality.publications.length > 1) {
+            <div class="reality__nav" aria-label="Navegação das publicações">
+              <button
+                type="button"
+                class="reality__nav-btn"
+                aria-label="Ver publicação anterior"
+                (click)="scrollCarousel('previous')"
+              >
+                <mat-icon aria-hidden="true">chevron_left</mat-icon>
+              </button>
+              <button
+                type="button"
+                class="reality__nav-btn"
+                aria-label="Ver próxima publicação"
+                (click)="scrollCarousel('next')"
+              >
+                <mat-icon aria-hidden="true">chevron_right</mat-icon>
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+
+      @if (reality.publications.length > 0) {
+        <div #carouselWrap class="reality__carousel-wrap">
+          <ul class="reality__carousel" role="list" aria-label="Publicações em destaque">
+            @for (post of reality.publications; track post.id) {
+              <li class="reality__item">
+                <blog-card [post]="post" />
+              </li>
+            }
+          </ul>
+        </div>
+      } @else {
+        <p class="reality__empty">Nenhuma publicação destacada foi selecionada ainda.</p>
+      }
+    }
+  </div>
+</section>

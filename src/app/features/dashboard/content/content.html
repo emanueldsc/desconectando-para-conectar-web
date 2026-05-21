@@ -1,6 +1,14 @@
 <div class="content-page">
+  @if (feedback(); as message) {
+    <p class="content-page__feedback" [class.content-page__feedback--error]="message.isError">{{ message.text }}</p>
+  }
+
   @if (view() === 'list') {
-    @if (isGloballyEmpty()) {
+    @if (loading()) {
+      <section class="content-page__loading" aria-live="polite">
+        <p>Carregando publicações...</p>
+      </section>
+    } @else if (isGloballyEmpty()) {
       <dashboard-content-empty-state [query]="searchQuery()" (create)="openEdit()"></dashboard-content-empty-state>
     } @else {
       <dashboard-content-list

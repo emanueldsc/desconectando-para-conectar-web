@@ -8,9 +8,21 @@ export interface Publication {
   date: string;
   status: PublicationStatus;
   thumbnail?: string;
+  content?: string;
+  excerpt?: string;
+  publishedAt?: string;
+  updatedAt?: string;
 }
 
 export interface PublicationPayload {
   title: string;
   content: string;
+  featuredImage?: string;
+  excerpt?: string;
+  imageAlt?: string;
+  eyebrow?: string;
+  category?: string;
+  tags?: string[];
+  metaDescription?: string;
+  metaKeywords?: string[];
 }

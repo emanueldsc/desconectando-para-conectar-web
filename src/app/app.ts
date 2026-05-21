@@ -1,29 +1,20 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, effect, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { NavigationEnd, Router, RouterModule, RouterOutlet } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { filter, map } from 'rxjs';
+import { filter, finalize, map } from 'rxjs';
 import { Footer } from './shared/components/footer/footer';
 import { TopBar } from './shared/components/top-bar/top-bar';
+import { AuthApiService } from './shared/services/auth-api.service';
 import { MenuActions } from './store/menu/menu.actions';
-import { MenuItem, UserProfile } from './store/menu/menu.models';
+import { MenuItem, MenuScope, UserProfile } from './store/menu/menu.models';
 import { selectMenuError, selectMenuItems, selectMenuLoading } from './store/menu/menu.selectors';
-
-const DASHBOARD_MENU: readonly MenuItem[] = [
-  { id: 'dash-general',   label: 'Visão Geral',  route: '/dashboard',           profiles: ['admin'] },
-  { id: 'dash-content',   label: 'Conteúdo Blog', route: '/dashboard/content',  profiles: ['admin'] },
-  { id: 'dash-raffle',    label: 'Rifas',         route: '/dashboard/raffle',   profiles: ['admin'] },
-  { id: 'dash-donations', label: 'Doações',       route: '/dashboard/donations',profiles: ['admin'] },
-  { id: 'dash-users',     label: 'Usuários',      route: '/dashboard/users',    profiles: ['admin'] },
-  { id: 'dash-cms',       label: 'CMS do Site',   route: '/dashboard/cms',      profiles: ['admin'] },
-];
 
 @Component({
   selector: 'app-root',
-  standalone: true,
   imports: [RouterOutlet, RouterModule, MatSidenavModule, MatButtonModule, MatIconModule, TopBar, Footer],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './app.html',
@@ -32,6 +23,8 @@ const DASHBOARD_MENU: readonly MenuItem[] = [
 export class App {
   private readonly store = inject(Store);
   private readonly router = inject(Router);
+  private readonly authApi = inject(AuthApiService);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly menuItems = this.store.selectSignal(selectMenuItems);
   protected readonly menuLoading = this.store.selectSignal(selectMenuLoading);
@@ -49,15 +42,98 @@ export class App {
     this.currentUrl().startsWith('/dashboard')
   );
 
-  protected readonly activeMenuItems = computed<readonly MenuItem[]>(() =>
-    this.isDashboard() ? DASHBOARD_MENU : this.menuItems()
+  private readonly menuScope = computed<MenuScope>(() =>
+    this.isDashboard() ? 'dashboard' : 'public'
   );
 
-  protected readonly dashboardMenuItems = DASHBOARD_MENU;
+  protected readonly activeMenuItems = computed(() => this.menuItems());
 
   public constructor() {
-    const profile: UserProfile = 'guest';
-    this.store.dispatch(MenuActions.loadMenu({ profile }));
+    effect(() => {
+      this.currentUrl();
+      const scope = this.menuScope();
+      const profile = this.resolveProfile(scope);
+      this.store.dispatch(MenuActions.loadMenu({ profile, scope }));
+    });
+  }
+
+  private resolveProfile(scope: MenuScope): UserProfile {
+    const authUser = this.readAuthUser();
+
+    if (!authUser) {
+      return 'guest';
+    }
+
+    if (scope === 'dashboard' && authUser.role === 'buyer') {
+      return 'guest';
+    }
+
+    return authUser.role === 'buyer' ? 'member' : 'admin';
+  }
+
+  protected handleMenuItem(item: MenuItem): void {
+    if (item.action === 'logout') {
+      this.logout();
+    }
+  }
+
+  private logout(): void {
+    const token = this.readAuthToken();
+
+    if (!token) {
+      this.clearAuthSession();
+      this.refreshMenu();
+      void this.router.navigate(['/public/home']);
+      return;
+    }
+
+    this.authApi.logout(token)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => {
+          this.clearAuthSession();
+          this.refreshMenu();
+          void this.router.navigate(['/public/home']);
+        })
+      )
+      .subscribe({
+        error: (_error: unknown) => {
+          this.clearAuthSession();
+          this.refreshMenu();
+          void this.router.navigate(['/public/home']);
+        }
+      });
+  }
+
+  private refreshMenu(): void {
+    const scope = this.menuScope();
+    const profile = this.resolveProfile(scope);
+    this.store.dispatch(MenuActions.loadMenu({ profile, scope }));
+  }
+
+  private readAuthToken(): string | null {
+    return localStorage.getItem('auth_token') ?? sessionStorage.getItem('auth_token');
+  }
+
+  private readAuthUser(): { role?: string } | null {
+    const rawUser = localStorage.getItem('auth_user') ?? sessionStorage.getItem('auth_user');
+
+    if (!rawUser) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(rawUser) as { role?: string };
+    } catch {
+      return null;
+    }
+  }
+
+  private clearAuthSession(): void {
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('auth_user');
+    sessionStorage.removeItem('auth_token');
+    sessionStorage.removeItem('auth_user');
   }
 
   protected menuIcon(menuId: string): string {
@@ -66,6 +142,8 @@ export class App {
       blog: 'auto_stories',
       raffles: 'confirmation_number',
       login: 'login',
+      'member-area': 'groups',
+      logout: 'logout',
       dashboard: 'dashboard',
       'dash-general':   'dashboard',
       'dash-content':   'edit_note',
@@ -80,6 +158,8 @@ export class App {
 
   protected menuHint(menuId: string): string {
     const hintMap: Record<string, string> = {
+      'member-area': 'Acesse sua area de membros',
+      logout: 'Encerrar sessao com seguranca',
       'dash-general':   'Resumo e indicadores',
       'dash-content':   'Postagens do blog',
       'dash-raffle':    'Gestão das rifas',

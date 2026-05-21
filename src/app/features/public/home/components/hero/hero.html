@@ -1,13 +1,29 @@
-<section class="hero" aria-label="Bem-vindo">
+<section class="hero" aria-label="Bem-vindo" [style.background-image]="backgroundImage()">
   <div class="hero__content">
-    <h1 class="hero__title">Transforme Vidas Hoje</h1>
-    <p class="hero__subtitle">
-      Sua contribuição traz água, educação e esperança para as comunidades do sertão nordestino.
-    </p>
+    <h1 class="hero__title">{{ heroData()?.title ?? 'Transforme Vidas Hoje' }}</h1>
 
-    <button matFab extended class="hero__cta">
-      <span>Doe Agora</span>
-      <mat-icon iconPositionEnd>favorite_border</mat-icon>
+    @if (impactPhrases().length > 0) {
+      <div class="hero__impact-phrases" aria-label="Frases de impacto">
+        @for (phrase of impactPhrases(); track $index) {
+          <p class="hero__impact-line">{{ phrase }}</p>
+        }
+      </div>
+    } @else {
+      <p class="hero__subtitle">
+        {{ heroData()?.subtitle ?? 'Sua contribuicao traz agua, educacao e esperanca para as comunidades do sertao nordestino.' }}
+      </p>
+    }
+
+    <button
+      matFab
+      extended
+      class="hero__cta"
+      [routerLink]="heroData()?.ctaLink ?? '/public/raffles'"
+      [style.background-color]="ctaBackgroundColor()"
+      [style.color]="ctaTextColor()"
+    >
+      <span>{{ heroData()?.ctaLabel ?? 'Doe Agora' }}</span>
+      <mat-icon iconPositionEnd>{{ ctaIcon() }}</mat-icon>
     </button>
   </div>
 </section>

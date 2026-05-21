@@ -1,0 +1,92 @@
+<section class="blog-article">
+  <div class="blog-article__inner">
+    @if (loading()) {
+      <p class="blog-article__state">Carregando artigo...</p>
+    } @else if (error(); as errorMessage) {
+      <div class="blog-article__state blog-article__state--error">
+        <p>{{ errorMessage }}</p>
+        <a class="blog-article__back-link" routerLink="/public/blog">
+          <mat-icon aria-hidden="true">arrow_back</mat-icon>
+          Voltar para o blog
+        </a>
+      </div>
+    } @else if (article(); as post) {
+      <nav class="blog-article__breadcrumb" aria-label="Navegação secundária">
+        <a routerLink="/public/blog">Blog</a>
+        <mat-icon aria-hidden="true">chevron_right</mat-icon>
+        <span>{{ post.category }}</span>
+      </nav>
+
+      <header class="blog-article__hero">
+        <img
+          class="blog-article__hero-image"
+          [ngSrc]="post.image"
+          [alt]="post.imageAlt ?? post.title"
+          width="1600"
+          height="900"
+          priority
+        />
+        <div class="blog-article__hero-overlay" aria-hidden="true"></div>
+        <div class="blog-article__hero-content">
+          <p class="blog-article__eyebrow">{{ post.category }}</p>
+          <h1 class="blog-article__title">{{ post.title }}</h1>
+          <p class="blog-article__summary">
+            {{ post.seo?.metaDescription ?? post.category }}
+          </p>
+
+          <div class="blog-article__meta">
+            <span>{{ formatPublishedAt(post.publishedAt) }}</span>
+            <span>{{ post.readTime ?? 1 }} min de leitura</span>
+            @if (post.views !== undefined) {
+              <span>{{ post.views }} visualizações</span>
+            }
+          </div>
+        </div>
+      </header>
+
+      <div class="blog-article__layout">
+        <article class="blog-article__content">
+          <div class="blog-article__body" [innerHTML]="post.content"></div>
+
+          @if (post.tags?.length) {
+            <div class="blog-article__tags" aria-label="Tags do artigo">
+              @for (tag of post.tags; track tag) {
+                <span class="blog-article__tag">{{ tag }}</span>
+              }
+            </div>
+          }
+        </article>
+
+        <aside class="blog-article__sidebar">
+          @if (relatedPosts().length > 0) {
+            <section class="blog-article__section">
+              <h2 class="blog-article__section-title">Leia também</h2>
+              <div class="blog-article__related-list">
+                @for (relatedPost of relatedPosts(); track relatedPost.id) {
+                  <blog-card [post]="relatedPost" />
+                }
+              </div>
+            </section>
+          }
+
+          @if (comments().length > 0) {
+            <section class="blog-article__section">
+              <h2 class="blog-article__section-title">Comentários</h2>
+              <div class="blog-article__comments">
+                @for (comment of comments(); track trackComment($index, comment)) {
+                  <article class="blog-article__comment">
+                    <div class="blog-article__comment-header">
+                      <strong>{{ comment.author }}</strong>
+                      <span>{{ formatPublishedAt(comment.createdAt) }}</span>
+                    </div>
+                    <p>{{ comment.content }}</p>
+                  </article>
+                }
+              </div>
+            </section>
+          }
+        </aside>
+      </div>
+    }
+  </div>
+</section>

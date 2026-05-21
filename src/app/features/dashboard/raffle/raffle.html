@@ -46,7 +46,7 @@
 			[loading]="isDrawing()"
 			[errorMessage]="drawError()"
 			(cancel)="closeDraw()"
-			(confirm)="confirmDraw()"
+			(confirm)="confirmDraw($event)"
 		></dashboard-raffle-draw-confirm>
 	}
 </div>

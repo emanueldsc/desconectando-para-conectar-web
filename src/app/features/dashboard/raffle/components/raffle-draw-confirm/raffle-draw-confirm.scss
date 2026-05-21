@@ -118,6 +118,47 @@
     font-size: 0.88rem;
   }
 
+  &__form {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  &__field {
+    display: grid;
+    gap: 0.35rem;
+
+    span {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      color: #594238;
+      text-transform: uppercase;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid #e0c0b2;
+      border-radius: 0.65rem;
+      padding: 0.75rem;
+      font: inherit;
+      color: #251913;
+      background: #fff;
+      box-sizing: border-box;
+
+      &:focus {
+        outline: none;
+        border-color: #d35400;
+        box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.14);
+      }
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 6.5rem;
+    }
+  }
+
   &__actions {
     display: grid;
     gap: 0.55rem;

@@ -12,17 +12,54 @@
     <h2 class="content-edit__heading">{{ heading() }}</h2>
   </header>
 
-  <div class="content-edit__image-upload">
-    <mat-icon class="content-edit__upload-icon" aria-hidden="true">add_photo_alternate</mat-icon>
-    <p class="content-edit__upload-label">Adicionar Imagem de Capa</p>
-    <p class="content-edit__upload-hint">Recomendado: 1200×630px</p>
-    <input
-      type="file"
-      class="content-edit__file-input"
-      accept="image/*"
-      aria-label="Upload de imagem de capa"
-    />
-  </div>
+  <section class="content-edit__image-upload" aria-labelledby="featured-image-title">
+    <p class="content-edit__upload-label" id="featured-image-title">Imagem de Capa</p>
+
+    <div class="content-edit__image-preview">
+      @if (hasFeaturedImage()) {
+        <img
+          class="content-edit__preview-image"
+          [src]="featuredImage() ?? ''"
+          [alt]="form.controls.title.value || 'Imagem de destaque da publicação'"
+          (error)="handleFeaturedImageError($event)"
+        />
+      } @else {
+        <div class="content-edit__image-placeholder">
+          <mat-icon class="content-edit__upload-icon" aria-hidden="true">add_photo_alternate</mat-icon>
+          <p class="content-edit__upload-placeholder-text">Adicionar Imagem de Capa</p>
+          <p class="content-edit__upload-hint">Recomendado: 1200×630px</p>
+        </div>
+      }
+    </div>
+
+    <div class="content-edit__image-actions">
+      <label class="content-edit__upload-button">
+        <input
+          type="file"
+          class="content-edit__file-input"
+          accept="image/*"
+          aria-label="Upload de imagem de capa"
+          (change)="handleFeaturedImageSelected($event)"
+        />
+        {{ hasFeaturedImage() ? 'Trocar imagem' : 'Selecionar imagem' }}
+      </label>
+
+      @if (hasFeaturedImage()) {
+        <button type="button" class="content-edit__remove-button" (click)="removeFeaturedImage()">
+          <mat-icon aria-hidden="true">delete</mat-icon>
+          Remover imagem
+        </button>
+      }
+    </div>
+
+    @if (imageFeedback(); as feedbackMessage) {
+      <p class="content-edit__image-feedback">{{ feedbackMessage }}</p>
+    }
+
+    @if (isUploadingImage()) {
+      <p class="content-edit__image-status" aria-live="polite">Enviando imagem...</p>
+    }
+  </section>
 
   <form [formGroup]="form" class="content-edit__form" (ngSubmit)="submitPublish()">
     <div class="content-edit__field">

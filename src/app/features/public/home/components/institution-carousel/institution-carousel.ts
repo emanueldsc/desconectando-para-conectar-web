@@ -1,13 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-
-interface Institution {
-  id: number;
-  name: string;
-  description: string;
-  image: string;
-  imagePosition: string;
-}
+import { Institution } from '../../../../../shared/models/api-contracts.models';
 
 @Component({
   selector: 'home-institution-carousel',
@@ -20,37 +13,7 @@ export class InstitutionCarouselComponent {
   private isDragging = false;
   private startX = 0;
   private startScrollLeft = 0;
-
-  protected readonly institutions: Institution[] = [
-    {
-      id: 1,
-      name: 'Associação Sertaneja',
-      description: 'Apoio às famílias do sertão nordestino com ações de impacto social contínuo.',
-      image: '/assets/sertao_landscape.png',
-      imagePosition: 'left center'
-    },
-    {
-      id: 2,
-      name: 'Instituto Raízes',
-      description: 'Educação e cultura para comunidades rurais com foco em juventude e cidadania.',
-      image: '/assets/sertao_landscape.png',
-      imagePosition: 'center center'
-    },
-    {
-      id: 3,
-      name: 'Rede Caatinga',
-      description: 'Preservação da Caatinga e incentivo a tecnologias sustentáveis no semiárido.',
-      image: '/assets/sertao_landscape.png',
-      imagePosition: 'right center'
-    },
-    {
-      id: 4,
-      name: 'Projeto Mandacaru',
-      description: 'Fortalecimento da agricultura familiar e geração de renda local com dignidade.',
-      image: '/assets/sertao_landscape.png',
-      imagePosition: 'center top'
-    }
-  ];
+  readonly institutions = input<Institution[]>([]);
 
   protected scrollPrevious(track: HTMLElement): void {
     this.scrollByCard(track, -1);

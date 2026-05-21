@@ -6,18 +6,20 @@ export const menuFeatureKey = 'menu';
 
 export const menuReducer = createReducer(
   initialMenuState,
-  on(MenuActions.loadMenu, (state, { profile }) => ({
+  on(MenuActions.loadMenu, (state, { profile, scope }) => ({
     ...state,
     loading: true,
     error: null,
-    profile
+    profile,
+    scope
   })),
-  on(MenuActions.loadMenuSuccess, (state, { menuItems, profile }) => ({
+  on(MenuActions.loadMenuSuccess, (state, { menuItems, profile, scope }) => ({
     ...state,
     items: menuItems,
     loading: false,
     error: null,
-    profile
+    profile,
+    scope
   })),
   on(MenuActions.loadMenuFailure, (state, { error }) => ({
     ...state,

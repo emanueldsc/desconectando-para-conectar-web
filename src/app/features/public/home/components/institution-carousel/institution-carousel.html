@@ -36,11 +36,11 @@
       (pointerleave)="onPointerUp(carouselTrack, $event)"
       aria-label="Carousel de instituicoes"
     >
-      @for (inst of institutions; track inst.id) {
+      @for (inst of institutions(); track inst.id) {
         <li
           class="institution-card"
           [style.background-image]="'url(' + inst.image + ')'"
-          [style.background-position]="inst.imagePosition"
+          [style.background-position]="inst.imagePosition ?? 'center center'"
         >
           <div class="institution-card__overlay" aria-hidden="true"></div>
 

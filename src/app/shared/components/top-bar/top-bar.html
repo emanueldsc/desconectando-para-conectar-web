@@ -14,7 +14,13 @@
 
     <nav class="topbar__nav" aria-label="Atalhos">
       @for (item of menuItems(); track item.id) {
-        <a [routerLink]="item.route">{{ item.label }}</a>
+        @if (item.action === 'logout') {
+          <button type="button" class="topbar__nav-action" (click)="selectItem(item)">
+            {{ item.label }}
+          </button>
+        } @else {
+          <a [routerLink]="item.route" (click)="selectItem(item)">{{ item.label }}</a>
+        }
       }
     </nav>
   </div>

@@ -14,8 +14,13 @@ import { MenuItem } from '../../../store/menu/menu.models';
 export class TopBar {
   public readonly menuItems = input<readonly MenuItem[]>([]);
   public readonly menuClick = output<void>();
+  public readonly menuItemSelected = output<MenuItem>();
 
   public openMenu(): void {
     this.menuClick.emit();
+  }
+
+  public selectItem(item: MenuItem): void {
+    this.menuItemSelected.emit(item);
   }
 }

@@ -1,10 +1,13 @@
 export type UserProfile = 'guest' | 'member' | 'admin';
+export type MenuScope = 'public' | 'dashboard';
 
 export interface MenuItem {
   id: string;
   label: string;
   route: string;
+  scope: MenuScope;
   profiles: UserProfile[];
+  action?: 'logout';
 }
 
 export interface MenuState {
@@ -12,11 +15,13 @@ export interface MenuState {
   loading: boolean;
   error: string | null;
   profile: UserProfile;
+  scope: MenuScope;
 }
 
 export const initialMenuState: MenuState = {
   items: [],
   loading: false,
   error: null,
-  profile: 'guest'
+  profile: 'guest',
+  scope: 'public'
 };

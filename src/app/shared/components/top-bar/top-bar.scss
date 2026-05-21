@@ -35,6 +35,23 @@
   text-decoration: none;
 }
 
+.topbar__nav-action {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--app-topbar-text-color);
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+.topbar__nav-action:hover,
+.topbar__nav-action:focus-visible,
+.topbar__nav a:hover,
+.topbar__nav a:focus-visible {
+  text-decoration: underline;
+}
+
 @media (max-width: 768px) {
   .topbar__nav {
     display: none;

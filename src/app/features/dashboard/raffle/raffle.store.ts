@@ -1,6 +1,7 @@
-import { computed, Injectable, signal } from '@angular/core';
-import { delay, Observable, of, throwError } from 'rxjs';
-import { CreateRafflePayload, DrawRaffleResult, RaffleCampaign } from './raffle.models';
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { Observable, tap } from 'rxjs';
+import { AdminRaffleApiService } from '../../../shared/services/admin-raffle-api.service';
+import { CreateRafflePayload, DrawRafflePayload, DrawRaffleResult, RaffleCampaign } from './raffle.models';
 
 const INITIAL_RAFFLES: readonly RaffleCampaign[] = [
   {
@@ -37,19 +38,9 @@ const INITIAL_RAFFLES: readonly RaffleCampaign[] = [
   },
 ];
 
-const BACKEND_DRAW_RESULTS: Readonly<Record<number, Omit<DrawRaffleResult, 'processedAt'>>> = {
-  1: {
-    winnerName: 'Josefa Nascimento',
-    winnerNumber: 88,
-  },
-  2: {
-    winnerName: 'Raimundo Alves',
-    winnerNumber: 17,
-  },
-};
-
 @Injectable({ providedIn: 'root' })
 export class RaffleStore {
+  private readonly raffleApi = inject(AdminRaffleApiService);
   private readonly rafflesState = signal<RaffleCampaign[]>([...INITIAL_RAFFLES]);
 
   readonly raffles = computed(() => this.rafflesState());
@@ -85,15 +76,18 @@ export class RaffleStore {
     this.rafflesState.update((items) => items.filter((raffle) => raffle.id !== id));
   }
 
-  requestDrawFromBackend(id: number): Observable<DrawRaffleResult> {
-    const raffle = this.rafflesState().find((item) => item.id === id);
-    if (!raffle) {
-      return throwError(() => new Error('Rifa nao encontrada para sorteio.'));
-    }
+  loadFromBackend(): Observable<RaffleCampaign[]> {
+    return this.raffleApi.getRaffles().pipe(
+      tap((raffles) => {
+        if (raffles.length > 0) {
+          this.rafflesState.set(raffles);
+        }
+      })
+    );
+  }
 
-    const backendResponse = this.buildBackendResult(raffle);
-
-    return of(backendResponse).pipe(delay(450));
+  requestDrawFromBackend(id: number, payload: DrawRafflePayload): Observable<DrawRaffleResult> {
+    return this.raffleApi.drawRaffle(id, payload);
   }
 
   applyDrawResult(id: number, result: DrawRaffleResult): void {
@@ -106,19 +100,9 @@ export class RaffleStore {
           status: 'closed',
           winnerName: result.winnerName,
           winnerNumber: result.winnerNumber,
+          winnerSourceComment: result.winnerSourceComment,
         };
       })
     );
-  }
-
-  private buildBackendResult(raffle: RaffleCampaign): DrawRaffleResult {
-    const mapped = BACKEND_DRAW_RESULTS[raffle.id];
-    const fallbackNumber = Math.min(raffle.rangeEnd, Math.max(raffle.rangeStart, raffle.soldTickets));
-
-    return {
-      winnerName: mapped?.winnerName ?? 'Resultado processado pelo backend',
-      winnerNumber: mapped?.winnerNumber ?? fallbackNumber,
-      processedAt: new Date().toISOString(),
-    };
   }
 }

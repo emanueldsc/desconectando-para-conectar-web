@@ -38,6 +38,9 @@
       <div>
         <span>Resultado recebido do backend</span>
         <strong>{{ raffle().winnerName }} (n. {{ raffle().winnerNumber }})</strong>
+        @if (raffle().winnerSourceComment) {
+          <p>{{ raffle().winnerSourceComment }}</p>
+        }
       </div>
     </article>
   }
