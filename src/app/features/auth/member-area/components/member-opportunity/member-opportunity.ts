@@ -7,11 +7,11 @@ import { ParticipationOpportunity } from '../../member-area.models';
   selector: 'auth-member-opportunity',
   imports: [MatIconModule, NgOptimizedImage],
   templateUrl: './member-opportunity.html',
-  styleUrl: './member-opportunity.scss',
+  styleUrls: ['./member-opportunity.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MemberOpportunity {
-  readonly opportunity = input.required<ParticipationOpportunity>();
+  readonly opportunity = input.required<ParticipationOpportunity | null>();
 
-  protected readonly progressStyle = computed(() => `width: ${this.opportunity().progress}%`);
+  protected readonly progressStyle = computed(() => `width: ${this.opportunity()?.progress ?? 0}%`);
 }
