@@ -1,7 +1,7 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, finalize, firstValueFrom, map, of } from 'rxjs';
 import {
     RaffleDetailResponse,
@@ -55,8 +55,10 @@ export class Raffle {
   private readonly raffleApi = inject(PublicRaffleApiService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   readonly loading = signal(true);
+  readonly initialRaffleSlug = signal<string | null>(null);
   readonly error = signal<string | null>(null);
   readonly activeRaffles = signal<RaffleListItem[]>([]);
   readonly finishedRaffles = signal<RaffleListItem[]>([]);
@@ -76,6 +78,10 @@ export class Raffle {
   readonly hasFinishedRaffles = computed(() => this.finishedRaffles().length > 0);
 
   public constructor() {
+    this.route.queryParamMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => this.initialRaffleSlug.set(params.get('raffle')));
+
     this.loadRaffles();
   }
 
@@ -326,11 +332,17 @@ export class Raffle {
             this.error.set('Nenhuma rifa disponivel no momento.');
             this.loading.set(false);
           } else {
-            this.currentRaffleIndex.set(0);
-            const firstToOpen = raffles[0] ?? null;
+            const requestedSlug = this.initialRaffleSlug();
+            const selectedByQuery = requestedSlug
+              ? raffles.find((item) => item.slug === requestedSlug) ?? null
+              : null;
 
-            if (firstToOpen) {
-              this.openRaffle(firstToOpen, 0);
+            const selected = selectedByQuery ?? (raffles[0] ?? null);
+
+            if (selected) {
+              const selectedIndex = raffles.findIndex((item) => item.slug === selected.slug);
+              this.currentRaffleIndex.set(selectedIndex >= 0 ? selectedIndex : 0);
+              this.openRaffle(selected, selectedIndex >= 0 ? selectedIndex : 0);
             }
 
             this.loading.set(false);

@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
-import { MemberRaffle } from '../../features/auth/member-area/member-area.models';
+import { MemberProfile, MemberRaffle } from '../../features/auth/member-area/member-area.models';
 
 export interface MemberDonation {
   id: number;
@@ -26,6 +26,14 @@ export class MemberApiService {
       headers: this.getAuthHeaders(),
     }).pipe(
       // Extrai apenas o array de rifas
+      map((res) => res.data)
+    );
+  }
+
+  getMemberProfile(): Observable<MemberProfile> {
+    return this.http.get<{ success: boolean; data: MemberProfile }>(`${this.baseUrl}/member/profile`, {
+      headers: this.getAuthHeaders(),
+    }).pipe(
       map((res) => res.data)
     );
   }

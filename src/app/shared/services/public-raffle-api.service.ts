@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
@@ -34,7 +34,8 @@ export class PublicRaffleApiService {
   ): Observable<ReserveRaffleNumberResponse> {
     return this.http.post<ReserveRaffleNumberResponse>(
       `${this.baseUrl}/public/raffles/${raffleId}/numbers/${number}/reserve`,
-      payload
+      payload,
+      { headers: this.getAuthHeaders() }
     );
   }
 
@@ -51,7 +52,13 @@ export class PublicRaffleApiService {
     return this.http.post<UploadRaffleReceiptResponse>(
       `${this.baseUrl}/public/raffles/${raffleId}/numbers/${number}/receipt`,
       formData,
+      { headers: this.getAuthHeaders() }
     );
+  }
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('auth_token') ?? sessionStorage.getItem('auth_token') ?? '';
+    return token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : new HttpHeaders();
   }
 
   private buildQueryParams(query: RaffleListQuery): HttpParams {

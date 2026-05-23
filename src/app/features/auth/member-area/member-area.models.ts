@@ -8,14 +8,28 @@ export interface MemberRaffle {
   title: string;
   drawDate: string;
   status: 'active' | 'completed';
-  numbers?: number[];
+  numbers?: { number: number; status: string; reservationCode?: string; reservationPaymentStatus?: string | null; reservationReceiptUrl?: string | null }[];
   summary?: string;
   imageUrl: string;
 }
 
-export interface ParticipationOpportunity {
+export interface MemberProfile {
+  id: number;
+  name: string;
+  email: string;
+  phone?: string;
+  avatar?: string;
+  address?: string;
+  role: 'buyer' | 'manager' | 'publisher';
+}
+
+export interface MemberOpportunityRaffle {
+  id: number;
   title: string;
   description: string;
+  slug: string;
+  ticketPrice: number;
   progress: number;
-  imageUrl: string;
+  drawDate: string | null;
+  status: 'active' | 'coming' | 'finished';
 }

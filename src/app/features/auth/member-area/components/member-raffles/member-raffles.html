@@ -20,12 +20,33 @@
             <span class="member-raffles__status member-raffles__status--active">Ativa</span>
           </div>
 
-          <p class="member-raffles__date">Sorteio: {{ raffle.drawDate }}</p>
+          <p class="member-raffles__date">Sorteio: {{ raffle.drawDate || 'Data não definida' }}</p>
 
-          <div class="member-raffles__numbers">
-            @for (number of raffle.numbers ?? []; track number) {
-              <span>{{ number }}</span>
-            }
+          <div class="member-raffles__numbers raffle-detail__numbers">
+            <div class="raffle-detail__numbers-grid">
+              @for (numObj of raffle.numbers ?? []; track numObj.number) {
+                @if (numObj.status === 'occupied') {
+                  <button
+                    type="button"
+                    class="raffle-detail__number raffle-detail__number--occupied member-clickable"
+                    (click)="openModal(raffle.id, numObj)"
+                    aria-label="Ver comprovante do ponto pago"
+                  >
+                    {{ numObj.number }}
+                  </button>
+                } @else if (numObj.status === 'reserved') {
+                  <button
+                    type="button"
+                    class="raffle-detail__number raffle-detail__number--reserved member-clickable"
+                    (click)="openModal(raffle.id, numObj)"
+                  >
+                    {{ numObj.number }}
+                  </button>
+                } @else {
+                  <div class="raffle-detail__number member-clickable" (click)="openModal(raffle.id, numObj)">{{ numObj.number }}</div>
+                }
+              }
+            </div>
           </div>
         </div>
       </article>
@@ -58,3 +79,47 @@
     }
   </div>
 </section>
+
+@if (selected) {
+  <div class="raffle-detail__modal-overlay" role="dialog" aria-modal="true">
+    <div class="raffle-detail__modal">
+      <h3>Enviar comprovante - Ponto {{ selected.numObj.number }}</h3>
+
+      @if (selected.numObj.reservationReceiptUrl) {
+        <p>Comprovante atual:</p>
+        <img src="{{ selected.numObj.reservationReceiptUrl }}" alt="Comprovante" class="raffle-detail__receipt" />
+      }
+
+      @if (selected.numObj.reservationPaymentStatus === 'approved') {
+        <p>Comprovante aprovado. Não é possível alterar.</p>
+        <div class="member-raffles__modal-actions">
+          <button type="button" class="member-raffles__modal-btn member-raffles__modal-btn--ghost" (click)="closeModal()">Fechar</button>
+        </div>
+      } @else {
+        <p>Envie uma imagem do comprovante (jpg, png, webp).</p>
+
+        <label
+          class="member-raffles__upload-zone"
+          [class.member-raffles__upload-zone--dragging]="isDragging"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event, selected.raffleId, selected.numObj)"
+        >
+          <mat-icon aria-hidden="true">cloud_upload</mat-icon>
+          <span>Arraste a imagem ou clique aqui para anexar o comprovante</span>
+          <small>JPG, PNG ou WEBP</small>
+          <input
+            #receiptInput
+            type="file"
+            accept="image/*"
+            (change)="onFileChange($event, selected.raffleId, selected.numObj)"
+          />
+        </label>
+
+        <div class="member-raffles__modal-actions">
+          <button type="button" class="member-raffles__modal-btn member-raffles__modal-btn--ghost" (click)="closeModal()">Cancelar</button>
+        </div>
+      }
+    </div>
+  </div>
+}
