@@ -1,10 +1,18 @@
 <section class="users-page">
+	@if (loading()) {
+		<p>Carregando usuários e membros...</p>
+	} @else if (loadError(); as errorMessage) {
+		<div role="alert">
+			<p>{{ errorMessage }}</p>
+			<button type="button" (click)="reload()">Tentar novamente</button>
+		</div>
+	} @else {
 	<div class="users-page__tabs" role="tablist" aria-label="Alternar área de gestão">
 		<button type="button" role="tab" [class.users-page__tab--active]="activeSection() === 'members'" (click)="setSection('members')">
-			Membros
+			Membros (compradores)
 		</button>
 		<button type="button" role="tab" [class.users-page__tab--active]="activeSection() === 'users'" (click)="setSection('users')">
-			Usuários
+			Usuários (portal)
 		</button>
 	</div>
 
@@ -18,6 +26,7 @@
 		(createMember)="openCreateModal()"
 		(editMember)="openEditModal($event)"
 	></dashboard-users-members-list>
+	}
 </section>
 
 @if (showCreateModal()) {

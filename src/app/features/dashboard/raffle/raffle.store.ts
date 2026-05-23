@@ -3,91 +3,79 @@ import { Observable, tap } from 'rxjs';
 import { AdminRaffleApiService } from '../../../shared/services/admin-raffle-api.service';
 import { CreateRafflePayload, DrawRafflePayload, DrawRaffleResult, RaffleCampaign } from './raffle.models';
 
-const INITIAL_RAFFLES: readonly RaffleCampaign[] = [
-  {
-    id: 1,
-    title: 'Cesta de Cafe da Manha Regional',
-    description: 'Campanha solidaria para arrecadacao da cooperativa local de artesaos.',
-    rangeStart: 1,
-    rangeEnd: 200,
-    soldTickets: 200,
-    ticketPrice: 10,
-    status: 'active',
-  },
-  {
-    id: 2,
-    title: 'Violao Autografado',
-    description: 'Apoio para oficinas de musica para criancas atendidas pelo projeto.',
-    rangeStart: 1,
-    rangeEnd: 100,
-    soldTickets: 40,
-    ticketPrice: 20,
-    status: 'draft',
-  },
-  {
-    id: 3,
-    title: 'Jantar Nordestino para Dois',
-    description: 'Campanha finalizada com ganhador definido e entrega em andamento.',
-    rangeStart: 1,
-    rangeEnd: 100,
-    soldTickets: 100,
-    ticketPrice: 17.5,
-    status: 'closed',
-    winnerName: 'Maria Silva',
-    winnerNumber: 42,
-  },
-];
-
 @Injectable({ providedIn: 'root' })
 export class RaffleStore {
   private readonly raffleApi = inject(AdminRaffleApiService);
-  private readonly rafflesState = signal<RaffleCampaign[]>([...INITIAL_RAFFLES]);
+  private readonly rafflesState = signal<RaffleCampaign[]>([]);
 
   readonly raffles = computed(() => this.rafflesState());
 
-  create(payload: CreateRafflePayload): RaffleCampaign {
-    const items = this.rafflesState();
-    const nextId = Math.max(0, ...items.map((item) => item.id)) + 1;
-    const created: RaffleCampaign = {
-      id: nextId,
-      ...payload,
-      soldTickets: 0,
-      status: 'draft',
-    };
-
-    this.rafflesState.update((current) => [created, ...current]);
-    return created;
-  }
-
-  update(id: number, payload: CreateRafflePayload): void {
-    this.rafflesState.update((items) =>
-      items.map((raffle) =>
-        raffle.id === id
-          ? {
-              ...raffle,
-              ...payload,
-            }
-          : raffle
-      )
+  create(payload: CreateRafflePayload): Observable<RaffleCampaign> {
+    return this.raffleApi.createRaffle(payload).pipe(
+      tap((created) => {
+        this.rafflesState.update((current) => [created, ...current]);
+      })
     );
   }
 
-  remove(id: number): void {
-    this.rafflesState.update((items) => items.filter((raffle) => raffle.id !== id));
+  update(id: number, payload: CreateRafflePayload): Observable<RaffleCampaign> {
+    return this.raffleApi.updateRaffle(id, payload).pipe(
+      tap((updated) => {
+        this.rafflesState.update((items) =>
+          items.map((raffle) => (raffle.id === id ? updated : raffle))
+        );
+      })
+    );
+  }
+
+  remove(id: number): Observable<void> {
+    return this.raffleApi.deleteRaffle(id).pipe(
+      tap(() => {
+        this.rafflesState.update((items) => items.filter((raffle) => raffle.id !== id));
+      })
+    );
   }
 
   loadFromBackend(): Observable<RaffleCampaign[]> {
     return this.raffleApi.getRaffles().pipe(
       tap((raffles) => {
-        if (raffles.length > 0) {
-          this.rafflesState.set(raffles);
-        }
+        this.rafflesState.set(raffles);
       })
     );
   }
 
   requestDrawFromBackend(id: number, payload: DrawRafflePayload): Observable<DrawRaffleResult> {
     return this.raffleApi.drawRaffle(id, payload);
+  }
+
+  activate(id: number): Observable<RaffleCampaign> {
+    return this.raffleApi.activateRaffle(id).pipe(
+      tap((updated) => {
+        this.rafflesState.update((items) =>
+          items.map((raffle) => (raffle.id === id ? updated : raffle))
+        );
+      })
+    );
+  }
+
+  confirmReservedPayment(id: number, number: number, reservationCode?: string): Observable<RaffleCampaign> {
+    return this.raffleApi.confirmReservedNumber(id, number, { reservationCode }).pipe(
+      tap((updated) => {
+        this.rafflesState.update((items) =>
+          items.map((raffle) => (raffle.id === id ? updated : raffle))
+        );
+      })
+    );
+  }
+
+  updateReservationTimeout(id: number, reservationTimeoutMinutes: number): Observable<RaffleCampaign> {
+    return this.raffleApi.updateReservationTimeout(id, { reservationTimeoutMinutes }).pipe(
+      tap((updated) => {
+        this.rafflesState.update((items) =>
+          items.map((raffle) => (raffle.id === id ? updated : raffle))
+        );
+      })
+    );
   }
 
   applyDrawResult(id: number, result: DrawRaffleResult): void {
@@ -100,7 +88,7 @@ export class RaffleStore {
           status: 'closed',
           winnerName: result.winnerName,
           winnerNumber: result.winnerNumber,
-          winnerSourceComment: result.winnerSourceComment,
+          extractionNumber: result.extractionNumber,
         };
       })
     );

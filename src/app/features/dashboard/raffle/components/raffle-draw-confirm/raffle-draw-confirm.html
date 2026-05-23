@@ -2,10 +2,9 @@
   <section class="draw-modal" (click)="$event.stopPropagation()">
     <header class="draw-modal__header">
       <mat-icon aria-hidden="true">confirmation_number</mat-icon>
-      <h2 id="draw-title">Finalizar Rifa Encerrada</h2>
+      <h2 id="draw-title">Finalizar Rifa</h2>
       <p>
-        A rifa <strong>{{ raffle().title }}</strong> atingiu 100% de participação. Informe o número sorteado e a
-        origem do sorteio para registrar no backend.
+        Informe o número da extração e o número ganhador da rifa <strong>{{ raffle().title }}</strong>. O nome da pessoa sorteada continua opcional.
       </p>
     </header>
 
@@ -16,7 +15,7 @@
       </article>
       <article>
         <span>Status</span>
-        <strong>Encerrada</strong>
+        <strong>Ativa</strong>
       </article>
     </div>
 
@@ -25,12 +24,22 @@
       <div>
         <h3>AÇÃO IRREVERSÍVEL</h3>
         <p>
-          Após confirmar, o número escolhido e o comentário de origem ficarão registrados permanentemente.
+          Após confirmar, a rifa será encerrada e o número escolhido ficará registrado permanentemente.
         </p>
       </div>
     </article>
 
     <form class="draw-modal__form" [formGroup]="form" (ngSubmit)="submitDraw()">
+      <label class="draw-modal__field">
+        <span>Número da extração</span>
+        <input
+          type="number"
+          formControlName="extractionNumber"
+          min="1"
+          placeholder="Ex: 15234"
+        />
+      </label>
+
       <label class="draw-modal__field">
         <span>Número sorteado</span>
         <input
@@ -43,12 +52,12 @@
       </label>
 
       <label class="draw-modal__field">
-        <span>Comentário da origem do sorteio</span>
-        <textarea
-          formControlName="sourceComment"
-          rows="4"
-          placeholder="Ex: Sorteio realizado com a última bola chamada do Totolec, extração nº X, 1º prêmio."
-        ></textarea>
+        <span>Nome da pessoa sorteada (opcional)</span>
+        <input
+          type="text"
+          formControlName="winnerName"
+          placeholder="Ex: Maria Silva"
+        />
       </label>
 
       <footer class="draw-modal__actions">

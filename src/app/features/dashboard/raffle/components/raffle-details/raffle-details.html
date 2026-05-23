@@ -30,17 +30,65 @@
       <span>Progresso</span>
       <strong>{{ progress() }}%</strong>
     </article>
+    <article>
+      <span>Tempo de Reserva</span>
+      <strong>{{ raffle().reservationTimeoutMinutes }} min</strong>
+    </article>
   </section>
+
+  <section class="raffle-details__timeout-config">
+    <h3>Configurar validade da reserva</h3>
+    <form (ngSubmit)="submitTimeout($event)" #timeoutForm="ngForm">
+      <input
+        type="number"
+        name="reservationTimeout"
+        [ngModel]="raffle().reservationTimeoutMinutes"
+        min="1"
+        max="10080"
+        required
+      />
+      <button type="submit" class="raffle-details__btn raffle-details__btn--outline">Salvar tempo</button>
+    </form>
+  </section>
+
+  @if (reservedNumbers().length > 0) {
+    <section class="raffle-details__reserved-list" aria-label="Pontos reservados aguardando confirmação">
+      <h3>Pontos reservados aguardando aprovação</h3>
+
+      @for (numberEntry of reservedNumbers(); track numberEntry.number) {
+        <article class="raffle-details__reserved-item">
+          <div>
+            <strong>Ponto {{ numberEntry.number }}</strong>
+            <p>Status: {{ numberEntry.reservationPaymentStatus ?? 'awaiting_receipt' }}</p>
+            @if (numberEntry.reservedUntil) {
+              <p>Validade: {{ numberEntry.reservedUntil }}</p>
+            }
+            @if (numberEntry.reservationReceiptUrl) {
+              <a [href]="numberEntry.reservationReceiptUrl" target="_blank" rel="noopener noreferrer">
+                Ver comprovante
+              </a>
+            }
+          </div>
+
+          <button
+            type="button"
+            class="raffle-details__btn raffle-details__btn--success"
+            (click)="confirmReserved(numberEntry)"
+          >
+            <mat-icon aria-hidden="true">verified</mat-icon>
+            Confirmar pagamento
+          </button>
+        </article>
+      }
+    </section>
+  }
 
   @if (raffle().status === 'closed') {
     <article class="raffle-details__winner">
       <mat-icon aria-hidden="true">emoji_events</mat-icon>
       <div>
         <span>Resultado recebido do backend</span>
-        <strong>{{ raffle().winnerName }} (n. {{ raffle().winnerNumber }})</strong>
-        @if (raffle().winnerSourceComment) {
-          <p>{{ raffle().winnerSourceComment }}</p>
-        }
+        <strong>{{ raffle().winnerName || 'Participante não identificado' }} (n. {{ raffle().winnerNumber }})</strong>
       </div>
     </article>
   }
@@ -50,6 +98,12 @@
       <mat-icon aria-hidden="true">edit</mat-icon>
       Editar
     </button>
+    @if (canActivate()) {
+      <button type="button" class="raffle-details__btn raffle-details__btn--success" (click)="activate.emit(raffle().id)">
+        <mat-icon aria-hidden="true">play_circle</mat-icon>
+        Ativar rifa
+      </button>
+    }
     <button type="button" class="raffle-details__btn raffle-details__btn--danger" (click)="delete.emit(raffle().id)">
       <mat-icon aria-hidden="true">delete</mat-icon>
       Excluir

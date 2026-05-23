@@ -20,6 +20,29 @@
       <textarea rows="3" formControlName="description" placeholder="Conte a história por trás desta iniciativa..."></textarea>
     </label>
 
+    <div class="create-raffle__image-upload">
+      <p class="create-raffle__upload-title">Imagem da Rifa</p>
+
+      @if (uploadedImageUrl(); as imageUrl) {
+        <img class="create-raffle__preview" [src]="imageUrl" alt="Pré-visualização da imagem da rifa" />
+      }
+
+      <label class="create-raffle__upload-btn" [class.create-raffle__upload-btn--disabled]="isUploadingImage()">
+        <mat-icon aria-hidden="true">image</mat-icon>
+        {{ isUploadingImage() ? 'Enviando imagem...' : 'Enviar imagem' }}
+        <input
+          type="file"
+          accept="image/png,image/jpeg,image/webp"
+          [disabled]="isUploadingImage()"
+          (change)="onImageSelected($event)"
+        />
+      </label>
+
+      @if (uploadError(); as uploadErrorMessage) {
+        <p class="create-raffle__upload-error" role="alert">{{ uploadErrorMessage }}</p>
+      }
+    </div>
+
     <div class="create-raffle__grid">
       <label class="create-raffle__field">
         <span>Início do Intervalo</span>
@@ -34,6 +57,24 @@
     <label class="create-raffle__field">
       <span>Valor por Bilhete (R$)</span>
       <input type="number" step="0.01" formControlName="ticketPrice" />
+    </label>
+
+    <label class="create-raffle__field">
+      <span>Tempo de Reserva (minutos)</span>
+      <input type="number" min="1" max="10080" formControlName="reservationTimeoutMinutes" />
+    </label>
+
+    <label class="create-raffle__field">
+      <span>Data do Sorteio</span>
+      <input type="date" formControlName="drawDate" [disabled]="form.controls.drawDateUndefined.value" />
+      @if (form.controls.drawDate.touched && form.controls.drawDate.hasError('required')) {
+        <small class="create-raffle__field-error">Informe a data do sorteio ou marque como indefinida.</small>
+      }
+    </label>
+
+    <label class="create-raffle__checkbox-field">
+      <input type="checkbox" formControlName="drawDateUndefined" />
+      <span>Sorteio com data indefinida</span>
     </label>
 
     <div class="create-raffle__actions">

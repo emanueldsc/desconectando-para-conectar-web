@@ -25,14 +25,16 @@ export class RaffleDrawConfirm {
 
   protected readonly form = this.fb.nonNullable.group({
     winnerNumber: [1, [Validators.required, Validators.min(1)]],
-    sourceComment: ['', [Validators.required, Validators.maxLength(500)]],
+    extractionNumber: [1, [Validators.required, Validators.min(1)]],
+    winnerName: ['', [Validators.maxLength(120)]],
   });
 
   public constructor() {
     effect(() => {
       this.form.reset({
         winnerNumber: this.raffle().rangeStart,
-        sourceComment: '',
+        extractionNumber: 1,
+        winnerName: '',
       });
     });
   }
@@ -54,7 +56,8 @@ export class RaffleDrawConfirm {
 
     this.confirm.emit({
       winnerNumber: payload.winnerNumber,
-      sourceComment: payload.sourceComment,
+      extractionNumber: payload.extractionNumber,
+      winnerName: payload.winnerName.trim() === '' ? undefined : payload.winnerName,
     });
   }
 }

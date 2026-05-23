@@ -7,76 +7,186 @@
     <section class="raffle-detail__panel">
       <p>Carregando rifa...</p>
     </section>
-  } @else if (data(); as raffle) {
-    <!-- Hero Section -->
-    <div class="raffle-detail__hero">
-      <img class="raffle-detail__hero-img" [src]="raffle.image" [alt]="raffle.title" />
-      <div class="raffle-detail__hero-overlay"></div>
-      <div class="raffle-detail__hero-content">
-        <span class="raffle-detail__badge">Acao Solidaria</span>
-        <h1 class="raffle-detail__title">{{ raffle.title }}</h1>
-        <p class="raffle-detail__draw-date">
-          <span class="material-symbols-outlined">calendar_month</span>
-          Sorteio: {{ raffle.drawDate }}
-        </p>
-      </div>
-    </div>
+  } @else {
+    @if (selectedRaffle(); as raffle) {
+      <div class="raffle-detail__hero">
+        <img class="raffle-detail__hero-img" [src]="raffle.image" [alt]="raffle.title" />
+        <div class="raffle-detail__hero-overlay"></div>
 
-    <!-- Details Panel -->
-    <section class="raffle-detail__panel">
-      <div class="raffle-detail__panel-header">
-        <div>
-          <h2 class="raffle-detail__subtitle">Sobre o Premio</h2>
-          <p class="raffle-detail__desc">{{ raffle.description }}</p>
-        </div>
-        <div class="raffle-detail__ticket-price">
-          <span class="raffle-detail__ticket-label">Valor do Bilhete</span>
-          <span class="raffle-detail__ticket-value">R$ {{ raffle.ticketPrice }}</span>
-        </div>
-      </div>
-      <div class="raffle-detail__progress">
-        <div class="raffle-detail__progress-header">
-          <span>Progresso da Rifa</span>
-          <span>{{ raffle.progress }}% ({{ raffle.sold }}/{{ raffle.total }})</span>
-        </div>
-        <div class="raffle-detail__progress-bar">
-          <div class="raffle-detail__progress-bar-inner" [style.width.%]="raffle.progress"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Number Selector -->
-    <section class="raffle-detail__numbers">
-      <div class="raffle-detail__numbers-header">
-        <div>
-          <h2 class="raffle-detail__subtitle">Escolha seus Numeros</h2>
-          <p class="raffle-detail__desc">Selecione os numeros disponiveis no painel abaixo.</p>
-        </div>
-        <div class="raffle-detail__legend">
-          <div><span class="raffle-detail__legend-dot raffle-detail__legend-dot--available"></span>Livre</div>
-          <div><span class="raffle-detail__legend-dot raffle-detail__legend-dot--selected"></span>Seu</div>
-          <div><span class="raffle-detail__legend-dot raffle-detail__legend-dot--occupied"></span>Ocupado</div>
-        </div>
-      </div>
-      <div class="raffle-detail__numbers-grid">
-        @for (num of raffle.numbers; track num.number) {
-          @if (num.status === 'occupied') {
-            <div class="raffle-detail__number raffle-detail__number--occupied">{{ num.number | number:'2.0' }}</div>
-          } @else {
-            <button
-              type="button"
-              class="raffle-detail__number"
-              [class.raffle-detail__number--selected]="isSelected(num.number)"
-              [class.raffle-detail__number--available]="num.status === 'available' && !isSelected(num.number)"
-              (click)="toggleNumber(num)"
-              [attr.aria-pressed]="isSelected(num.number)"
-              [disabled]="false"
-            >
-              {{ num.number | number:'2.0' }}
-            </button>
-          }
+        @if (hasMultipleRaffles()) {
+          <button type="button" class="raffle-detail__carousel-btn raffle-detail__carousel-btn--prev" (click)="previousRaffle()" aria-label="Rifa anterior">
+            ‹
+          </button>
+          <button type="button" class="raffle-detail__carousel-btn raffle-detail__carousel-btn--next" (click)="nextRaffle()" aria-label="Próxima rifa">
+            ›
+          </button>
         }
+
+        <div class="raffle-detail__hero-content">
+          <span class="raffle-detail__badge">
+            {{ raffle.status === 'finished' ? 'Rifa Finalizada' : 'Extração nº ' + (raffle.extractionNumber || '-') }}
+          </span>
+          <h1 class="raffle-detail__title">{{ raffle.title }}</h1>
+          <p class="raffle-detail__draw-date">
+            Sorteio: {{ raffle.drawDate ? (raffle.drawDate | date: "dd/MM/yyyy 'às' HH:mm") : 'Data indefinida' }}
+          </p>
+          <p class="raffle-detail__carousel-index">{{ currentRaffleIndex() + 1 }} / {{ activeRaffles().length }}</p>
+        </div>
       </div>
-    </section>
+
+      <section class="raffle-detail__panel raffle-detail__panel--spaced">
+        <div class="raffle-detail__panel-header">
+          <div>
+            <h2 class="raffle-detail__subtitle">Sobre o Premio</h2>
+            <p class="raffle-detail__desc">{{ raffle.description }}</p>
+          </div>
+          <div class="raffle-detail__ticket-price">
+            <span class="raffle-detail__ticket-label">Valor do Bilhete</span>
+            <span class="raffle-detail__ticket-value">R$ {{ raffle.ticketPrice }}</span>
+          </div>
+        </div>
+        <div class="raffle-detail__progress">
+          <div class="raffle-detail__progress-header">
+            <span>Progresso da Rifa</span>
+            <span>{{ raffle.progress }}% ({{ raffle.sold }}/{{ raffle.total }})</span>
+          </div>
+          <div class="raffle-detail__progress-bar">
+            <div class="raffle-detail__progress-bar-inner" [style.width.%]="raffle.progress"></div>
+          </div>
+        </div>
+      </section>
+
+      @if (raffle.status === 'finished' && raffle.winnerInfo) {
+        <section class="raffle-detail__panel raffle-detail__panel--spaced raffle-detail__result">
+          <h2 class="raffle-detail__subtitle">Resultado da rifa</h2>
+          <p class="raffle-detail__desc">
+            Ganhador: <strong>{{ raffle.winnerInfo.name || 'Participante não identificado' }}</strong> - número sorteado <strong>{{ raffle.winnerInfo.winnerNumber }}</strong>
+          </p>
+        </section>
+      }
+
+      @if (raffle.status === 'active') {
+        <section class="raffle-detail__numbers raffle-detail__panel--spaced">
+          <div class="raffle-detail__numbers-header">
+            <div>
+              <h2 class="raffle-detail__subtitle">Escolha seu ponto</h2>
+              <p class="raffle-detail__desc">Selecione um ponto disponível para reservar por {{ raffle.reservationTimeoutMinutes }} minutos.</p>
+            </div>
+            <div class="raffle-detail__legend">
+              <div><span class="raffle-detail__legend-dot raffle-detail__legend-dot--available"></span>Livre</div>
+              <div><span class="raffle-detail__legend-dot raffle-detail__legend-dot--selected"></span>Selecionado</div>
+              <div><span class="raffle-detail__legend-dot raffle-detail__legend-dot--reserved"></span>Reservado</div>
+              <div><span class="raffle-detail__legend-dot raffle-detail__legend-dot--occupied"></span>Comprado</div>
+            </div>
+          </div>
+          <div class="raffle-detail__numbers-grid">
+            @for (num of raffle.numbers; track num.number) {
+              @if (num.status === 'occupied') {
+                <div class="raffle-detail__number raffle-detail__number--occupied">{{ num.number | number:'2.0' }}</div>
+              } @else if (num.status === 'reserved') {
+                <div class="raffle-detail__number raffle-detail__number--reserved">{{ num.number | number:'2.0' }}</div>
+              } @else {
+                <button
+                  type="button"
+                  class="raffle-detail__number"
+                  [class.raffle-detail__number--selected]="isSelected(num.number)"
+                  [class.raffle-detail__number--available]="num.status === 'available' && !isSelected(num.number)"
+                  (click)="toggleNumber(num)"
+                  [attr.aria-pressed]="isSelected(num.number)"
+                >
+                  {{ num.number | number:'2.0' }}
+                </button>
+              }
+            }
+          </div>
+
+          <div class="raffle-detail__actions">
+            <button type="button" class="raffle-detail__action-btn" [disabled]="selectedNumbers().length === 0 || submittingReservation()" (click)="reserveSelectedNumbers()">
+              {{ submittingReservation() ? 'Reservando...' : 'Reservar pontos selecionados' }}
+            </button>
+
+            @if (pendingReservations().length > 0) {
+              <div class="raffle-detail__receipt-box">
+                @for (reservation of pendingReservations(); track reservation.number) {
+                  <div class="raffle-detail__receipt-item">
+                    <p><strong>Ponto {{ reservation.number }}</strong></p>
+                    <p><strong>Código da reserva:</strong> {{ reservation.reservationCode }}</p>
+                    <p><strong>Validade:</strong> {{ reservation.reservedUntil }}</p>
+                    <input type="file" accept="image/png,image/jpeg,image/webp" (change)="onReceiptSelected(reservation.number, $event)" />
+                    <button type="button" class="raffle-detail__action-btn raffle-detail__action-btn--secondary" [disabled]="!reservation.receiptFile || reservation.sendingReceipt" (click)="sendReceipt(reservation.number)">
+                      {{ reservation.sendingReceipt ? 'Enviando...' : 'Enviar comprovante deste ponto' }}
+                    </button>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+
+          @if (actionMessage()) {
+            <p class="raffle-detail__feedback" role="status">{{ actionMessage() }}</p>
+          }
+        </section>
+      }
+
+      <section class="raffle-detail__panel raffle-detail__panel--spaced">
+        <div class="raffle-detail__finished-header">
+          <div>
+            <h2 class="raffle-detail__subtitle">Últimas rifas finalizadas</h2>
+            <p class="raffle-detail__desc">Veja as 10 rifas mais recentes já sorteadas.</p>
+          </div>
+          <label class="raffle-detail__search-box">
+            <span>Pesquisar pelo número da extração</span>
+            <div class="raffle-detail__search-inline">
+              <input
+                type="text"
+                inputmode="numeric"
+                placeholder="Ex: 15234"
+                [value]="finishedExtractionNumberInput()"
+                (input)="updateFinishedSearchInput(($any($event.target).value ?? '').toString())"
+              />
+              <button type="button" (click)="searchFinishedByExtractionNumber()">Buscar</button>
+            </div>
+          </label>
+        </div>
+
+        @if (hasFinishedRaffles()) {
+          <div class="raffle-detail__finished-grid">
+            @for (item of finishedRaffles(); track item.id) {
+              <article class="raffle-detail__finished-card">
+                <img [src]="item.image" [alt]="item.title" />
+                <div>
+                  <h3>{{ item.title }}</h3>
+                  <p>Número da extração: <strong>{{ item.extractionNumber || '-' }}</strong></p>
+                  <p>Número sorteado: <strong>{{ item.winnerNumber || '-' }}</strong></p>
+                  <p>Ganhador: <strong>{{ item.winnerName || 'Participante não identificado' }}</strong></p>
+                </div>
+              </article>
+            }
+          </div>
+        } @else {
+          <p class="raffle-detail__desc">Nenhuma rifa finalizada encontrada para esse filtro.</p>
+        }
+
+        <div class="raffle-detail__pager">
+          <button type="button" (click)="previousFinishedPage()" [disabled]="finishedRafflesPage() <= 1">Anterior</button>
+          <span>Página {{ finishedRafflesPage() }} de {{ finishedRafflesPages() }}</span>
+          <button type="button" (click)="nextFinishedPage()" [disabled]="finishedRafflesPage() >= finishedRafflesPages()">Próxima</button>
+        </div>
+      </section>
+    }
+  }
+
+  @if (memberLoginModalMessage(); as modalMessage) {
+    <div class="raffle-detail__modal-overlay" role="dialog" aria-modal="true" aria-labelledby="member-login-title" (click)="closeMemberLoginModal()">
+      <section class="raffle-detail__modal" (click)="$event.stopPropagation()">
+        <h2 id="member-login-title">Acesso restrito</h2>
+        <p>{{ modalMessage }}</p>
+
+        <div class="raffle-detail__modal-actions">
+          <button type="button" class="raffle-detail__modal-btn raffle-detail__modal-btn--ghost" (click)="closeMemberLoginModal()">Fechar</button>
+          <button type="button" class="raffle-detail__modal-btn raffle-detail__modal-btn--primary" (click)="goToLogin()">Ir para login</button>
+        </div>
+      </section>
+    </div>
   }
 </section>

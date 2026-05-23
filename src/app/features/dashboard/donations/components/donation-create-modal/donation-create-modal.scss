@@ -29,6 +29,7 @@
     padding: 1rem 1.5rem;
     display: flex;
     align-items: center;
+    gap: 0.75rem;
     justify-content: space-between;
 
     h3 {
@@ -36,6 +37,7 @@
       font-family: 'Literata', serif;
       font-size: 1.5rem;
       color: #9e3d00;
+      flex: 1;
     }
 
     button {
@@ -53,6 +55,50 @@
         background: #f6ddd4;
       }
     }
+  }
+
+  &__header-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    background: #f6ddd4;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    color: #9e3d00;
+
+    mat-icon {
+      width: 1.25rem;
+      height: 1.25rem;
+      font-size: 1.25rem;
+      line-height: 1.25rem;
+    }
+  }
+
+  &__form-error {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
+    border-radius: 0.5rem;
+    padding: 0.6rem 0.85rem;
+    color: #b91c1c;
+    font-size: 0.8rem;
+
+    mat-icon {
+      width: 1rem;
+      height: 1rem;
+      font-size: 1rem;
+      line-height: 1rem;
+      flex-shrink: 0;
+    }
+  }
+
+  &__field-error {
+    color: #b91c1c;
+    font-size: 0.72rem;
+    margin-left: 0.25rem;
   }
 
   &__form {

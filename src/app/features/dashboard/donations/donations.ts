@@ -1,35 +1,9 @@
 import { CurrencyPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { AdminDonationsApiService } from '../../../shared/services/admin-donations-api.service';
 import { DonationCreateModal } from './components/donation-create-modal/donation-create-modal';
 import { Donation, DonationCreatePayload, DonationFilter, DonationStatus, PaymentMethod } from './donations.models';
-
-const INITIAL_DONATIONS: readonly Donation[] = [
-  {
-    id: 1,
-    donorName: 'Maria das Gracas',
-    amount: 150,
-    date: '2023-10-12',
-    paymentMethod: 'pix',
-    status: 'confirmed',
-  },
-  {
-    id: 2,
-    donorName: 'Joao Severino',
-    amount: 50,
-    date: '2023-10-11',
-    paymentMethod: 'boleto',
-    status: 'pending',
-  },
-  {
-    id: 3,
-    donorName: 'Ana Lucia',
-    amount: 200,
-    date: '2023-10-10',
-    paymentMethod: 'card',
-    status: 'confirmed',
-  },
-];
 
 @Component({
   selector: 'donations',
@@ -38,11 +12,21 @@ const INITIAL_DONATIONS: readonly Donation[] = [
   templateUrl: './donations.html',
   styleUrl: './donations.scss',
 })
-export class Donations {
-  protected readonly donations = signal<Donation[]>([...INITIAL_DONATIONS]);
+export class Donations implements OnInit {
+  private readonly api = inject(AdminDonationsApiService);
+
+  protected readonly donations = signal<Donation[]>([]);
   protected readonly query = signal('');
   protected readonly filter = signal<DonationFilter>('all');
+  protected readonly dateFrom = signal('');
+  protected readonly dateTo = signal('');
   protected readonly isModalOpen = signal(false);
+  protected readonly editingDonation = signal<Donation | null>(null);
+  protected readonly loading = signal(false);
+  protected readonly loadError = signal<string | null>(null);
+  protected readonly saving = signal(false);
+  protected readonly saveError = signal<string | null>(null);
+  protected readonly deletingId = signal<number | null>(null);
 
   protected readonly totalRaised = computed(() =>
     this.donations().reduce((sum, donation) => sum + donation.amount, 0)
@@ -62,6 +46,8 @@ export class Donations {
   protected readonly filteredDonations = computed(() => {
     const search = this.query().toLowerCase().trim();
     const activeFilter = this.filter();
+    const from = this.dateFrom();
+    const to = this.dateTo();
 
     return this.donations().filter((donation) => {
       const matchesSearch =
@@ -69,11 +55,45 @@ export class Donations {
         donation.donorName.toLowerCase().includes(search) ||
         this.paymentLabel(donation.paymentMethod).toLowerCase().includes(search);
       const matchesFilter = activeFilter === 'all' || donation.status === activeFilter;
-      return matchesSearch && matchesFilter;
+      const matchesFrom = !from || donation.date >= from;
+      const matchesTo = !to || donation.date <= to;
+      return matchesSearch && matchesFilter && matchesFrom && matchesTo;
     });
   });
 
+  protected readonly hasDateFilter = computed(() => !!(this.dateFrom() || this.dateTo()));
+
   protected readonly hasResults = computed(() => this.filteredDonations().length > 0);
+
+  ngOnInit(): void {
+    this.loadDonations();
+  }
+
+  private loadDonations(): void {
+    this.loading.set(true);
+    this.loadError.set(null);
+
+    this.api.getDonations().subscribe({
+      next: (response) => {
+        const mapped: Donation[] = response.data.map((d) => ({
+          id: d.id,
+          donorName: d.donorName,
+          amount: d.amount,
+          date: d.date,
+          paymentMethod: d.paymentMethod as PaymentMethod,
+          status: d.status as DonationStatus,
+          notes: d.notes,
+          canEdit: d.canEdit,
+        }));
+        this.donations.set(mapped);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.loadError.set('Não foi possível carregar as doações. Tente novamente.');
+        this.loading.set(false);
+      },
+    });
+  }
 
   protected setQuery(value: string): void {
     this.query.set(value);
@@ -87,27 +107,87 @@ export class Donations {
     this.filter.set(value);
   }
 
-  protected openModal(): void {
+  protected onDateFromInput(event: Event): void {
+    this.dateFrom.set((event.target as HTMLInputElement).value);
+  }
+
+  protected onDateToInput(event: Event): void {
+    this.dateTo.set((event.target as HTMLInputElement).value);
+  }
+
+  protected clearDateFilter(): void {
+    this.dateFrom.set('');
+    this.dateTo.set('');
+  }
+
+  protected openCreateModal(): void {
+    this.editingDonation.set(null);
+    this.saveError.set(null);
+    this.isModalOpen.set(true);
+  }
+
+  protected openEditModal(donation: Donation): void {
+    this.editingDonation.set(donation);
+    this.saveError.set(null);
     this.isModalOpen.set(true);
   }
 
   protected closeModal(): void {
     this.isModalOpen.set(false);
+    this.editingDonation.set(null);
+    this.saveError.set(null);
   }
 
   protected saveDonation(payload: DonationCreatePayload): void {
-    const nextId = Math.max(0, ...this.donations().map((item) => item.id)) + 1;
-    const created: Donation = {
-      id: nextId,
-      donorName: payload.donorName.trim(),
+    this.saving.set(true);
+    this.saveError.set(null);
+
+    const editing = this.editingDonation();
+    const apiPayload = {
+      donorName: payload.donorName,
       amount: payload.amount,
       date: payload.date,
       paymentMethod: payload.paymentMethod,
-      status: payload.isConfirmed ? 'confirmed' : 'pending',
+      isConfirmed: payload.isConfirmed,
+      notes: payload.notes ?? null,
     };
 
-    this.donations.update((items) => [created, ...items]);
-    this.closeModal();
+    const call$ = editing
+      ? this.api.updateDonation(editing.id, apiPayload)
+      : this.api.createDonation(apiPayload);
+
+    call$.subscribe({
+      next: (response) => {
+        this.saving.set(false);
+        if (!response.success) {
+          this.saveError.set(response.message ?? 'Erro ao salvar doação.');
+          return;
+        }
+        this.closeModal();
+        this.loadDonations();
+      },
+      error: () => {
+        this.saving.set(false);
+        this.saveError.set('Não foi possível salvar. Verifique a conexão e tente novamente.');
+      },
+    });
+  }
+
+  protected deleteDonation(donation: Donation): void {
+    if (!donation.canEdit) return;
+    if (!confirm(`Excluir a doação de ${donation.donorName}?`)) return;
+
+    this.deletingId.set(donation.id);
+
+    this.api.deleteDonation(donation.id).subscribe({
+      next: () => {
+        this.deletingId.set(null);
+        this.loadDonations();
+      },
+      error: () => {
+        this.deletingId.set(null);
+      },
+    });
   }
 
   protected formatDate(dateIso: string): string {

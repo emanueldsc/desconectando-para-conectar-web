@@ -389,6 +389,11 @@
       color: #fff;
     }
 
+    &--success {
+      background: #2d5a27;
+      color: #fff;
+    }
+
     &:disabled {
       opacity: 0.45;
       cursor: not-allowed;

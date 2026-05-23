@@ -7,30 +7,69 @@
 >
   <section class="donation-modal" (click)="$event.stopPropagation()">
     <header class="donation-modal__header">
-      <h3 id="donation-modal-title">Registrar Doação</h3>
+      <div class="donation-modal__header-icon" aria-hidden="true">
+        <mat-icon>{{ headerIcon() }}</mat-icon>
+      </div>
+      <h3 id="donation-modal-title">{{ title() }}</h3>
       <button type="button" aria-label="Fechar modal" (click)="cancel.emit()">
         <mat-icon aria-hidden="true">close</mat-icon>
       </button>
     </header>
 
     <form class="donation-modal__form" [formGroup]="form" (ngSubmit)="submit()">
+      @if (formErrorMessage()) {
+        <div class="donation-modal__form-error" role="alert">
+          <mat-icon aria-hidden="true">error_outline</mat-icon>
+          {{ formErrorMessage() }}
+        </div>
+      }
+
       <div class="donation-modal__field">
-        <label for="donorName">Doador</label>
+        <label for="donorName">Doador <span aria-hidden="true">*</span></label>
         <div class="donation-modal__field-icon-wrap">
           <mat-icon aria-hidden="true">person_search</mat-icon>
-          <input id="donorName" type="text" formControlName="donorName" placeholder="Buscar por nome ou CPF..." />
+          <input
+            id="donorName"
+            type="text"
+            formControlName="donorName"
+            placeholder="Nome do doador..."
+            [attr.aria-describedby]="hasError('donorName', 'required') || hasError('donorName', 'minlength') ? 'donorName-error' : null"
+          />
         </div>
+        @if (hasError('donorName', 'required')) {
+          <span id="donorName-error" class="donation-modal__field-error" role="alert">Nome é obrigatório.</span>
+        } @else if (hasError('donorName', 'minlength')) {
+          <span id="donorName-error" class="donation-modal__field-error" role="alert">Mínimo 3 caracteres.</span>
+        }
       </div>
 
       <div class="donation-modal__grid">
         <div class="donation-modal__field">
-          <label for="amount">Valor (R$)</label>
-          <input id="amount" type="number" min="0.01" step="0.01" formControlName="amount" />
+          <label for="amount">Valor (R$) <span aria-hidden="true">*</span></label>
+          <input
+            id="amount"
+            type="number"
+            min="0.01"
+            step="0.01"
+            formControlName="amount"
+            [attr.aria-describedby]="hasError('amount', 'required') || hasError('amount', 'min') ? 'amount-error' : null"
+          />
+          @if (hasError('amount', 'required') || hasError('amount', 'min')) {
+            <span id="amount-error" class="donation-modal__field-error" role="alert">Informe um valor maior que zero.</span>
+          }
         </div>
 
         <div class="donation-modal__field">
-          <label for="date">Data</label>
-          <input id="date" type="date" formControlName="date" />
+          <label for="date">Data <span aria-hidden="true">*</span></label>
+          <input
+            id="date"
+            type="date"
+            formControlName="date"
+            [attr.aria-describedby]="hasError('date', 'required') ? 'date-error' : null"
+          />
+          @if (hasError('date', 'required')) {
+            <span id="date-error" class="donation-modal__field-error" role="alert">Data é obrigatória.</span>
+          }
         </div>
       </div>
 
@@ -62,10 +101,15 @@
         <input type="checkbox" formControlName="isConfirmed" />
       </label>
 
+      <div class="donation-modal__field">
+        <label for="notes">Observações</label>
+        <textarea id="notes" formControlName="notes" rows="2" placeholder="Anotações opcionais..."></textarea>
+      </div>
+
       <div class="donation-modal__actions">
         <button type="submit" class="donation-modal__save">
           <mat-icon aria-hidden="true">save</mat-icon>
-          Salvar doação
+          {{ submitLabel() }}
         </button>
         <button type="button" class="donation-modal__cancel" (click)="cancel.emit()">Cancelar</button>
       </div>

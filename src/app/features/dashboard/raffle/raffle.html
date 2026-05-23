@@ -17,7 +17,8 @@
 			(create)="openCreate()"
 			(details)="openDetails($event)"
 			(edit)="openEdit($event)"
-			(delete)="deleteRaffle($event)"
+			(delete)="requestDelete($event)"
+			(activate)="activateRaffle($event)"
 			(draw)="openDraw($event)"
 		></dashboard-raffle-list>
 	}
@@ -35,7 +36,10 @@
 			[raffle]="raffleDetails"
 			(back)="backToList()"
 			(edit)="openEdit($event)"
-			(delete)="deleteRaffle($event)"
+			(delete)="requestDelete($event)"
+			(activate)="activateRaffle($event)"
+			(confirmReservedPayment)="confirmReservedPayment($event)"
+			(updateTimeout)="updateReservationTimeout($event)"
 			(draw)="openDraw($event)"
 		></dashboard-raffle-details>
 	}
@@ -48,5 +52,20 @@
 			(cancel)="closeDraw()"
 			(confirm)="confirmDraw($event)"
 		></dashboard-raffle-draw-confirm>
+	}
+
+	@if (deleteId() !== null) {
+		<div class="raffle-page__confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="delete-title" (click)="cancelDelete()">
+			<section class="raffle-page__confirm-modal" (click)="$event.stopPropagation()">
+				<h2 id="delete-title">Confirmar exclusão</h2>
+				<p>Tem certeza que deseja excluir esta rifa? Essa ação não pode ser desfeita.</p>
+				<div class="raffle-page__confirm-actions">
+					<button type="button" class="raffle-page__confirm-btn raffle-page__confirm-btn--ghost" (click)="cancelDelete()">Cancelar</button>
+					<button type="button" class="raffle-page__confirm-btn raffle-page__confirm-btn--danger" [disabled]="isDeleting()" (click)="confirmDelete()">
+						{{ isDeleting() ? 'Excluindo...' : 'Excluir rifa' }}
+					</button>
+				</div>
+			</section>
+		</div>
 	}
 </div>

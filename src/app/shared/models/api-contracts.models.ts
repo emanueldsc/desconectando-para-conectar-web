@@ -40,7 +40,7 @@ export interface FeaturedRaffleCard {
   goal: number;              // Total de pontos/tickets goal
   current: number;           // Quantidade atual vendida
   status: 'active' | 'coming' | 'finished';
-  drawDate: string;          // ISO 8601 format
+  drawDate: string | null;   // ISO 8601 format
   category?: string;         // Opcional: categoria da rifa
 }
 
@@ -204,6 +204,7 @@ export interface RaffleListQuery {
   limit?: number;            // default: 12
   search?: string;           // busca por título
   status?: 'active' | 'coming' | 'finished';  // filtro por status
+  extractionNumber?: number; // filtrar rifas finalizadas pelo número da extração
   sort?: 'newest' | 'popular' | 'progress';   // default: 'newest'
   includeOld?: boolean;      // incluir rifas antigas/arquivadas (default: false)
 }
@@ -218,11 +219,15 @@ export interface RaffleListItem {
   current: number;           // Quantidade atual arrecadada
   progress: number;          // 0-100 (calculado: current/goal * 100)
   status: 'active' | 'coming' | 'finished';
-  drawDate: string;          // ISO 8601
+  drawDate: string | null;   // ISO 8601
+  extractionNumber?: number | null;
   category?: string;
   ticketPrice: number;       // Preço unitário
   ticketsAvailable: number;  // Total de pontos/tickets disponíveis
   ticketsSold: number;       // Quantidade vendida
+  reservationTimeoutMinutes?: number;
+  winnerName?: string | null;
+  winnerNumber?: number | null;
   slug: string;              // URL-friendly identifier
   createdAt: string;         // ISO 8601
 }
@@ -251,7 +256,12 @@ export interface RaffleListResponse {
 /** Número/bilhete de uma rifa */
 export interface RaffleNumber {
   number: number;            // Ex: 1, 2, 3...
-  status: 'available' | 'selected' | 'occupied';
+  status: 'available' | 'reserved' | 'occupied';
+  reservedAt?: string;
+  reservedUntil?: string;
+  reservationCode?: string;
+  reservationReceiptUrl?: string;
+  reservationPaymentStatus?: 'awaiting_receipt' | 'pending_review' | 'approved';
 }
 
 /** Organização/instituição responsável pela rifa */
@@ -270,8 +280,9 @@ export interface RaffleOrganization {
 /** Informações do ganhador (se rifa já foi realizada) */
 export interface RaffleWinnerInfo {
   id: number;
-  name: string;
+  name: string | null;
   winnerNumber: number;      // Número sorteado
+  extractionNumber?: number | null; // Número único da extração
   drawDate: string;          // ISO 8601 da data do sorteio
   prize?: string;            // Descrição do prêmio
 }
@@ -288,11 +299,13 @@ export interface RaffleDetailResponse {
   current: number;
   progress: number;          // 0-100
   status: 'active' | 'coming' | 'finished';
-  drawDate: string;          // ISO 8601
+  drawDate: string | null;   // ISO 8601
+  extractionNumber?: number | null;
   category?: string;
   ticketPrice: number;
   ticketsAvailable: number;
   ticketsSold: number;
+  reservationTimeoutMinutes?: number;
   numbers: RaffleNumber[];   // Array com status de cada número
   winnerInfo?: RaffleWinnerInfo;  // Preenchido se status === 'finished'
   rules?: string;            // HTML com regras completas
@@ -302,6 +315,31 @@ export interface RaffleDetailResponse {
   seo?: {
     metaDescription: string;
     keywords: string[];
+  };
+}
+
+export interface ReserveRaffleNumberRequest {
+  buyerName?: string;
+  buyerPhone?: string;
+}
+
+export interface ReserveRaffleNumberResponse {
+  success: boolean;
+  message: string;
+  data: {
+    number: number;
+    reservationCode: string;
+    reservedUntil: string;
+  };
+}
+
+export interface UploadRaffleReceiptResponse {
+  success: boolean;
+  message: string;
+  data: {
+    number: number;
+    receiptUrl: string;
+    paymentStatus: 'pending_review';
   };
 }
 

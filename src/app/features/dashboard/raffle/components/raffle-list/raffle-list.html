@@ -91,6 +91,12 @@
                   <mat-icon aria-hidden="true">edit</mat-icon>
                   Editar
                 </button>
+                @if (canActivate(raffle)) {
+                  <button type="button" class="raffle-list__btn raffle-list__btn--success" (click)="activate.emit(raffle.id)">
+                    <mat-icon aria-hidden="true">play_circle</mat-icon>
+                    Ativar
+                  </button>
+                }
                 <button type="button" class="raffle-list__btn raffle-list__btn--danger" (click)="delete.emit(raffle.id)">
                   <mat-icon aria-hidden="true">delete</mat-icon>
                 </button>

@@ -12,6 +12,24 @@ ng serve
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
+## API connection (local)
+
+This frontend is configured to call the backend through `/api`.
+
+During local development, Angular uses `proxy.conf.json` to forward `/api/*` requests to `http://localhost:8000`.
+
+1. Start the Laravel API first (in the API project):
+
+```bash
+php artisan serve --host=127.0.0.1 --port=8000
+```
+
+2. Start this frontend:
+
+```bash
+ng serve
+```
+
 ## Code scaffolding
 
 Angular CLI includes powerful code scaffolding tools. To generate a new component, run:

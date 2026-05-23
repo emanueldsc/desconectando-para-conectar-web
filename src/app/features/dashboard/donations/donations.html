@@ -1,10 +1,6 @@
 <section class="donations-page" aria-label="Gestão de doações">
 	<header class="donations-page__header">
 		<h2>Gestão de Doações</h2>
-		<button type="button" class="donations-page__create" (click)="openModal()">
-			<mat-icon aria-hidden="true">add</mat-icon>
-			Nova doação
-		</button>
 	</header>
 
 	<section class="donations-page__metrics" aria-label="Resumo financeiro">
@@ -34,7 +30,7 @@
 	</section>
 
 	<section class="donations-page__actions" aria-label="Filtros e busca">
-		<button type="button" class="donations-page__manual" (click)="openModal()">
+		<button type="button" class="donations-page__manual" (click)="openCreateModal()">
 			<mat-icon aria-hidden="true">add_circle</mat-icon>
 			Registrar doação manual
 		</button>
@@ -55,6 +51,47 @@
 			<button type="button" [class.donations-page__filter--active]="filter() === 'confirmed'" (click)="setFilter('confirmed')">Confirmado</button>
 			<button type="button" [class.donations-page__filter--active]="filter() === 'pending'" (click)="setFilter('pending')">Pendente</button>
 		</div>
+
+		<div class="donations-page__date-range" role="group" aria-label="Filtrar por intervalo de data">
+			<div class="donations-page__date-field">
+				<label for="dateFrom">
+					<mat-icon aria-hidden="true">calendar_today</mat-icon>
+					De
+				</label>
+				<input
+					id="dateFrom"
+					type="date"
+					[value]="dateFrom()"
+					(input)="onDateFromInput($event)"
+					aria-label="Data inicial"
+				/>
+			</div>
+			<span class="donations-page__date-sep" aria-hidden="true">—</span>
+			<div class="donations-page__date-field">
+				<label for="dateTo">
+					<mat-icon aria-hidden="true">event</mat-icon>
+					Até
+				</label>
+				<input
+					id="dateTo"
+					type="date"
+					[value]="dateTo()"
+					(input)="onDateToInput($event)"
+					aria-label="Data final"
+				/>
+			</div>
+			@if (hasDateFilter()) {
+				<button
+					type="button"
+					class="donations-page__date-clear"
+					aria-label="Limpar filtro de data"
+					(click)="clearDateFilter()"
+				>
+					<mat-icon aria-hidden="true">close</mat-icon>
+					Limpar
+				</button>
+			}
+		</div>
 	</section>
 
 	<section class="donations-page__history" aria-label="Histórico recente">
@@ -66,7 +103,18 @@
 			</button>
 		</header>
 
-		@if (hasResults()) {
+		@if (loading()) {
+			<div class="donations-page__state">
+				<mat-icon aria-hidden="true">hourglass_top</mat-icon>
+				<p>Carregando doações...</p>
+			</div>
+		} @else if (loadError()) {
+			<div class="donations-page__state donations-page__state--error" role="alert">
+				<mat-icon aria-hidden="true">error_outline</mat-icon>
+				<p>{{ loadError() }}</p>
+				<button type="button" (click)="ngOnInit()">Tentar novamente</button>
+			</div>
+		} @else if (hasResults()) {
 			<ul>
 				@for (donation of filteredDonations(); track donation.id) {
 					<li>
@@ -94,6 +142,32 @@
 							<mat-icon aria-hidden="true">{{ donation.status === 'confirmed' ? 'check_circle' : 'schedule' }}</mat-icon>
 							{{ statusLabel(donation.status) }}
 						</span>
+
+						@if (donation.canEdit) {
+							<div class="donations-page__row-actions">
+								<button
+									type="button"
+									class="donations-page__row-btn donations-page__row-btn--edit"
+									aria-label="Editar doação"
+									(click)="openEditModal(donation)"
+								>
+									<mat-icon aria-hidden="true">edit</mat-icon>
+								</button>
+								<button
+									type="button"
+									class="donations-page__row-btn donations-page__row-btn--delete"
+									aria-label="Excluir doação"
+									[disabled]="deletingId() === donation.id"
+									(click)="deleteDonation(donation)"
+								>
+									<mat-icon aria-hidden="true">{{ deletingId() === donation.id ? 'hourglass_top' : 'delete' }}</mat-icon>
+								</button>
+							</div>
+						} @else {
+							<div class="donations-page__row-actions donations-page__row-actions--locked" aria-label="Prazo de edição expirado">
+								<mat-icon aria-hidden="true" title="Prazo de edição expirado">lock</mat-icon>
+							</div>
+						}
 					</li>
 				}
 			</ul>
@@ -107,5 +181,9 @@
 </section>
 
 @if (isModalOpen()) {
-	<dashboard-donation-create-modal (cancel)="closeModal()" (save)="saveDonation($event)"></dashboard-donation-create-modal>
+	<dashboard-donation-create-modal
+		[donation]="editingDonation()"
+		(cancel)="closeModal()"
+		(save)="saveDonation($event)"
+	></dashboard-donation-create-modal>
 }

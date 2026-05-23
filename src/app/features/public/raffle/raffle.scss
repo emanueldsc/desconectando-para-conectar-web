@@ -3,6 +3,7 @@
   color: #251913;
   background: #fff8f6;
   min-height: 100vh;
+  padding-bottom: 2rem;
 }
 
 .raffle-detail__hero {
@@ -34,7 +35,32 @@
   left: 0;
   width: 100%;
   z-index: 3;
-  padding: 1.25rem;
+  padding: 2rem 4rem;
+  box-sizing: border-box;
+}
+
+.raffle-detail__carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 4;
+  border: 0;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.86);
+  color: #9e3d00;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.raffle-detail__carousel-btn--prev {
+  left: 0.8rem;
+}
+
+.raffle-detail__carousel-btn--next {
+  right: 0.8rem;
 }
 .raffle-detail__badge {
   display: inline-block;
@@ -61,16 +87,26 @@
   align-items: center;
   gap: 0.5rem;
 }
+
+.raffle-detail__carousel-index {
+  margin: 0.35rem 0 0;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
 .raffle-detail__panel {
   background: #fff;
   border-radius: 1rem;
   box-shadow: 0 2px 8px rgba(37, 25, 19, 0.08);
   padding: 2rem 1.5rem;
-  margin-bottom: 2rem;
-  border: 2px solid #2D5A27;
-  border-opacity: 0.10;
+  border: 2px solid rgba(45, 90, 39, 0.1);
   margin: 0 1rem;
 }
+
+.raffle-detail__panel--spaced {
+  margin-top: 1.25rem;
+}
+
 .raffle-detail__panel-header {
   display: flex;
   flex-direction: column;
@@ -144,7 +180,7 @@
   border-radius: 1rem;
   box-shadow: 0 2px 8px rgba(37, 25, 19, 0.08);
   padding: 2rem 1.5rem;
-  margin: 2rem 1rem;
+  margin: 1rem 1rem 0;
 }
 .raffle-detail__numbers-header {
   display: flex;
@@ -186,6 +222,11 @@
 .raffle-detail__legend-dot--occupied {
   background: repeating-linear-gradient(45deg, #E0E0E0, #E0E0E0 5px, #fff8f6 5px, #fff8f6 10px);
   border: 1px solid #e0c0b2;
+}
+
+.raffle-detail__legend-dot--reserved {
+  background: #f39c12;
+  border: 1px solid #d88700;
 }
 .raffle-detail__numbers-grid {
   display: grid;
@@ -234,28 +275,243 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
-.raffle-detail__fab {
-  position: fixed;
-  bottom: 2rem;
-  right: 1.5rem;
-  z-index: 50;
+
+.raffle-detail__number--reserved {
+  background: #f6ddd4;
+  color: #9e3d00;
+  border: 1px solid #d9b7a5;
+  cursor: not-allowed;
 }
-.raffle-detail__fab-btn {
-  background: #D35400;
+
+.raffle-detail__actions {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.raffle-detail__action-btn {
+  border: 0;
+  border-radius: 999px;
+  background: #2d5a27;
   color: #fff;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 2rem;
-  border-radius: 1.25rem;
-  box-shadow: 0 8px 16px rgba(211, 84, 0, 0.25);
-  font-family: 'Literata', Georgia, serif;
-  font-size: 1.25rem;
+  font: inherit;
   font-weight: 700;
-  border: none;
+  padding: 0.75rem 1rem;
   cursor: pointer;
-  transition: background 0.2s;
 }
-.raffle-detail__fab-btn:hover {
-  background: #c64f00;
+
+.raffle-detail__action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.raffle-detail__action-btn--secondary {
+  background: #d35400;
+}
+
+.raffle-detail__receipt-box {
+  border: 1px solid #e0c0b2;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  display: grid;
+  gap: 0.5rem;
+  background: #fff;
+}
+
+.raffle-detail__receipt-item {
+  border: 1px solid #ecd2c5;
+  border-radius: 0.65rem;
+  padding: 0.65rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.raffle-detail__receipt-box p {
+  margin: 0;
+  color: #594238;
+}
+
+.raffle-detail__feedback {
+  margin: 0;
+  color: #23501e;
+  background: #bcf0ae;
+  border: 1px solid #8cd274;
+  border-radius: 0.6rem;
+  padding: 0.6rem;
+  font-weight: 700;
+}
+
+.raffle-detail__result {
+  border-color: #2d5a27;
+}
+
+.raffle-detail__finished-header {
+  display: grid;
+  gap: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+  .raffle-detail__finished-header {
+    grid-template-columns: 1fr auto;
+    align-items: end;
+  }
+}
+
+.raffle-detail__search-box {
+  display: grid;
+  gap: 0.35rem;
+  color: #594238;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.raffle-detail__search-box input {
+  border: 1px solid #d9b7a5;
+  border-radius: 0.6rem;
+  padding: 0.5rem 0.7rem;
+  min-width: 210px;
+}
+
+.raffle-detail__search-inline {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  input {
+    flex: 1;
+  }
+
+  button {
+    border: 0;
+    border-radius: 999px;
+    padding: 0.45rem 0.85rem;
+    background: #2d5a27;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+}
+
+.raffle-detail__finished-grid {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.raffle-detail__finished-card {
+  border: 1px solid #ecd2c5;
+  border-radius: 0.7rem;
+  padding: 0.55rem;
+  background: #fff;
+  display: grid;
+  gap: 0.6rem;
+  grid-template-columns: 80px 1fr;
+
+  img {
+    width: 80px;
+    height: 80px;
+    border-radius: 0.5rem;
+    object-fit: cover;
+  }
+
+  h3,
+  p {
+    margin: 0;
+  }
+
+  h3 {
+    font-size: 0.95rem;
+    color: #9e3d00;
+  }
+
+  p {
+    font-size: 0.85rem;
+    color: #594238;
+  }
+}
+
+.raffle-detail__pager {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+
+  button {
+    border: 0;
+    border-radius: 999px;
+    padding: 0.45rem 0.85rem;
+    background: #2d5a27;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  span {
+    color: #594238;
+    font-weight: 700;
+  }
+}
+.raffle-detail__modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background: rgba(26, 22, 20, 0.55);
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.raffle-detail__modal {
+  width: min(100%, 440px);
+  background: #fff;
+  border-radius: 1rem;
+  border: 2px solid #e0c0b2;
+  padding: 1rem;
+  display: grid;
+  gap: 0.8rem;
+
+  h2,
+  p {
+    margin: 0;
+  }
+
+  h2 {
+    font-family: 'Literata', Georgia, serif;
+    color: #251913;
+  }
+
+  p {
+    color: #594238;
+  }
+}
+
+.raffle-detail__modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.raffle-detail__modal-btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.5rem 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+
+  &--ghost {
+    background: #fff1ec;
+    color: #594238;
+  }
+
+  &--primary {
+    background: #2d5a27;
+    color: #fff;
+  }
 }

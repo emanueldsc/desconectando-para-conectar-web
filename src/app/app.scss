@@ -46,9 +46,15 @@ app-root {
 
 .app-sidenav {
   max-width: 100vw;
-  width: min(88vw, 360px);
+  width: min(88vw, 380px);
+  height: 100vh;
+  max-height: 100vh;
+  height: 100dvh;
+  max-height: 100dvh;
   padding: 1rem;
   overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background:
     radial-gradient(circle at top left, rgba(243, 156, 18, 0.18), transparent 34%),
     radial-gradient(circle at bottom right, rgba(45, 90, 39, 0.14), transparent 38%),
@@ -120,6 +126,29 @@ app-root {
 .app-sidenav__nav {
   display: grid;
   gap: 0.6rem;
+}
+
+.app-sidenav__section {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.app-sidenav__section-title {
+  margin: 0;
+  color: #7c2e00;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.app-sidenav__divider {
+  height: 1px;
+  width: 100%;
+  margin: 0.25rem 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent 0%, #d9b7a5 20%, #d9b7a5 80%, transparent 100%);
 }
 
 .app-sidenav__link {

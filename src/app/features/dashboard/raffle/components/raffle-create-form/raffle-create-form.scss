@@ -92,6 +92,28 @@
     }
   }
 
+  &__field-error {
+    margin: 0;
+    color: #ba1a1a;
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+
+  &__checkbox-field {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: #594238;
+    font-weight: 700;
+    font-size: 0.88rem;
+
+    input[type='checkbox'] {
+      width: 1rem;
+      height: 1rem;
+      accent-color: #2d5a27;
+    }
+  }
+
   &__actions {
     display: grid;
     gap: 0.6rem;
@@ -100,6 +122,65 @@
     @media (min-width: 720px) {
       grid-template-columns: 1fr 1fr;
     }
+  }
+
+  &__image-upload {
+    display: grid;
+    gap: 0.5rem;
+    border: 2px dashed #e0c0b2;
+    border-radius: 0.75rem;
+    padding: 0.8rem;
+    background: #fff8f6;
+  }
+
+  &__upload-title {
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.73rem;
+    font-weight: 700;
+    color: #594238;
+  }
+
+  &__preview {
+    width: 100%;
+    max-height: 180px;
+    object-fit: cover;
+    border-radius: 0.6rem;
+    border: 1px solid #e0c0b2;
+  }
+
+  &__upload-btn {
+    border: 0;
+    border-radius: 999px;
+    background: #2d5a27;
+    color: #fff;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+    padding: 0.55rem 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    width: fit-content;
+
+    input {
+      display: none;
+    }
+  }
+
+  &__upload-btn--disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &__upload-error {
+    margin: 0;
+    color: #ba1a1a;
+    font-size: 0.8rem;
+    font-weight: 700;
   }
 
   &__cancel,

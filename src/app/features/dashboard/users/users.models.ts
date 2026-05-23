@@ -1,6 +1,6 @@
 export type MemberCategory = 'child' | 'volunteer' | 'collaborator';
 export type MemberFilter = MemberCategory | 'all';
-export type PortalRole = 'buyer' | 'manager' | 'publisher';
+export type PortalRole = 'buyer' | 'manager' | 'publisher' | 'none';
 
 export interface UserMember {
   id: number;
@@ -19,4 +19,7 @@ export interface CreateMemberPayload {
   portalRole: PortalRole;
   address: string;
   notes: string;
+  email?: string;
+  password?: string;
+  passwordConfirmation?: string;
 }

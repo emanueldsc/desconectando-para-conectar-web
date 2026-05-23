@@ -9,6 +9,8 @@ export interface Donation {
   date: string;
   paymentMethod: PaymentMethod;
   status: DonationStatus;
+  notes: string | null;
+  canEdit: boolean;
 }
 
 export interface DonationCreatePayload {
@@ -17,4 +19,5 @@ export interface DonationCreatePayload {
   date: string;
   paymentMethod: PaymentMethod;
   isConfirmed: boolean;
+  notes?: string | null;
 }

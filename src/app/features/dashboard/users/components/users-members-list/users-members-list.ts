@@ -24,17 +24,17 @@ export class UsersMembersList {
   readonly editMember = output<number>();
 
   protected heading(): string {
-    if (this.section() === 'users') return 'Gestão de Usuários';
-    return 'Gestão de Membros';
+    if (this.section() === 'users') return 'Gestão de Usuários do Portal';
+    return 'Gestão de Membros Compradores';
   }
 
   protected searchPlaceholder(): string {
-    if (this.section() === 'users') return 'Buscar por nome ou telefone...';
-    return 'Buscar por nome ou categoria...';
+    if (this.section() === 'users') return 'Buscar por nome ou categoria...';
+    return 'Buscar por nome ou telefone...';
   }
 
   protected createLabel(): string {
-    return 'Novo membro';
+    return 'Novo usuário';
   }
 
   protected onSearch(event: Event): void {

@@ -4,7 +4,10 @@ import { Observable } from 'rxjs';
 import {
     RaffleDetailResponse,
     RaffleListQuery,
-    RaffleListResponse
+    RaffleListResponse,
+    ReserveRaffleNumberRequest,
+    ReserveRaffleNumberResponse,
+    UploadRaffleReceiptResponse,
 } from '../models/api-contracts.models';
 import { API_BASE_URL } from './api.config';
 
@@ -22,6 +25,33 @@ export class PublicRaffleApiService {
 
   public getRaffleByIdOrSlug(idOrSlug: number | string): Observable<RaffleDetailResponse> {
     return this.http.get<RaffleDetailResponse>(`${this.baseUrl}/public/raffles/${idOrSlug}`);
+  }
+
+  public reserveNumber(
+    raffleId: number,
+    number: number,
+    payload: ReserveRaffleNumberRequest
+  ): Observable<ReserveRaffleNumberResponse> {
+    return this.http.post<ReserveRaffleNumberResponse>(
+      `${this.baseUrl}/public/raffles/${raffleId}/numbers/${number}/reserve`,
+      payload
+    );
+  }
+
+  public uploadReservationReceipt(
+    raffleId: number,
+    number: number,
+    reservationCode: string,
+    receiptFile: File,
+  ): Observable<UploadRaffleReceiptResponse> {
+    const formData = new FormData();
+    formData.append('reservationCode', reservationCode);
+    formData.append('receipt', receiptFile);
+
+    return this.http.post<UploadRaffleReceiptResponse>(
+      `${this.baseUrl}/public/raffles/${raffleId}/numbers/${number}/receipt`,
+      formData,
+    );
   }
 
   private buildQueryParams(query: RaffleListQuery): HttpParams {

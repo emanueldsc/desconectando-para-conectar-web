@@ -47,6 +47,15 @@ export class App {
   );
 
   protected readonly activeMenuItems = computed(() => this.menuItems());
+  protected readonly internalMenuItems = computed(() =>
+    this.activeMenuItems().filter((item) => item.scope === 'dashboard')
+  );
+  protected readonly externalMenuItems = computed(() =>
+    this.activeMenuItems().filter((item) => item.scope !== 'dashboard')
+  );
+  protected readonly hasMixedMenuScopes = computed(() =>
+    this.internalMenuItems().length > 0 && this.externalMenuItems().length > 0
+  );
 
   public constructor() {
     effect(() => {

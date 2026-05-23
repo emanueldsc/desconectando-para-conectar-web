@@ -1,4 +1,4 @@
-<article class="member-card" [class.member-card--buyer]="isBuyer()" aria-label="Membro cadastrado">
+<article class="member-card" [class.member-card--buyer]="isBuyer()" [attr.aria-label]="(isBuyer() ? 'Membro' : 'Usuário') + ' cadastrado'">
   @if (!isBuyer()) {
     <div class="member-card__icon">
       <mat-icon aria-hidden="true">{{ iconName() }}</mat-icon>
@@ -27,7 +27,7 @@
     }
   </div>
 
-  <button type="button" class="member-card__more" aria-label="Editar membro" (click)="requestEdit()">
+  <button type="button" class="member-card__more" [attr.aria-label]="'Editar ' + entityLabel()" (click)="requestEdit()">
     <mat-icon aria-hidden="true">edit</mat-icon>
   </button>
 </article>

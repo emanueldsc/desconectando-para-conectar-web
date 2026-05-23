@@ -26,8 +26,11 @@ export class UserMemberCard {
     const role = this.member().portalRole;
     if (role === 'manager') return 'Gestor Portal';
     if (role === 'publisher') return 'Publicador';
+    if (role === 'none') return 'Sem perfil no portal';
     return 'Comprador de Rifa';
   });
+
+  protected readonly entityLabel = computed(() => (this.isBuyer() ? 'membro' : 'usuário'));
 
   protected readonly iconName = computed(() => {
     const category = this.member().category;

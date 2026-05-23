@@ -21,6 +21,7 @@ export class RaffleList {
   readonly details = output<number>();
   readonly edit = output<number>();
   readonly delete = output<number>();
+  readonly activate = output<number>();
   readonly draw = output<number>();
 
   protected readonly filtered = computed(() => {
@@ -57,8 +58,11 @@ export class RaffleList {
   }
 
   protected canDraw(raffle: RaffleCampaign): boolean {
-    const total = raffle.rangeEnd - raffle.rangeStart + 1;
-    return raffle.status === 'active' && raffle.soldTickets >= total;
+    return raffle.status === 'active';
+  }
+
+  protected canActivate(raffle: RaffleCampaign): boolean {
+    return raffle.status === 'draft';
   }
 
   protected onSearch(event: Event): void {

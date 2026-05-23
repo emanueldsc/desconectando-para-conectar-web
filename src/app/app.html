@@ -23,46 +23,92 @@
     </div>
 
     <nav class="app-sidenav__nav" [attr.aria-label]="isDashboard() ? 'Navegacao do painel' : 'Navegacao principal'">
-      @for (item of activeMenuItems(); track item.id) {
-        @if (item.action === 'logout') {
-          <button
-            type="button"
-            class="app-sidenav__link app-sidenav__link--button"
-            (click)="appSidenav.close(); handleMenuItem(item)"
-          >
-            <span class="app-sidenav__link-icon" aria-hidden="true">
-              <mat-icon>{{ menuIcon(item.id) }}</mat-icon>
-            </span>
-            <span class="app-sidenav__link-content">
-              <span class="app-sidenav__link-label">{{ item.label }}</span>
-              <span class="app-sidenav__link-hint">Sair da sua sessao com seguranca</span>
-            </span>
-            <mat-icon class="app-sidenav__link-arrow" aria-hidden="true">chevron_right</mat-icon>
-          </button>
-        } @else {
-          <a
-            [routerLink]="item.route"
-            routerLinkActive="app-sidenav__link--active"
-            [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
-            (click)="appSidenav.close(); handleMenuItem(item)"
-            class="app-sidenav__link"
-          >
-            <span class="app-sidenav__link-icon" aria-hidden="true">
-              <mat-icon>{{ menuIcon(item.id) }}</mat-icon>
-            </span>
-            <span class="app-sidenav__link-content">
-              <span class="app-sidenav__link-label">{{ item.label }}</span>
-              <span class="app-sidenav__link-hint">
-                @if (isDashboard()) {
-                  {{ menuHint(item.id) }}
-                } @else {
-                  Acessar {{ item.label.toLowerCase() }}
-                }
-              </span>
-            </span>
-            <mat-icon class="app-sidenav__link-arrow" aria-hidden="true">chevron_right</mat-icon>
-          </a>
-        }
+      @if (internalMenuItems().length > 0) {
+        <div class="app-sidenav__section">
+          <p class="app-sidenav__section-title">Menu administrativo</p>
+
+          @for (item of internalMenuItems(); track item.id) {
+            @if (item.action === 'logout') {
+              <button
+                type="button"
+                class="app-sidenav__link app-sidenav__link--button"
+                (click)="appSidenav.close(); handleMenuItem(item)"
+              >
+                <span class="app-sidenav__link-icon" aria-hidden="true">
+                  <mat-icon>{{ menuIcon(item.id) }}</mat-icon>
+                </span>
+                <span class="app-sidenav__link-content">
+                  <span class="app-sidenav__link-label">{{ item.label }}</span>
+                  <span class="app-sidenav__link-hint">Sair da sua sessao com seguranca</span>
+                </span>
+                <mat-icon class="app-sidenav__link-arrow" aria-hidden="true">chevron_right</mat-icon>
+              </button>
+            } @else {
+              <a
+                [routerLink]="item.route"
+                routerLinkActive="app-sidenav__link--active"
+                [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
+                (click)="appSidenav.close(); handleMenuItem(item)"
+                class="app-sidenav__link"
+              >
+                <span class="app-sidenav__link-icon" aria-hidden="true">
+                  <mat-icon>{{ menuIcon(item.id) }}</mat-icon>
+                </span>
+                <span class="app-sidenav__link-content">
+                  <span class="app-sidenav__link-label">{{ item.label }}</span>
+                  <span class="app-sidenav__link-hint">{{ menuHint(item.id) }}</span>
+                </span>
+                <mat-icon class="app-sidenav__link-arrow" aria-hidden="true">chevron_right</mat-icon>
+              </a>
+            }
+          }
+        </div>
+      }
+
+      @if (hasMixedMenuScopes()) {
+        <div class="app-sidenav__divider" role="separator" aria-label="Separador entre menu administrativo e menu publico"></div>
+      }
+
+      @if (externalMenuItems().length > 0) {
+        <div class="app-sidenav__section">
+          <p class="app-sidenav__section-title">Menu do site publico</p>
+
+          @for (item of externalMenuItems(); track item.id) {
+            @if (item.action === 'logout') {
+              <button
+                type="button"
+                class="app-sidenav__link app-sidenav__link--button"
+                (click)="appSidenav.close(); handleMenuItem(item)"
+              >
+                <span class="app-sidenav__link-icon" aria-hidden="true">
+                  <mat-icon>{{ menuIcon(item.id) }}</mat-icon>
+                </span>
+                <span class="app-sidenav__link-content">
+                  <span class="app-sidenav__link-label">{{ item.label }}</span>
+                  <span class="app-sidenav__link-hint">Sair da sua sessao com seguranca</span>
+                </span>
+                <mat-icon class="app-sidenav__link-arrow" aria-hidden="true">chevron_right</mat-icon>
+              </button>
+            } @else {
+              <a
+                [routerLink]="item.route"
+                routerLinkActive="app-sidenav__link--active"
+                [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
+                (click)="appSidenav.close(); handleMenuItem(item)"
+                class="app-sidenav__link"
+              >
+                <span class="app-sidenav__link-icon" aria-hidden="true">
+                  <mat-icon>{{ menuIcon(item.id) }}</mat-icon>
+                </span>
+                <span class="app-sidenav__link-content">
+                  <span class="app-sidenav__link-label">{{ item.label }}</span>
+                  <span class="app-sidenav__link-hint">Acessar {{ item.label.toLowerCase() }}</span>
+                </span>
+                <mat-icon class="app-sidenav__link-arrow" aria-hidden="true">chevron_right</mat-icon>
+              </a>
+            }
+          }
+        </div>
       }
     </nav>
 
