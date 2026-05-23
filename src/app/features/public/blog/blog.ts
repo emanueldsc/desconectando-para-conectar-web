@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,19 +20,11 @@ export class Blog {
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
   readonly posts = signal<BlogCardData[]>([]);
-
-  protected readonly filteredPosts = computed(() => {
-    const query = this.searchQuery().trim().toLowerCase();
-
-    if (!query) {
-      return this.posts();
-    }
-
-    return this.posts().filter((post) =>
-      post.description.toLowerCase().includes(query)
-      || post.eyebrow.toLowerCase().includes(query)
-    );
-  });
+  readonly page = signal(1);
+  readonly totalPages = signal(1);
+  readonly limit = signal(4);
+  readonly limitOptions = [4, 8, 12, 24];
+  readonly totalItems = signal(0);
 
   public constructor() {
     this.loadBlogPosts();
@@ -40,6 +32,34 @@ export class Blog {
 
   onSearchChange(value: string): void {
     this.searchQuery.set(value);
+    this.page.set(1);
+    this.loadBlogPosts();
+  }
+
+
+  onLimitChangeEvent(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    const value = select.value;
+    const parsed = Number(value);
+    if (this.limitOptions.includes(parsed)) {
+      this.limit.set(parsed);
+      this.page.set(1);
+      this.loadBlogPosts();
+    }
+  }
+
+  goToPreviousPage(): void {
+    if (this.page() > 1 && !this.loading()) {
+      this.page.set(this.page() - 1);
+      this.loadBlogPosts();
+    }
+  }
+
+  goToNextPage(): void {
+    if (this.page() < this.totalPages() && !this.loading()) {
+      this.page.set(this.page() + 1);
+      this.loadBlogPosts();
+    }
   }
 
   private loadBlogPosts(): void {
@@ -47,7 +67,12 @@ export class Blog {
     this.error.set(null);
 
     this.blogApi
-      .getBlogList({ sort: 'newest', limit: 24 })
+      .getBlogList({
+        sort: 'newest',
+        page: this.page(),
+        limit: this.limit(),
+        search: this.searchQuery().trim() || undefined
+      })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
@@ -61,6 +86,9 @@ export class Blog {
               description: post.description
             }))
           );
+          this.page.set(response.pagination.page);
+          this.totalPages.set(Math.max(response.pagination.pages, 1));
+          this.totalItems.set(response.pagination.total);
           this.loading.set(false);
         },
         error: () => {

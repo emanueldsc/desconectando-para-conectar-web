@@ -24,9 +24,25 @@
         </div>
       </div>
 
+      <div class="blog-page__pagination-controls">
+        <label for="blog-limit-select" class="blog-page__limit-label">Exibir:</label>
+        <select
+          id="blog-limit-select"
+          class="blog-page__limit-select"
+          [value]="limit()"
+          (change)="onLimitChangeEvent($event)"
+          aria-label="Selecionar quantidade de itens por página"
+        >
+          @for (opt of limitOptions; track opt) {
+            <option [value]="opt">{{ opt }}</option>
+          }
+        </select>
+        <span class="blog-page__total">({{ totalItems() }} artigos)</span>
+      </div>
+
       <ul class="blog-page__grid" role="list">
-        @if (filteredPosts().length > 0) {
-          @for (post of filteredPosts(); track post.id) {
+        @if (posts().length > 0) {
+          @for (post of posts(); track post.id) {
             <li>
               <blog-card [post]="post" />
             </li>
@@ -37,6 +53,34 @@
           </li>
         }
       </ul>
+
+      @if (totalPages() > 1) {
+        <nav class="blog-page__pagination" aria-label="Paginação de artigos do blog">
+          <button
+            class="blog-page__page-button"
+            type="button"
+            (click)="goToPreviousPage()"
+            [disabled]="loading() || page() <= 1"
+            aria-label="Ir para página anterior"
+          >
+            Anterior
+          </button>
+
+          <span class="blog-page__page-indicator" aria-live="polite">
+            Página {{ page() }} de {{ totalPages() }}
+          </span>
+
+          <button
+            class="blog-page__page-button"
+            type="button"
+            (click)="goToNextPage()"
+            [disabled]="loading() || page() >= totalPages()"
+            aria-label="Ir para próxima página"
+          >
+            Próxima
+          </button>
+        </nav>
+      }
     }
   </div>
 </section>

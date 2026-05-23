@@ -150,8 +150,32 @@
 							<p>Selecione até 4 publicações para ficarem fixas nessa área.</p>
 						</div>
 
+						<div class="cms-reality__publications-controls">
+							<input
+								type="text"
+								class="cms-reality__publications-search styled-input"
+								placeholder="Buscar publicação..."
+								[value]="publicationSearch()"
+								(input)="onPublicationSearchChange($event.target.value)"
+								aria-label="Buscar publicação"
+							/>
+							<div class="cms-reality__pagination">
+								<button type="button" class="cms-pagination-btn" (click)="goToPreviousPublicationPage()" [disabled]="publicationPage() <= 1">
+									<mat-icon>chevron_left</mat-icon>
+								</button>
+								<span class="cms-pagination-info">Página {{ publicationPage() }} de {{ publicationTotalPages() }}</span>
+								<button type="button" class="cms-pagination-btn" (click)="goToNextPublicationPage()" [disabled]="publicationPage() >= publicationTotalPages()">
+									<mat-icon>chevron_right</mat-icon>
+								</button>
+							</div>
+						</div>
 						<div class="cms-reality__publications">
-							@for (publication of availablePublications(); track publication.id) {
+							@if(isLoadingPublications()) {
+								<p>Carregando publicações...</p>
+							} @else if (filteredPagedPublications().length === 0) {
+								<p>Nenhuma publicação encontrada.</p>
+							}
+							@for (publication of filteredPagedPublications(); track publication.id) {
 								<label class="cms-publication-option" [class.cms-publication-option--selected]="isRealityPublicationSelected(publication.id)">
 									<input type="checkbox" [checked]="isRealityPublicationSelected(publication.id)" (change)="toggleRealityPublication(publication.id, $event)" />
 									<div class="cms-publication-option__content">

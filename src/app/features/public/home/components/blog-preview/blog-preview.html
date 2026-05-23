@@ -2,12 +2,52 @@
   <div class="blog-preview__inner">
     <h2 class="blog-preview__title" id="blog-preview-title">Histórias que Conectam</h2>
 
-    <ul class="blog-preview__grid" role="list">
-      @for (post of posts(); track post.id) {
-        <li>
-          <blog-card [post]="post" />
-        </li>
+    @if (error(); as errorMessage) {
+      <p class="blog-preview__state">{{ errorMessage }}</p>
+    } @else {
+      @if (loading() && posts().length === 0) {
+        <p class="blog-preview__state">Carregando artigos...</p>
       }
-    </ul>
+
+      <ul class="blog-preview__grid" role="list">
+        @for (post of posts(); track post.id) {
+          <li>
+            <blog-card [post]="post" />
+          </li>
+        }
+      </ul>
+
+      @if (!loading() && posts().length === 0) {
+        <p class="blog-preview__state">Nenhum artigo encontrado para esta página.</p>
+      }
+
+      @if (totalPages() > 1) {
+        <nav class="blog-preview__pagination" aria-label="Paginação de artigos do blog">
+          <button
+            class="blog-preview__page-button"
+            type="button"
+            (click)="goToPreviousPage()"
+            [disabled]="loading() || currentPage() <= 1"
+            aria-label="Ir para página anterior"
+          >
+            Anterior
+          </button>
+
+          <p class="blog-preview__page-indicator" aria-live="polite">
+            Página {{ currentPage() }} de {{ totalPages() }}
+          </p>
+
+          <button
+            class="blog-preview__page-button"
+            type="button"
+            (click)="goToNextPage()"
+            [disabled]="loading() || currentPage() >= totalPages()"
+            aria-label="Ir para próxima página"
+          >
+            Próxima
+          </button>
+        </nav>
+      }
+    }
   </div>
 </section>

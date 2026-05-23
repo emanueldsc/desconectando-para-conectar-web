@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { finalize } from 'rxjs';
 import { BlogPostPreview, CmsBanner, CmsHeroButton, CmsRealitySection, CmsSettings } from '../../../shared/models/api-contracts.models';
 import { AdminCmsApiService } from '../../../shared/services/admin-cms-api.service';
+import { CmsBlogApiService } from '../../../shared/services/cms-blog-api.service';
 
 @Component({
   selector: 'dashboard-cms',
@@ -22,11 +23,21 @@ export class Cms {
   private readonly fb = inject(FormBuilder);
   private readonly cmsApi = inject(AdminCmsApiService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly blogApi = inject(CmsBlogApiService);
 
   protected readonly isLoading = signal(true);
   protected readonly isSaving = signal(false);
   protected readonly isUploadingBanner = signal(false);
   protected readonly availablePublications = signal<BlogPostPreview[]>([]);
+  // Signals para busca e paginação de publicações
+  protected readonly publicationSearch = signal('');
+  private publicationSearchTimeout: any = null;
+  protected readonly publicationPage = signal(1);
+  protected readonly publicationTotalPages = signal(1);
+  protected readonly publicationTotal = signal(0);
+  protected readonly filteredPagedPublications = signal<BlogPostPreview[]>([]);
+  private readonly publicationLimit = 8;
+  protected readonly isLoadingPublications = signal(false);
   protected readonly materialIcons = [
     'favorite_border',
     'favorite',
@@ -69,6 +80,72 @@ export class Cms {
 
   public constructor() {
     this.loadSettings();
+    // Carregar publicações se modo "selected" já estiver ativo
+    if (this.cmsForm.controls.realitySection.controls.displayMode.value === 'selected') {
+      this.loadPublications();
+    }
+    // Reagir à mudança de modo
+    this.cmsForm.controls.realitySection.controls.displayMode.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((mode) => {
+        if (mode === 'selected') {
+          this.loadPublications();
+        }
+      });
+  }
+  // Métodos para busca e paginação de publicações
+
+  protected onPublicationSearchChange(value: string): void {
+    this.isLoadingPublications.set(true);
+    this.filteredPagedPublications.set([]);
+    this.publicationSearch.set(value);
+    this.publicationPage.set(1);
+    if (this.publicationSearchTimeout) {
+      clearTimeout(this.publicationSearchTimeout);
+    }
+    this.publicationSearchTimeout = setTimeout(() => {
+      this.loadPublications();
+    }, 1000);
+  }
+
+  protected goToPreviousPublicationPage(): void {
+    if (this.publicationPage() > 1) {
+      this.publicationPage.set(this.publicationPage() - 1);
+      this.loadPublications();
+    }
+  }
+
+  protected goToNextPublicationPage(): void {
+    if (this.publicationPage() < this.publicationTotalPages()) {
+      this.publicationPage.set(this.publicationPage() + 1);
+      this.loadPublications();
+    }
+  }
+
+  private loadPublications(): void {
+    this.isLoadingPublications.set(true);
+    this.filteredPagedPublications.set([]);
+    this.blogApi.getBlogList({
+      page: this.publicationPage(),
+      limit: this.publicationLimit,
+      search: this.publicationSearch(),
+    })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.isLoadingPublications.set(false))
+      )
+      .subscribe({
+        next: (response) => {
+          this.filteredPagedPublications.set(response.data);
+          this.publicationTotal.set(response.pagination.total);
+          this.publicationTotalPages.set(response.pagination.pages);
+        },
+        error: () => {
+          this.filteredPagedPublications.set([]);
+          this.publicationTotal.set(0);
+          this.publicationTotalPages.set(1);
+        }
+      });
   }
 
   protected get bannersArray(): FormArray {

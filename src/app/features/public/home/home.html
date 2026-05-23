@@ -8,6 +8,14 @@
 	<home-hero [heroData]="hero()" [impactPhrases]="impactPhrases()" />
 	<home-reality-section [section]="realitySection()" />
 	<home-rifas-do-bem [rifas]="featuredRaffles()" />
-	<home-blog-preview [posts]="blogPreview()" />
+	<home-blog-preview
+		[posts]="blogPreview()"
+		[loading]="blogLoading()"
+		[error]="blogError()"
+		[currentPage]="blogPage()"
+		[totalPages]="blogPages()"
+		(previousPage)="loadPreviousBlogPage()"
+		(nextPage)="loadNextBlogPage()"
+	/>
 }
 
