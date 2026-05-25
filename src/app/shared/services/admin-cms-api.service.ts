@@ -30,7 +30,7 @@ export class AdminCmsApiService {
       return throwError(() => new Error('Sessão expirada. Faça login novamente.'));
     }
 
-    return this.http.put<CmsUpdateResponse>(`${this.baseUrl}/admin/cms`, payload, {
+    return this.http.post<CmsUpdateResponse>(`${this.baseUrl}/admin/cms`, {...payload, _method: 'PUT'}, {
       headers: this.authorizationHeaders(token)
     });
   }
