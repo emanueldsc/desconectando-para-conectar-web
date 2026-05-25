@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { MemberProfile, MemberRaffle } from '../../features/auth/member-area/member-area.models';
+import { API_BASE_URL } from './api.config';
 
 export interface MemberDonation {
   id: number;
@@ -14,7 +15,7 @@ export interface MemberDonation {
 @Injectable({ providedIn: 'root' })
 export class MemberApiService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = '/api';
+  private readonly baseUrl = inject(API_BASE_URL);
 
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('auth_token') ?? sessionStorage.getItem('auth_token') ?? '';
