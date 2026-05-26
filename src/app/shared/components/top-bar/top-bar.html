@@ -3,24 +3,53 @@
     <button
       type="button"
       mat-icon-button
-      class="topbar__menu-btn"
+      class="topbar__menu-btn hide-on-desktop"
       aria-label="Abrir menu de navegacao"
       (click)="openMenu()"
     >
       <mat-icon>menu</mat-icon>
     </button>
 
-    <a routerLink="/public/home" class="topbar__brand">Desconectando para Conectar</a>
+    <a routerLink="/public/home" class="topbar__brand">
+      Desconectando para Conectar
+    </a>
 
-    <nav class="topbar__nav" aria-label="Atalhos">
+    <nav class="topbar__nav hide-on-mobile" aria-label="Atalhos">
+      <!-- Itens Públicos -->
       @for (item of menuItems(); track item.id) {
-        @if (item.action === 'logout') {
-          <button type="button" class="topbar__nav-action" (click)="selectItem(item)">
+        @if (item.action !== 'logout' && !isInternalRoute(item.route)) {
+          <a mat-button [routerLink]="item.route" (click)="selectItem(item)" class="nav-link">
             {{ item.label }}
-          </button>
-        } @else {
-          <a [routerLink]="item.route" (click)="selectItem(item)">{{ item.label }}</a>
+          </a>
         }
+      }
+
+      <!-- Menu Suspenso (Exclusivo para Usuário Logado) -->
+      @if (hasInternalItems() || hasLogout()) {
+        <button mat-button [matMenuTriggerFor]="userMenu" class="user-menu-btn">
+          <mat-icon>account_circle</mat-icon>
+          Minha Conta
+          <mat-icon>arrow_drop_down</mat-icon>
+        </button>
+        <mat-menu #userMenu="matMenu">
+          @for (item of menuItems(); track item.id) {
+            @if (isInternalRoute(item.route)) {
+              <a mat-menu-item [routerLink]="item.route" (click)="selectItem(item)">
+                <mat-icon>{{ item.icon || 'chevron_right' }}</mat-icon>
+                <span>{{ item.label }}</span>
+              </a>
+            }
+          }
+          @for (item of menuItems(); track item.id) {
+            @if (item.action === 'logout') {
+              <mat-divider></mat-divider>
+              <button mat-menu-item (click)="selectItem(item)">
+                <mat-icon color="warn">logout</mat-icon>
+                <span>{{ item.label }}</span>
+              </button>
+            }
+          }
+        </mat-menu>
       }
     </nav>
   </div>

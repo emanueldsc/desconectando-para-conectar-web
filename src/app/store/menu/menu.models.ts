@@ -7,6 +7,7 @@ export interface MenuItem {
   route: string;
   scope: MenuScope;
   profiles: UserProfile[];
+  icon?: string;
   action?: 'logout';
 }
 

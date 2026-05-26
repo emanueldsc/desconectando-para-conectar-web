@@ -1,59 +1,98 @@
 .topbar {
-  background: var(--mat-sys-on-primary);
-  color: var(--app-topbar-text-color);
+  background-color: #ffffff;
+  box-shadow: 0 4px 20px rgba(139, 69, 19, 0.08); /* Sombra suave terrosa */
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 3px solid #e07a5f; /* Cor Laranja/Terracota do Sertão */
 }
 
 .topbar__inner {
-  min-height: 64px;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1rem;
   display: flex;
   align-items: center;
-  gap: 1rem;
-}
-
-.topbar__menu-btn {
-  color: var(--app-topbar-text-color);
+  justify-content: space-between;
+  padding: 0 16px;
+  height: 72px;
 }
 
 .topbar__brand {
-  color: var(--app-topbar-text-color);
-  text-decoration: none;
+  font-size: 1.25rem;
   font-weight: 700;
-  font-size: large;
+  color: #5d4037; /* Marrom Rústico */
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.2s ease;
+
+  .brand-icon {
+    color: #e07a5f; /* Laranja da Solidariedade */
+  }
+
+  &:hover {
+    color: #e07a5f;
+  }
 }
 
 .topbar__nav {
-  margin-left: auto;
   display: flex;
-  gap: 1rem;
+  align-items: center;
+  gap: 8px;
+
+  .nav-link {
+    color: #5d4037;
+    font-weight: 500;
+    border-radius: 20px;
+    padding: 0 16px;
+    
+    &:hover {
+      background-color: rgba(224, 122, 95, 0.1);
+      color: #e07a5f;
+    }
+  }
+
+  .user-menu-btn {
+    background-color: #e07a5f;
+    color: #ffffff;
+    border-radius: 24px;
+    padding: 0 20px;
+    font-weight: 600;
+    margin-left: 16px;
+
+    mat-icon {
+      margin-right: 4px;
+    }
+
+    &:hover {
+      background-color: #d86c50; /* Terracota mais escuro */
+    }
+  }
 }
 
-.topbar__nav a {
-  color: var(--app-topbar-text-color);
-  text-decoration: none;
+/* Responsividade: Esconde no mobile, mostra no desktop */
+.hide-on-mobile {
+  display: flex;
 }
 
-.topbar__nav-action {
-  appearance: none;
-  border: 0;
-  background: transparent;
-  color: var(--app-topbar-text-color);
-  padding: 0;
-  font: inherit;
-  cursor: pointer;
+/* Esconde no desktop, mostra no mobile */
+.hide-on-desktop {
+  display: none;
 }
 
-.topbar__nav-action:hover,
-.topbar__nav-action:focus-visible,
-.topbar__nav a:hover,
-.topbar__nav a:focus-visible {
-  text-decoration: underline;
-}
-
+/* Quando estiver em telas menores que 768px (Tablet / Celular) */
 @media (max-width: 768px) {
-  .topbar__nav {
+  .hide-on-mobile {
     display: none;
+  }
+  
+  .hide-on-desktop {
+    display: block;
+    color: #5d4037;
+  }
+  
+  .topbar__brand {
+    font-size: 1.1rem;
   }
 }
