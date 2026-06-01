@@ -451,6 +451,7 @@ export interface CmsSettings {
   socials: CmsSocials;
   heroButton: CmsHeroButton;
   realitySection: CmsRealitySection;
+  monthlyGoal: number;
   updatedAt?: string;
 }
 
@@ -467,6 +468,7 @@ export interface CmsUpdateRequest {
   realitySection: CmsRealitySection;
   contact: CmsContact;
   socials: CmsSocials;
+  monthlyGoal: number;
 }
 
 export interface CmsUpdateResponse {

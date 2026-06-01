@@ -76,6 +76,7 @@ export class Cms {
       facebook: [''],
       youtube: [''],
     }),
+    monthlyGoal: this.fb.nonNullable.control(20000, [Validators.required, Validators.min(0)]),
   });
 
   public constructor() {
@@ -324,6 +325,7 @@ export class Cms {
       realitySection,
       contact: this.cmsForm.controls.contact.getRawValue(),
       socials: this.cmsForm.controls.socials.getRawValue(),
+      monthlyGoal: this.cmsForm.controls.monthlyGoal.getRawValue(),
     })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
@@ -411,6 +413,7 @@ export class Cms {
     });
     this.cmsForm.controls.contact.patchValue(data.contact);
     this.cmsForm.controls.socials.patchValue(data.socials);
+    this.cmsForm.controls.monthlyGoal.patchValue(data.monthlyGoal ?? 20000);
   }
 
   private createBannerGroup(banner: CmsBanner) {

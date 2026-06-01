@@ -31,6 +31,20 @@ describe('Cms', () => {
             facebook: '',
             youtube: '',
           },
+          heroButton: {
+            label: 'Doar Agora',
+            link: '/public/raffles',
+            icon: 'favorite_border',
+            backgroundColor: '#d35400',
+            textColor: '#ffffff',
+          },
+          realitySection: {
+            title: 'Nossa Realidade',
+            subtitle: 'Publicacoes recentes',
+            displayMode: 'latest',
+            publicationIds: [],
+          },
+          monthlyGoal: 20000,
         },
       }),
       updateSettings: () => of({
@@ -41,6 +55,20 @@ describe('Cms', () => {
           phrases: [],
           contact: { email: '', whatsapp: '', phone: '' },
           socials: { instagram: '', facebook: '', youtube: '' },
+          heroButton: {
+            label: 'Doar Agora',
+            link: '/public/raffles',
+            icon: 'favorite_border',
+            backgroundColor: '#d35400',
+            textColor: '#ffffff',
+          },
+          realitySection: {
+            title: 'Nossa Realidade',
+            subtitle: 'Publicacoes recentes',
+            displayMode: 'latest',
+            publicationIds: [],
+          },
+          monthlyGoal: 20000,
         },
       }),
     };

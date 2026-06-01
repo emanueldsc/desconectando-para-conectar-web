@@ -171,6 +171,52 @@
 	background: linear-gradient(90deg, var(--green) 0%, var(--gold) 100%);
 }
 
+.dashboard__history {
+	margin-top: 1.1rem;
+	padding: 0.95rem 1rem;
+	border: 1px solid rgba(140, 113, 102, 0.25);
+	border-radius: 0.75rem;
+	background: var(--surface);
+	box-shadow: 0 4px 10px rgba(37, 25, 19, 0.05);
+}
+
+.dashboard__history h3 {
+	margin: 0;
+	font-family: 'Literata', Georgia, serif;
+	font-size: 1.05rem;
+	color: var(--title);
+}
+
+.dashboard__history-list {
+	list-style: none;
+	margin: 0.7rem 0 0;
+	padding: 0;
+	display: grid;
+	gap: 0.35rem;
+}
+
+.dashboard__history-item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.45rem 0.55rem;
+	border-radius: 0.45rem;
+	background: var(--surface-low);
+}
+
+.dashboard__history-month {
+	font-size: 0.84rem;
+	color: var(--muted);
+	font-weight: 600;
+}
+
+.dashboard__history-total {
+	font-family: 'Literata', Georgia, serif;
+	font-size: 0.96rem;
+	color: var(--pumpkin);
+	font-weight: 700;
+}
+
 @media (min-width: 760px) {
 	.dashboard__grid {
 		grid-template-columns: repeat(2, minmax(0, 1fr));

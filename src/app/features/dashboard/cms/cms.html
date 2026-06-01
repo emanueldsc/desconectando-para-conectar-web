@@ -20,7 +20,22 @@
 				<p class="cms-page__feedback" [class.cms-page__feedback--error]="status.isError">{{ status.text }}</p>
 			}
 
-			<div class="cms-page__grid">
+			<div class="cms-page__grid cms-bento--monthly--target">
+				<section class="cms-bento cms-bento--goal">
+					<div class="cms-bento__header">
+						<div class="cms-bento__icon cms-bento__icon--hero">
+							<mat-icon aria-hidden="true">flag</mat-icon>
+						</div>
+						<h3>Meta Mensal</h3>
+					</div>
+
+					<div class="cms-contact__fields">
+						<label>Valor da meta mensal (R$)
+							<input type="number" min="0" step="0.01" formControlName="monthlyGoal" />
+						</label>
+					</div>
+				</section>
+
 				<section class="cms-bento cms-bento--banners">
 					<div class="cms-bento__header">
 						<div class="cms-bento__icon cms-bento__icon--banners">
