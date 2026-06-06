@@ -18,6 +18,7 @@
 
 	<dashboard-users-members-list
 		[members]="filteredMembers()"
+		[savingNoteIds]="savingNoteIds()"
 		[query]="query()"
 		[filter]="filter()"
 		[section]="activeSection()"
@@ -25,6 +26,7 @@
 		(filterChange)="setFilter($event)"
 		(createMember)="openCreateModal()"
 		(editMember)="openEditModal($event)"
+		(saveMemberNote)="saveMemberNote($event)"
 	></dashboard-users-members-list>
 	}
 </section>

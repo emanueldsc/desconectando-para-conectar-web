@@ -97,6 +97,61 @@
     font-weight: 700;
   }
 
+  &__note-block {
+    margin-top: 0.45rem;
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  &__note-label {
+    font-size: 0.66rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #8c7166;
+    font-weight: 700;
+  }
+
+  &__note-input {
+    width: auto;
+    border: 1px solid #e0c0b2;
+    border-radius: 0.6rem;
+    padding: 0.45rem 0.55rem;
+    font: inherit;
+    color: #251913;
+    background: #fffaf7;
+    resize: vertical;
+    min-height: 3rem;
+
+    &:focus {
+      outline: 2px solid #d35400;
+      outline-offset: 1px;
+      background: #fff;
+    }
+
+    &:disabled {
+      opacity: 0.75;
+    }
+  }
+
+  &__note-save {
+    justify-self: start;
+    border: 1px solid #2d5a27;
+    border-radius: 999px;
+    background: #eef8e8;
+    color: #2d5a27;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+    padding: 0.35rem 0.7rem;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
   &--buyer {
     padding: 0.7rem 0.8rem;
   }

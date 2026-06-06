@@ -14,6 +14,7 @@ type UsersSection = 'members' | 'users';
 })
 export class UsersMembersList {
   readonly members = input.required<readonly UserMember[]>();
+  readonly savingNoteIds = input.required<readonly number[]>();
   readonly query = input.required<string>();
   readonly filter = input.required<MemberFilter>();
   readonly section = input.required<UsersSection>();
@@ -22,10 +23,11 @@ export class UsersMembersList {
   readonly filterChange = output<MemberFilter>();
   readonly createMember = output<void>();
   readonly editMember = output<number>();
+  readonly saveMemberNote = output<{ id: number; notes: string }>();
 
   protected heading(): string {
     if (this.section() === 'users') return 'Gestão de Usuários do Portal';
-    return 'Gestão de Membros Compradores';
+    return 'Gestão de Membros';
   }
 
   protected searchPlaceholder(): string {
@@ -43,5 +45,9 @@ export class UsersMembersList {
 
   protected onEditMember(id: number): void {
     this.editMember.emit(id);
+  }
+
+  protected onSaveMemberNote(payload: { id: number; notes: string }): void {
+    this.saveMemberNote.emit(payload);
   }
 }

@@ -25,9 +25,34 @@
     @if (!isBuyer()) {
       <span class="member-card__role">{{ roleLabel() }}</span>
     }
+
+    @if (canManageMemberNote()) {
+      <div class="member-card__note-block">
+        <label class="member-card__note-label" [attr.for]="'member-note-' + member().id">Observação interna</label>
+        <textarea
+          class="member-card__note-input"
+          [id]="'member-note-' + member().id"
+          [value]="noteDraft()"
+          (input)="onNoteInput($event)"
+          [disabled]="savingNote()"
+          placeholder="Adicione uma observação rápida sobre este membro"
+          rows="2"
+        ></textarea>
+        <button
+          type="button"
+          class="member-card__note-save"
+          [disabled]="!hasChangedNote() || savingNote()"
+          (click)="submitNote()"
+        >
+          {{ savingNote() ? 'Salvando...' : 'Salvar observação' }}
+        </button>
+      </div>
+    }
   </div>
 
-  <button type="button" class="member-card__more" [attr.aria-label]="'Editar ' + entityLabel()" (click)="requestEdit()">
-    <mat-icon aria-hidden="true">edit</mat-icon>
-  </button>
+  @if (canEditUser()) {
+    <button type="button" class="member-card__more" [attr.aria-label]="'Editar ' + entityLabel()" (click)="requestEdit()">
+      <mat-icon aria-hidden="true">edit</mat-icon>
+    </button>
+  }
 </article>

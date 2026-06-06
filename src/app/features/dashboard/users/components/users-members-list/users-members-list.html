@@ -8,11 +8,6 @@
       <mat-icon aria-hidden="true">add_circle</mat-icon>
       {{ createLabel() }}
     </button>
-  } @else {
-    <div class="members-list__external-note" role="note" aria-label="Cadastro externo de membros compradores">
-      <mat-icon aria-hidden="true">info</mat-icon>
-      <span>Membros compradores são cadastrados somente pela área externa do portal.</span>
-    </div>
   }
 
   <div class="members-list__search-wrap">
@@ -38,7 +33,13 @@
   @if (members().length > 0) {
     <div class="members-list__grid">
       @for (member of members(); track member.id) {
-        <dashboard-user-member-card [member]="member" (edit)="onEditMember($event)"></dashboard-user-member-card>
+        <dashboard-user-member-card
+          [member]="member"
+          [section]="section()"
+          [savingNote]="savingNoteIds().includes(member.id)"
+          (edit)="onEditMember($event)"
+          (saveNote)="onSaveMemberNote($event)"
+        ></dashboard-user-member-card>
       }
     </div>
   } @else {

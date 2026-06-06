@@ -9,6 +9,7 @@ export interface AdminUserRecord {
   email: string;
   phone: string | null;
   address: string | null;
+  notes: string | null;
   role: 'buyer' | 'manager' | 'publisher' | 'none';
   status: 'active' | 'inactive';
   createdAt: string | null;
@@ -23,6 +24,7 @@ export interface AdminUserUpdatePayload {
   fullName: string;
   phone: string;
   address: string;
+  notes?: string;
   role: 'buyer' | 'manager' | 'publisher' | 'none';
 }
 

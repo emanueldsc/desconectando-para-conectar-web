@@ -25,6 +25,7 @@ export class Users {
   protected readonly filter = signal<MemberFilter>('all');
   protected readonly showCreateModal = signal(false);
   protected readonly editingMemberId = signal<number | null>(null);
+  protected readonly savingNoteIds = signal<number[]>([]);
   protected readonly activeSection = signal<UsersSection>('members');
   protected readonly loading = signal(true);
   protected readonly loadError = signal<string | null>(null);
@@ -87,8 +88,55 @@ export class Users {
   }
 
   protected openEditModal(id: number): void {
+    if (this.activeSection() !== 'users') {
+      return;
+    }
+
     this.editingMemberId.set(id);
     this.showCreateModal.set(true);
+  }
+
+  protected saveMemberNote(payload: { id: number; notes: string }): void {
+    const member = this.members().find((item) => item.id === payload.id);
+
+    if (!member || member.portalRole !== 'buyer' || this.savingNoteIds().includes(payload.id)) {
+      return;
+    }
+
+    this.savingNoteIds.update((ids) => [...ids, payload.id]);
+
+    this.usersApi
+      .updateUser(payload.id, {
+        fullName: member.fullName.trim(),
+        phone: member.phone === '-' ? '' : member.phone.trim(),
+        address: (member.address ?? '').trim(),
+        notes: payload.notes,
+        role: member.portalRole,
+      })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => {
+          this.savingNoteIds.update((ids) => ids.filter((id) => id !== payload.id));
+        })
+      )
+      .subscribe({
+        next: (response) => {
+          const persistedNotes = response.data.notes ?? payload.notes;
+          this.members.update((items) =>
+            items.map((item) =>
+              item.id === payload.id
+                ? {
+                    ...item,
+                    notes: persistedNotes,
+                  }
+                : item
+            )
+          );
+        },
+        error: (error: unknown) => {
+          this.loadError.set(this.extractErrorMessage(error));
+        }
+      });
   }
 
   protected closeCreateModal(): void {
@@ -218,6 +266,7 @@ export class Users {
     fullName: string;
     phone: string | null;
     address: string | null;
+    notes: string | null;
     role: 'buyer' | 'manager' | 'publisher' | 'none';
   }): UserMember {
     return {
@@ -227,7 +276,7 @@ export class Users {
       category: item.role === 'buyer' ? 'child' : 'collaborator',
       portalRole: item.role,
       address: item.address ?? undefined,
-      notes: '',
+      notes: item.notes ?? '',
     };
   }
 
