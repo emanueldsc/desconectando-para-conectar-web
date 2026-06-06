@@ -12,6 +12,12 @@ export interface MemberDonation {
   paymentMethod: string;
 }
 
+export interface UpdateMemberProfilePayload {
+  name: string;
+  phone?: string;
+  address?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class MemberApiService {
   private readonly http = inject(HttpClient);
@@ -41,6 +47,14 @@ export class MemberApiService {
 
   getMemberDonations(): Observable<MemberDonation[]> {
     return this.http.get<{ success: boolean; data: MemberDonation[] }>(`${this.baseUrl}/member/donations`, {
+      headers: this.getAuthHeaders(),
+    }).pipe(
+      map((res) => res.data)
+    );
+  }
+
+  updateMemberProfile(payload: UpdateMemberProfilePayload): Observable<MemberProfile> {
+    return this.http.put<{ success: boolean; data: MemberProfile }>(`${this.baseUrl}/member/profile`, payload, {
       headers: this.getAuthHeaders(),
     }).pipe(
       map((res) => res.data)

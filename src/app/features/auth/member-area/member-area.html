@@ -5,6 +5,15 @@
     <main class="member-area__content" aria-label="Conteudo do painel doador">
       <auth-member-greeting [userName]="userName()" />
 
+      <div class="member-area__profile-actions">
+        <button type="button" class="member-area__edit-profile-btn" (click)="openEditProfile()">
+          Editar meus dados
+        </button>
+        @if (profileFeedback(); as feedbackMessage) {
+          <p class="member-area__profile-feedback" role="status">{{ feedbackMessage }}</p>
+        }
+      </div>
+
       <auth-member-impact-stats
         [totalDonated]="stats().totalDonated"
         [livesImpacted]="stats().livesImpacted"
@@ -15,4 +24,54 @@
       <auth-member-opportunity [offers]="activeRaffleOffers()" />
     </main>
   </div>
+
+  @if (showEditProfileModal()) {
+    <div class="member-area__modal-overlay" role="dialog" aria-modal="true" aria-labelledby="member-profile-modal-title">
+      <section class="member-area__modal" (click)="$event.stopPropagation()">
+        <h2 id="member-profile-modal-title">Editar meus dados</h2>
+
+        <div class="member-area__modal-field">
+          <label for="member-profile-name">Nome completo</label>
+          <input
+            id="member-profile-name"
+            type="text"
+            [formControl]="profileForm.controls.name"
+            maxlength="255"
+          />
+          @if (hasProfileFieldError('name', 'required')) {
+            <small>Informe seu nome.</small>
+          }
+        </div>
+
+        <div class="member-area__modal-field">
+          <label for="member-profile-phone">Telefone</label>
+          <input
+            id="member-profile-phone"
+            type="text"
+            [formControl]="profileForm.controls.phone"
+            maxlength="30"
+          />
+        </div>
+
+        <div class="member-area__modal-field">
+          <label for="member-profile-address">Endereço</label>
+          <input
+            id="member-profile-address"
+            type="text"
+            [formControl]="profileForm.controls.address"
+            maxlength="255"
+          />
+        </div>
+
+        <div class="member-area__modal-actions">
+          <button type="button" class="member-area__modal-btn member-area__modal-btn--ghost" [disabled]="savingProfile()" (click)="closeEditProfile()">
+            Cancelar
+          </button>
+          <button type="button" class="member-area__modal-btn member-area__modal-btn--primary" [disabled]="savingProfile()" (click)="saveProfile()">
+            {{ savingProfile() ? 'Salvando...' : 'Salvar dados' }}
+          </button>
+        </div>
+      </section>
+    </div>
+  }
 </section>
