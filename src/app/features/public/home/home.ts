@@ -6,7 +6,6 @@ import {
     FeaturedRaffleCard,
     HeroData,
     HomeRealitySection,
-    Institution,
 } from '../../../shared/models/api-contracts.models';
 import { PublicBlogApiService } from '../../../shared/services/public-blog-api.service';
 import { PublicHomeApiService } from '../../../shared/services/public-home-api.service';
@@ -35,7 +34,6 @@ export class Home {
   protected readonly hero = signal<HeroData | null>(null);
   protected readonly impactPhrases = signal<string[]>([]);
   protected readonly realitySection = signal<HomeRealitySection | null>(null);
-  protected readonly institutions = signal<Institution[]>([]);
   protected readonly featuredRaffles = signal<FeaturedRaffleCard[]>([]);
   protected readonly blogPreview = signal<BlogPostPreview[]>([]);
   protected readonly blogLoading = signal(false);
@@ -76,7 +74,6 @@ export class Home {
           this.hero.set(response.hero);
           this.impactPhrases.set(response.impactPhrases);
           this.realitySection.set(response.realitySection);
-          this.institutions.set(response.institutions);
           this.featuredRaffles.set(response.featuredRaffles);
           this.loading.set(false);
         },

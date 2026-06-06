@@ -44,15 +44,6 @@ export interface FeaturedRaffleCard {
   category?: string;         // Opcional: categoria da rifa
 }
 
-/** Instituição apresentada no carrossel */
-export interface Institution {
-  id: number;
-  name: string;              // Ex: "Associação Sertaneja"
-  description: string;       // Ex: "Apoio às famílias do sertão..."
-  image: string;             // URL
-  imagePosition?: string;    // CSS background-position (default: "center center")
-}
-
 export interface CmsHeroButton {
   title: string;
   label: string;
@@ -87,7 +78,6 @@ export interface HomePageResponse {
     youtube?: string;
   };
   featuredRaffles: FeaturedRaffleCard[];
-  institutions: Institution[];
   statistics: {
     totalDonated: number;    // Valor total arrecadado (R$)
     livesImpacted: number;   // Número de vidas impactadas
@@ -270,19 +260,6 @@ export interface RaffleNumber {
   reservationPaymentStatus?: 'awaiting_receipt' | 'pending_review' | 'approved';
 }
 
-/** Organização/instituição responsável pela rifa */
-export interface RaffleOrganization {
-  id: number;
-  name: string;
-  logo?: string;
-  description?: string;
-  contact?: {
-    email?: string;
-    phone?: string;
-    website?: string;
-  };
-}
-
 /** Informações do ganhador (se rifa já foi realizada) */
 export interface RaffleWinnerInfo {
   id: number;
@@ -317,7 +294,6 @@ export interface RaffleDetailResponse {
   rules?: string;            // HTML com regras completas
   slug: string;
   createdAt: string;
-  organization: RaffleOrganization;
   seo?: {
     metaDescription: string;
     keywords: string[];
