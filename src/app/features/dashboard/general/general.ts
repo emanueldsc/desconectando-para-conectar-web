@@ -36,7 +36,6 @@ export class General implements OnInit {
     this.generalApi.getOverview().subscribe({
       next: (response) => {
         this.cards.set(response.data.cards);
-        debugger;
         this.historyLastSixMonths.set(response.data.metrics.historyLastSixMonths ?? []);
         this.loading.set(false);
       },
