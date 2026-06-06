@@ -83,11 +83,28 @@
 @if (selected) {
   <div class="raffle-detail__modal-overlay" role="dialog" aria-modal="true">
     <div class="raffle-detail__modal">
+      <button
+        type="button"
+        class="member-raffles__modal-close"
+        [disabled]="isUploadingReceipt"
+        (click)="closeModal()"
+        aria-label="Fechar modal"
+      >
+        ×
+      </button>
+
       <h3>Enviar comprovante - Ponto {{ selected.numObj.number }}</h3>
 
       @if (selected.numObj.reservationReceiptUrl) {
         <p>Comprovante atual:</p>
-        <img src="{{ selected.numObj.reservationReceiptUrl }}" alt="Comprovante" class="raffle-detail__receipt" />
+        <a
+          class="member-raffles__receipt-link"
+          [href]="selected.numObj.reservationReceiptUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Visualizar comprovante em nova aba
+        </a>
       }
 
       @if (selected.numObj.reservationPaymentStatus === 'approved') {
@@ -101,23 +118,63 @@
         <label
           class="member-raffles__upload-zone"
           [class.member-raffles__upload-zone--dragging]="isDragging"
+          [class.member-raffles__upload-zone--has-file]="!!selectedReceiptFileName"
+          [class.member-raffles__upload-zone--disabled]="isUploadingReceipt"
           (dragover)="onDragOver($event)"
           (dragleave)="onDragLeave($event)"
-          (drop)="onDrop($event, selected.raffleId, selected.numObj)"
+          (drop)="onDrop($event)"
         >
-          <mat-icon aria-hidden="true">cloud_upload</mat-icon>
-          <span>Arraste a imagem ou clique aqui para anexar o comprovante</span>
-          <small>JPG, PNG ou WEBP</small>
+          @if (selectedReceiptFileName) {
+            <span class="member-raffles__upload-file-name" role="status" aria-live="polite">
+              {{ selectedReceiptFileName }}
+            </span>
+            <button
+              type="button"
+              class="member-raffles__upload-remove-btn"
+              [disabled]="isUploadingReceipt"
+              (click)="clearSelectedReceiptFile($event)"
+            >
+              Remover arquivo
+            </button>
+          } @else {
+            <mat-icon aria-hidden="true">cloud_upload</mat-icon>
+            <span>Arraste a imagem ou clique aqui para anexar o comprovante</span>
+            <small>JPG, PNG ou WEBP</small>
+          }
           <input
             #receiptInput
             type="file"
             accept="image/*"
-            (change)="onFileChange($event, selected.raffleId, selected.numObj)"
+            [disabled]="isUploadingReceipt"
+            (change)="onFileChange($event)"
           />
         </label>
 
+        @if (uploadStatus === 'file-selected') {
+          <p class="member-raffles__upload-feedback" role="status">Arquivo carregado. Clique em Enviar comprovante para concluir.</p>
+        } @else if (uploadStatus === 'success' && uploadMessage) {
+          <p class="member-raffles__upload-feedback member-raffles__upload-feedback--success" role="status">{{ uploadMessage }}</p>
+        } @else if (uploadStatus === 'error' && uploadMessage) {
+          <p class="member-raffles__upload-feedback member-raffles__upload-feedback--error" role="alert">{{ uploadMessage }}</p>
+        }
+
         <div class="member-raffles__modal-actions">
-          <button type="button" class="member-raffles__modal-btn member-raffles__modal-btn--ghost" (click)="closeModal()">Cancelar</button>
+          <button
+            type="button"
+            class="member-raffles__modal-btn member-raffles__modal-btn--primary"
+            [disabled]="!selectedReceiptFile || isUploadingReceipt"
+            (click)="submitReceiptUpload()"
+          >
+            {{ isUploadingReceipt ? 'Enviando...' : 'Enviar comprovante' }}
+          </button>
+          <button
+            type="button"
+            class="member-raffles__modal-btn member-raffles__modal-btn--ghost"
+            [disabled]="isUploadingReceipt"
+            (click)="closeModal()"
+          >
+            Cancelar
+          </button>
         </div>
       }
     </div>

@@ -158,6 +158,7 @@
   }
 
   .raffle-detail__modal {
+    position: relative;
     width: min(90%, 520px);
     background: #fff;
     border-radius: 1rem;
@@ -287,6 +288,108 @@
   input {
     display: none;
   }
+}
+
+.member-raffles__upload-zone--has-file {
+  border-color: #2d5a27;
+  background-color: #eef8e8;
+}
+
+.member-raffles__upload-zone--disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.member-raffles__upload-file-name {
+  font-weight: 800;
+  color: #20431c;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.member-raffles__upload-remove-btn {
+  border: 1px solid #8b2d22;
+  background: #fff;
+  color: #8b2d22;
+  border-radius: 999px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.member-raffles__upload-remove-btn:hover {
+  background: #fff0ee;
+}
+
+.member-raffles__upload-remove-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.member-raffles__upload-feedback {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #2d5a27;
+}
+
+.member-raffles__upload-feedback--success {
+  color: #23501e;
+}
+
+.member-raffles__upload-feedback--error {
+  color: #8b2d22;
+}
+
+.member-raffles__receipt-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  border: 1px solid #2d5a27;
+  border-radius: 999px;
+  padding: 0.45rem 0.85rem;
+  font-weight: 700;
+  color: #2d5a27;
+  background: #eef8e8;
+}
+
+.member-raffles__receipt-link:hover {
+  background: #dff2d6;
+}
+
+.raffle-detail__modal {
+  position: relative;
+}
+
+.member-raffles__modal-close {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid #d8b4a3;
+  border-radius: 999px;
+  background: #fff6f1;
+  color: #594238;
+  font-size: 1.2rem;
+  line-height: 1;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.member-raffles__modal-close:hover {
+  background: #f9e6dc;
+}
+
+.member-raffles__modal-close:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 // --- Modal Actions: Visual parity with raffle modal ---
