@@ -1,274 +1,338 @@
 <section class="cms-page">
-	@if (isLoading()) {
-		<p class="cms-page__loading">Carregando dados do CMS...</p>
-	} @else {
-		<form [formGroup]="cmsForm" (ngSubmit)="save()" novalidate>
-			<div class="cms-page__header">
-				<h2>Gestão do Portal</h2>
-				<p>Personalize os elementos visuais, frases de impacto e formas de contato que representam a nossa comunidade.</p>
-				<button type="submit" class="cms-page__save" [disabled]="isSaving()">
-					<mat-icon aria-hidden="true">save</mat-icon>
-					@if (isSaving()) {
-						Salvando...
-					} @else {
-						Salvar Alterações
-					}
-				</button>
-			</div>
+  @if (isLoading()) {
+    <p class="cms-page__loading">Carregando dados do CMS...</p>
+  } @else {
+    <form [formGroup]="cmsForm" (ngSubmit)="save()" novalidate>
+      <div class="cms-page__header">
+        <h2>Gestão do Portal</h2>
+        <p>
+          Personalize os elementos visuais, frases de impacto e formas de contato que representam a
+          nossa comunidade.
+        </p>
+        <button type="submit" class="cms-page__save" [disabled]="isSaving()">
+          <mat-icon aria-hidden="true">save</mat-icon>
+          @if (isSaving()) {
+            Salvando...
+          } @else {
+            Salvar Alterações
+          }
+        </button>
+      </div>
 
-			@if (feedback(); as status) {
-				<p class="cms-page__feedback" [class.cms-page__feedback--error]="status.isError">{{ status.text }}</p>
-			}
+      @if (feedback(); as status) {
+        <p class="cms-page__feedback" [class.cms-page__feedback--error]="status.isError">
+          {{ status.text }}
+        </p>
+      }
 
-			<div class="cms-page__grid cms-bento--monthly--target">
-				<section class="cms-bento cms-bento--goal">
-					<div class="cms-bento__header">
-						<div class="cms-bento__icon cms-bento__icon--hero">
-							<mat-icon aria-hidden="true">flag</mat-icon>
-						</div>
-						<h3>Meta Mensal</h3>
-					</div>
+      <div class="cms-page__grid cms-bento--monthly--target">
+        <section class="cms-bento cms-bento--goal">
+          <div class="cms-bento__header">
+            <div class="cms-bento__icon cms-bento__icon--hero">
+              <mat-icon aria-hidden="true">flag</mat-icon>
+            </div>
+            <h3>Meta Mensal</h3>
+          </div>
 
-					<div class="cms-contact__fields">
-						<label>Valor da meta mensal (R$)
-							<input type="number" min="0" step="0.01" formControlName="monthlyGoal" />
-						</label>
-					</div>
-				</section>
+          <div class="cms-contact__fields">
+            <label
+              >Valor da meta mensal (R$)
+              <input type="number" min="0" step="0.01" formControlName="monthlyGoal" />
+            </label>
+          </div>
+        </section>
 
-				<section class="cms-bento cms-bento--banners">
-					<div class="cms-bento__header">
-						<div class="cms-bento__icon cms-bento__icon--banners">
-							<mat-icon aria-hidden="true">view_carousel</mat-icon>
-						</div>
-						<h3>Banners da Home</h3>
-					</div>
+        <section class="cms-bento cms-bento--banners">
+          <div class="cms-bento__header">
+            <div class="cms-bento__icon cms-bento__icon--banners">
+              <mat-icon aria-hidden="true">view_carousel</mat-icon>
+            </div>
+            <h3>Banners da Home</h3>
+          </div>
 
-					<div class="cms-banners__single" formArrayName="banners">
-						<div class="cms-banner-card" [formGroupName]="0">
-							@if (hasBannerImage()) {
-								<img [src]="bannerGroup.get('url')?.value" [alt]="bannerGroup.get('alt')?.value || 'Banner'" class="cms-banner-card__img" (error)="handleBannerImageError($event)" />
-							} @else {
-								<label class="cms-banner-dropzone" [class.cms-banner-dropzone--uploading]="isUploadingBanner()">
-									<input type="file" accept="image/*" (change)="handleBannerFileSelected($event)" />
-									<mat-icon>add_photo_alternate</mat-icon>
-									@if (isUploadingBanner()) {
-										<span>Enviando imagem...</span>
-									} @else {
-										<span>Clique para carregar o banner</span>
-									}
-								</label>
-							}
-						</div>
+          <div class="cms-banners__single" formArrayName="banners">
+            <div class="cms-banner-card" [formGroupName]="0">
+              @if (hasBannerImage()) {
+                <img
+                  [src]="bannerGroup.get('url')?.value"
+                  [alt]="bannerGroup.get('alt')?.value || 'Banner'"
+                  class="cms-banner-card__img"
+                  (error)="handleBannerImageError($event)"
+                />
+              } @else {
+                <label
+                  class="cms-banner-dropzone"
+                  [class.cms-banner-dropzone--uploading]="isUploadingBanner()"
+                >
+                  <input type="file" accept="image/*" (change)="handleBannerFileSelected($event)" />
+                  <mat-icon>add_photo_alternate</mat-icon>
+                  @if (isUploadingBanner()) {
+                    <span>Enviando imagem...</span>
+                  } @else {
+                    <span>Clique para carregar o banner</span>
+                  }
+                </label>
+              }
+            </div>
 
-						<div class="cms-banner-fields" [formGroupName]="0">
-							<input type="text" formControlName="label" placeholder="Nome do banner" />
-							<input type="url" formControlName="url" placeholder="URL da imagem" readonly />
-							<input type="text" formControlName="alt" placeholder="Texto alternativo" />
+            <div class="cms-banner-fields" [formGroupName]="0">
+              <input type="text" formControlName="label" placeholder="Nome do banner" />
+              <input type="url" formControlName="url" placeholder="URL da imagem" readonly />
+              <input type="text" formControlName="alt" placeholder="Texto alternativo" />
 
-							@if (hasBannerImage()) {
-								<label class="cms-banner-dropzone cms-banner-dropzone--compact" [class.cms-banner-dropzone--uploading]="isUploadingBanner()">
-									<input type="file" accept="image/*" (change)="handleBannerFileSelected($event)" />
-									<mat-icon>sync</mat-icon>
-									@if (isUploadingBanner()) {
-										<span>Enviando imagem...</span>
-									} @else {
-										<span>Trocar banner atual</span>
-									}
-								</label>
+              @if (hasBannerImage()) {
+                <label
+                  class="cms-banner-dropzone cms-banner-dropzone--compact"
+                  [class.cms-banner-dropzone--uploading]="isUploadingBanner()"
+                >
+                  <input type="file" accept="image/*" (change)="handleBannerFileSelected($event)" />
+                  <mat-icon>sync</mat-icon>
+                  @if (isUploadingBanner()) {
+                    <span>Enviando imagem...</span>
+                  } @else {
+                    <span>Trocar banner atual</span>
+                  }
+                </label>
 
-								<button type="button" class="cms-banner-remove" (click)="removeBannerImage()" [disabled]="isUploadingBanner()">
-									<mat-icon>delete</mat-icon>
-									<span>Remover imagem</span>
-								</button>
-							}
-						</div>
-					</div>
-				</section>
+                <button
+                  type="button"
+                  class="cms-banner-remove"
+                  (click)="removeBannerImage()"
+                  [disabled]="isUploadingBanner()"
+                >
+                  <mat-icon>delete</mat-icon>
+                  <span>Remover imagem</span>
+                </button>
+              }
+            </div>
+          </div>
+        </section>
 
-				<section class="cms-bento cms-bento--hero" formGroupName="heroButton">
-					<div class="cms-bento__header">
-						<div class="cms-bento__icon cms-bento__icon--hero">
-							<mat-icon aria-hidden="true">campaign</mat-icon>
-						</div>
-						<h3>Botão de Doação do Banner</h3>
-					</div>
+        <section class="cms-bento cms-bento--phrases">
+          <div class="cms-bento__header">
+            <div class="cms-bento__icon cms-bento__icon--phrases">
+              <mat-icon aria-hidden="true">format_quote</mat-icon>
+            </div>
+            <h3>Frases de Impacto</h3>
+          </div>
 
-					<div class="cms-hero__fields">
-						<label>
-							Texto do botão
-							<input type="text" formControlName="label" placeholder="Participar Agora" />
-						</label>
-						<label>
-							Link do botão
-							<input type="text" formControlName="link" placeholder="/public/raffles" />
-						</label>
-						<label>
-							Ícone do Material Icons
-							<select formControlName="icon">
-								@for (icon of materialIcons; track icon) {
-									<option [value]="icon">{{ icon }}</option>
-								}
-							</select>
-						</label>
-						<label>
-							Cor de fundo
-							<input type="color" formControlName="backgroundColor" />
-						</label>
-						<label>
-							Cor do texto
-							<input type="color" formControlName="textColor" />
-						</label>
-					</div>
+          <label class="cms-hero-title-field">
+            Título
+            <input
+              class="cms-hero-title-field__input"
+              type="text"
+              [formControl]="cmsForm.controls.heroButton.controls.title"
+              placeholder="Desconectando para Conectar"
+            />
+          </label>
 
-					<div class="cms-hero__preview">
-						<button
-							type="button"
-							class="cms-hero__button-preview"
-							[style.background-color]="cmsForm.controls.heroButton.controls.backgroundColor.value"
-							[style.color]="cmsForm.controls.heroButton.controls.textColor.value"
-						>
-							<mat-icon>{{ cmsForm.controls.heroButton.controls.icon.value }}</mat-icon>
-							<span>{{ cmsForm.controls.heroButton.controls.label.value }}</span>
-						</button>
-					</div>
-				</section>
+          <div class="cms-phrases__list" formArrayName="phrases">
+            @for (phraseControl of phrasesArray.controls; track $index) {
+              <div class="cms-phrase-card">
+                <textarea class="cms-phrase-card__input" [formControlName]="$index"></textarea>
+                <button type="button" (click)="deletePhrase($index)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            }
 
-				<section class="cms-bento cms-bento--reality" formGroupName="realitySection">
-					<div class="cms-bento__header">
-						<div class="cms-bento__icon cms-bento__icon--reality">
-							<mat-icon aria-hidden="true">auto_stories</mat-icon>
-						</div>
-						<h3>Área Nossa Realidade</h3>
-					</div>
+            <button type="button" class="cms-phrases__add" (click)="addPhrase()">
+              <mat-icon>add</mat-icon> Adicionar Nova Frase
+            </button>
+          </div>
+        </section>
 
-					<div class="cms-reality__fields">
-						<label>
-							Título da área
-							<input type="text" formControlName="title" placeholder="Nossa Realidade" />
-						</label>
-						<label>
-							Subtítulo
-							<textarea formControlName="subtitle" rows="3"></textarea>
-						</label>
-						<label>
-							Modo de exibição
-							<select formControlName="displayMode">
-								<option value="latest">Mostrar 4 últimas postagens</option>
-								<option value="selected">Selecionar publicações fixas</option>
-							</select>
-						</label>
-					</div>
+        <section class="cms-bento cms-bento--hero" formGroupName="heroButton">
+          <div class="cms-bento__header">
+            <div class="cms-bento__icon cms-bento__icon--hero">
+              <mat-icon aria-hidden="true">campaign</mat-icon>
+            </div>
+            <h3>Botão de Doação do Banner</h3>
+          </div>
 
-					@if (cmsForm.controls.realitySection.controls.displayMode.value === 'selected') {
-						<div class="cms-reality__notice">
-							<p>Selecione até 4 publicações para ficarem fixas nessa área.</p>
-						</div>
+          <div class="cms-hero__fields">
+            <label>
+              Texto do botão
+              <input type="text" formControlName="label" placeholder="Participar Agora" />
+            </label>
+            <label>
+              Link do botão
+              <input type="text" formControlName="link" placeholder="/public/raffles" />
+            </label>
+            <label>
+              Ícone do Material Icons
+              <select formControlName="icon">
+                @for (icon of materialIcons; track icon) {
+                  <option [value]="icon">{{ icon }}</option>
+                }
+              </select>
+            </label>
+            <label>
+              Cor de fundo
+              <input type="color" formControlName="backgroundColor" />
+            </label>
+            <label>
+              Cor do texto
+              <input type="color" formControlName="textColor" />
+            </label>
+          </div>
 
-						<div class="cms-reality__publications-controls">
-							<input
-								type="text"
-								class="cms-reality__publications-search styled-input"
-								placeholder="Buscar publicação..."
-								[value]="publicationSearch()"
-								(input)="onPublicationSearchChange($event.target.value)"
-								aria-label="Buscar publicação"
-							/>
-							<div class="cms-reality__pagination">
-								<button type="button" class="cms-pagination-btn" (click)="goToPreviousPublicationPage()" [disabled]="publicationPage() <= 1">
-									<mat-icon>chevron_left</mat-icon>
-								</button>
-								<span class="cms-pagination-info">Página {{ publicationPage() }} de {{ publicationTotalPages() }}</span>
-								<button type="button" class="cms-pagination-btn" (click)="goToNextPublicationPage()" [disabled]="publicationPage() >= publicationTotalPages()">
-									<mat-icon>chevron_right</mat-icon>
-								</button>
-							</div>
-						</div>
-						<div class="cms-reality__publications">
-							@if(isLoadingPublications()) {
-								<p>Carregando publicações...</p>
-							} @else if (filteredPagedPublications().length === 0) {
-								<p>Nenhuma publicação encontrada.</p>
-							}
-							@for (publication of filteredPagedPublications(); track publication.id) {
-								<label class="cms-publication-option" [class.cms-publication-option--selected]="isRealityPublicationSelected(publication.id)">
-									<input type="checkbox" [checked]="isRealityPublicationSelected(publication.id)" (change)="toggleRealityPublication(publication.id, $event)" />
-									<div class="cms-publication-option__content">
-										<strong>{{ publication.description }}</strong>
-										<span>{{ publication.eyebrow }}</span>
-									</div>
-								</label>
-							}
-						</div>
-					} @else {
-						<div class="cms-reality__notice">
-							<p>Quando este modo estiver ativo, a Home mostrará automaticamente as 4 publicações mais recentes.</p>
-						</div>
-					}
-				</section>
+          <div class="cms-hero__preview">
+            <button
+              type="button"
+              class="cms-hero__button-preview"
+              [style.background-color]="cmsForm.controls.heroButton.controls.backgroundColor.value"
+              [style.color]="cmsForm.controls.heroButton.controls.textColor.value"
+            >
+              <span>{{ cmsForm.controls.heroButton.controls.label.value }}</span>
+              <mat-icon>{{ cmsForm.controls.heroButton.controls.icon.value }}</mat-icon>
+            </button>
+          </div>
+        </section>
 
-				<section class="cms-bento cms-bento--phrases">
-					<div class="cms-bento__header">
-						<div class="cms-bento__icon cms-bento__icon--phrases">
-							<mat-icon aria-hidden="true">format_quote</mat-icon>
-						</div>
-						<h3>Frases de Impacto</h3>
-					</div>
+        <section class="cms-bento cms-bento--reality" formGroupName="realitySection">
+          <div class="cms-bento__header">
+            <div class="cms-bento__icon cms-bento__icon--reality">
+              <mat-icon aria-hidden="true">auto_stories</mat-icon>
+            </div>
+            <h3>Área Nossa Realidade</h3>
+          </div>
 
-					<div class="cms-phrases__list" formArrayName="phrases">
-						@for (phraseControl of phrasesArray.controls; track $index) {
-							<div class="cms-phrase-card">
-								<textarea class="cms-phrase-card__input" [formControlName]="$index"></textarea>
-								<button type="button" (click)="deletePhrase($index)"><mat-icon>delete</mat-icon></button>
-							</div>
-						}
+          <div class="cms-reality__fields">
+            <label>
+              Título da área
+              <input type="text" formControlName="title" placeholder="Nossa Realidade" />
+            </label>
+            <label>
+              Subtítulo
+              <textarea formControlName="subtitle" rows="3"></textarea>
+            </label>
+            <label>
+              Modo de exibição
+              <select formControlName="displayMode">
+                <option value="latest">Mostrar 4 últimas postagens</option>
+                <option value="selected">Selecionar publicações fixas</option>
+              </select>
+            </label>
+          </div>
 
-						<button type="button" class="cms-phrases__add" (click)="addPhrase()">
-							<mat-icon>add</mat-icon> Adicionar Nova Frase
-						</button>
-					</div>
-				</section>
+          @if (cmsForm.controls.realitySection.controls.displayMode.value === 'selected') {
+            <div class="cms-reality__notice">
+              <p>Selecione até 4 publicações para ficarem fixas nessa área.</p>
+            </div>
 
-				<section class="cms-bento cms-bento--contact" formGroupName="contact">
-					<div class="cms-bento__header">
-						<div class="cms-bento__icon cms-bento__icon--contact">
-							<mat-icon aria-hidden="true">contact_support</mat-icon>
-						</div>
-						<h3>Informações de Contato</h3>
-					</div>
-					<div class="cms-contact__fields">
-						<label>E-mail de Suporte
-							<input type="email" formControlName="email" />
-						</label>
-						<label>WhatsApp Principal
-							<input type="tel" formControlName="whatsapp" />
-						</label>
-						<label>Telefone Fixo
-							<input type="tel" formControlName="phone" />
-						</label>
-					</div>
-				</section>
+            <div class="cms-reality__publications-controls">
+              <input
+                type="text"
+                class="cms-reality__publications-search styled-input"
+                placeholder="Buscar publicação..."
+                [value]="publicationSearch()"
+                (input)="onPublicationSearchChange($event.target.value)"
+                aria-label="Buscar publicação"
+              />
+              <div class="cms-reality__pagination">
+                <button
+                  type="button"
+                  class="cms-pagination-btn"
+                  (click)="goToPreviousPublicationPage()"
+                  [disabled]="publicationPage() <= 1"
+                >
+                  <mat-icon>chevron_left</mat-icon>
+                </button>
+                <span class="cms-pagination-info"
+                  >Página {{ publicationPage() }} de {{ publicationTotalPages() }}</span
+                >
+                <button
+                  type="button"
+                  class="cms-pagination-btn"
+                  (click)="goToNextPublicationPage()"
+                  [disabled]="publicationPage() >= publicationTotalPages()"
+                >
+                  <mat-icon>chevron_right</mat-icon>
+                </button>
+              </div>
+            </div>
+            <div class="cms-reality__publications">
+              @if (isLoadingPublications()) {
+                <p>Carregando publicações...</p>
+              } @else if (filteredPagedPublications().length === 0) {
+                <p>Nenhuma publicação encontrada.</p>
+              }
+              @for (publication of filteredPagedPublications(); track publication.id) {
+                <label
+                  class="cms-publication-option"
+                  [class.cms-publication-option--selected]="
+                    isRealityPublicationSelected(publication.id)
+                  "
+                >
+                  <input
+                    type="checkbox"
+                    [checked]="isRealityPublicationSelected(publication.id)"
+                    (change)="toggleRealityPublication(publication.id, $event)"
+                  />
+                  <div class="cms-publication-option__content">
+                    <strong>{{ publication.description }}</strong>
+                    <span>{{ publication.eyebrow }}</span>
+                  </div>
+                </label>
+              }
+            </div>
+          } @else {
+            <div class="cms-reality__notice">
+              <p>
+                Quando este modo estiver ativo, a Home mostrará automaticamente as 4 publicações
+                mais recentes.
+              </p>
+            </div>
+          }
+        </section>
 
-				<section class="cms-bento cms-bento--socials" formGroupName="socials">
-					<div class="cms-bento__header">
-						<div class="cms-bento__icon cms-bento__icon--socials">
-							<mat-icon aria-hidden="true">share</mat-icon>
-						</div>
-						<h3>Redes Sociais</h3>
-					</div>
-					<div class="cms-socials__fields">
-						<label>Instagram
-							<input type="url" formControlName="instagram" />
-						</label>
-						<label>Facebook
-							<input type="url" formControlName="facebook" />
-						</label>
-						<label>YouTube
-							<input type="url" formControlName="youtube" />
-						</label>
-					</div>
-				</section>
-			</div>
-		</form>
-	}
+        <section class="cms-bento cms-bento--contact" formGroupName="contact">
+          <div class="cms-bento__header">
+            <div class="cms-bento__icon cms-bento__icon--contact">
+              <mat-icon aria-hidden="true">contact_support</mat-icon>
+            </div>
+            <h3>Informações de Contato</h3>
+          </div>
+          <div class="cms-contact__fields">
+            <label
+              >E-mail de Suporte
+              <input type="email" formControlName="email" />
+            </label>
+            <label
+              >WhatsApp Principal
+              <input type="tel" formControlName="whatsapp" />
+            </label>
+            <label
+              >Telefone Fixo
+              <input type="tel" formControlName="phone" />
+            </label>
+          </div>
+        </section>
+
+        <section class="cms-bento cms-bento--socials" formGroupName="socials">
+          <div class="cms-bento__header">
+            <div class="cms-bento__icon cms-bento__icon--socials">
+              <mat-icon aria-hidden="true">share</mat-icon>
+            </div>
+            <h3>Redes Sociais</h3>
+          </div>
+          <div class="cms-socials__fields">
+            <label
+              >Instagram
+              <input type="url" formControlName="instagram" />
+            </label>
+            <label
+              >Facebook
+              <input type="url" formControlName="facebook" />
+            </label>
+            <label
+              >YouTube
+              <input type="url" formControlName="youtube" />
+            </label>
+          </div>
+        </section>
+      </div>
+    </form>
+  }
 </section>

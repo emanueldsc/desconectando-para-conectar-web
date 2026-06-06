@@ -32,6 +32,7 @@ describe('Cms', () => {
             youtube: '',
           },
           heroButton: {
+            title: 'Desconectando para Conectar',
             label: 'Doar Agora',
             link: '/public/raffles',
             icon: 'favorite_border',
@@ -56,6 +57,7 @@ describe('Cms', () => {
           contact: { email: '', whatsapp: '', phone: '' },
           socials: { instagram: '', facebook: '', youtube: '' },
           heroButton: {
+            title: 'Desconectando para Conectar',
             label: 'Doar Agora',
             link: '/public/raffles',
             icon: 'favorite_border',

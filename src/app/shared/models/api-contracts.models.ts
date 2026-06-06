@@ -54,6 +54,7 @@ export interface Institution {
 }
 
 export interface CmsHeroButton {
+  title: string;
   label: string;
   link: string;
   icon: string;

@@ -54,6 +54,7 @@ export class Cms {
     banners: this.fb.array([] as ReturnType<Cms['createBannerGroup']>[]),
     phrases: this.fb.array([] as ReturnType<Cms['createPhraseControl']>[]),
     heroButton: this.fb.nonNullable.group({
+      title: ['Desconectando para Conectar', [Validators.required]],
       label: ['Participar Agora', [Validators.required]],
       link: ['/public/raffles', [Validators.required]],
       icon: ['favorite_border', [Validators.required]],
@@ -430,6 +431,7 @@ export class Cms {
 
   private defaultHeroButton(): CmsHeroButton {
     return {
+      title: 'Desconectando para Conectar',
       label: 'Participar Agora',
       link: '/public/raffles',
       icon: 'favorite_border',

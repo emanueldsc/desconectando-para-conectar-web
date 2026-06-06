@@ -74,12 +74,17 @@
   color: var(--mat-sys-on-primary, #ffffff);
   font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
   font-size: 1.1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  text-transform: none;
+  letter-spacing: normal;
   border-radius: var(--border-radius, 20px);
   text-decoration: none;
   transition: opacity 0.2s;
   margin: 0 auto;
+
+  span {
+    text-transform: none;
+    letter-spacing: normal;
+  }
 
   &:hover {
     opacity: 0.88;
