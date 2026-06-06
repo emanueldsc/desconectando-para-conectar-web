@@ -78,12 +78,20 @@ export class AdminRaffleApiService {
         headers: this.authorizationHeaders(token),
       })
       .pipe(
-        map((response) => ({
-          winnerName: response.data.winnerName,
-          winnerNumber: response.data.winnerNumber ?? payload.winnerNumber,
-          extractionNumber: response.data.extractionNumber ?? payload.extractionNumber,
-          processedAt: new Date().toISOString(),
-        }))
+        map((response) => {
+          const extractionNumber = response.data.extractionNumber;
+
+          if (!Number.isFinite(extractionNumber) || Number(extractionNumber) < 1) {
+            throw new Error('Numero de extracao invalido retornado pelo backend.');
+          }
+
+          return {
+            winnerName: response.data.winnerName,
+            winnerNumber: response.data.winnerNumber ?? payload.winnerNumber,
+            extractionNumber: Number(extractionNumber),
+            processedAt: new Date().toISOString(),
+          };
+        })
       );
   }
 

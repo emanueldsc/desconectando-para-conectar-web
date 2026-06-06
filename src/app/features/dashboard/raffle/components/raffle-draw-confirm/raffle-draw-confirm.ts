@@ -25,7 +25,6 @@ export class RaffleDrawConfirm {
 
   protected readonly form = this.fb.nonNullable.group({
     winnerNumber: [1, [Validators.required, Validators.min(1)]],
-    extractionNumber: [1, [Validators.required, Validators.min(1)]],
     winnerName: ['', [Validators.maxLength(120)]],
   });
 
@@ -33,7 +32,6 @@ export class RaffleDrawConfirm {
     effect(() => {
       this.form.reset({
         winnerNumber: this.raffle().rangeStart,
-        extractionNumber: 1,
         winnerName: '',
       });
     });
@@ -56,7 +54,6 @@ export class RaffleDrawConfirm {
 
     this.confirm.emit({
       winnerNumber: payload.winnerNumber,
-      extractionNumber: payload.extractionNumber,
       winnerName: payload.winnerName.trim() === '' ? undefined : payload.winnerName,
     });
   }

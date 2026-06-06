@@ -47,6 +47,5 @@ export interface DrawRaffleResult {
 
 export interface DrawRafflePayload {
   winnerNumber: number;
-  extractionNumber: number;
   winnerName?: string;
 }

@@ -4,7 +4,7 @@
       <mat-icon aria-hidden="true">confirmation_number</mat-icon>
       <h2 id="draw-title">Finalizar Rifa</h2>
       <p>
-        Informe o número da extração e o número ganhador da rifa <strong>{{ raffle().title }}</strong>. O nome da pessoa sorteada continua opcional.
+        O número da extração é gerado automaticamente. Informe apenas o número ganhador da rifa <strong>{{ raffle().title }}</strong>. O nome da pessoa sorteada continua opcional.
       </p>
     </header>
 
@@ -30,16 +30,6 @@
     </article>
 
     <form class="draw-modal__form" [formGroup]="form" (ngSubmit)="submitDraw()">
-      <label class="draw-modal__field">
-        <span>Número da extração</span>
-        <input
-          type="number"
-          formControlName="extractionNumber"
-          min="1"
-          placeholder="Ex: 15234"
-        />
-      </label>
-
       <label class="draw-modal__field">
         <span>Número sorteado</span>
         <input
