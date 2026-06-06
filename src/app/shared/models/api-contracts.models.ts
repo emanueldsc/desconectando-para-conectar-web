@@ -80,6 +80,11 @@ export interface HomePageResponse {
   hero: HeroData;
   impactPhrases: string[];
   realitySection: HomeRealitySection;
+  socials?: {
+    instagram?: string;
+    facebook?: string;
+    youtube?: string;
+  };
   featuredRaffles: FeaturedRaffleCard[];
   institutions: Institution[];
   statistics: {

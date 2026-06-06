@@ -7,7 +7,7 @@
     </p>
 
     <ul class="footer__social" role="list">
-      @for (item of socialLinks; track item.label) {
+      @for (item of socialLinks(); track item.label) {
         <li>
           <a
             class="footer__social-link"
