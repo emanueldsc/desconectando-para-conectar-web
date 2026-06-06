@@ -1,6 +1,6 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { PublicationPayload } from '../../features/dashboard/content/content.models';
 import { API_BASE_URL } from './api.config';
 
@@ -101,7 +101,17 @@ export class AdminBlogApiService {
 
     return this.http.delete<AdminBlogMutationResponse>(`${this.baseUrl}/admin/content/posts/${postId}`, {
       headers: this.authorizationHeaders(token)
-    });
+    }).pipe(
+      catchError((error: unknown) => {
+        if (error instanceof HttpErrorResponse && error.status === 0) {
+          return this.http.post<AdminBlogMutationResponse>(`${this.baseUrl}/admin/content/posts/${postId}/delete`, {}, {
+            headers: this.authorizationHeaders(token)
+          });
+        }
+
+        return throwError(() => error);
+      })
+    );
   }
 
   public uploadFeaturedImage(file: File, previousUrl?: string): Observable<AdminBlogImageUploadResponse> {
