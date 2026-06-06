@@ -98,7 +98,7 @@
             <span>Perfil no Portal</span>
             <select formControlName="portalRole">
               <option value="none">Sem perfil</option>
-              <option value="manager" [disabled]="isChildCategory()">Gestor</option>
+              <option value="manager" [disabled]="isChildCategory() || !isEditing()">Gestor</option>
               <option value="publisher" [disabled]="isChildCategory()">Publicador</option>
             </select>
           </label>

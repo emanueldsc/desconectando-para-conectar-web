@@ -76,6 +76,11 @@ export class UserCreateModal {
 
     if (value === 'child') {
       this.form.controls.portalRole.setValue('none', { emitEvent: false });
+      return;
+    }
+
+    if (this.isUsersSection() && !this.isEditing()) {
+      this.form.controls.portalRole.setValue('publisher', { emitEvent: false });
     }
   }
 
@@ -87,6 +92,11 @@ export class UserCreateModal {
 
       if (this.selectedCategory() === 'child') {
         this.form.controls.portalRole.setValue('none', { emitEvent: false });
+        return;
+      }
+
+      if (!this.isEditing()) {
+        this.form.controls.portalRole.setValue('publisher', { emitEvent: false });
       }
     },
     { allowSignalWrites: true }
@@ -120,7 +130,7 @@ export class UserCreateModal {
           fullName: '',
           phone: '',
           category: defaultCategory,
-          portalRole: this.section() === 'users' ? 'none' : 'buyer',
+          portalRole: this.section() === 'users' ? 'publisher' : 'buyer',
           email: '',
           password: '',
           passwordConfirmation: '',
@@ -207,6 +217,8 @@ export class UserCreateModal {
         ? 'buyer'
         : payload.category === 'child'
           ? 'none'
+          : !this.isEditing()
+            ? 'publisher'
           : payload.portalRole,
       email: payload.email,
       password: payload.password,

@@ -1,4 +1,5 @@
 import { Routes } from "@angular/router";
+import { managerOnlyDashboardGuard } from '../auth/guards/manager-only-dashboard.guard';
 
 export const DASHBOARD_ROUTES: Routes = [
   {
@@ -15,14 +16,17 @@ export const DASHBOARD_ROUTES: Routes = [
   },
   {
     path: 'cms',
+    canActivate: [managerOnlyDashboardGuard],
     loadComponent: () => import('./cms/cms').then((m) => m.Cms)
   },
   {
     path: 'donations',
+    canActivate: [managerOnlyDashboardGuard],
     loadComponent: () => import('./donations/donations').then((m) => m.Donations)
   },
   {
     path: 'users',
+    canActivate: [managerOnlyDashboardGuard],
     loadComponent: () => import('./users/users').then((m) => m.Users)
   }
 ]

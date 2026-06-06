@@ -27,7 +27,6 @@ export class RegisterInternal {
   protected readonly registerForm = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.minLength(3)]],
     email: ['', [Validators.required, Validators.email]],
-    role: this.fb.nonNullable.control<'manager' | 'publisher'>('manager', [Validators.required]),
     password: ['', [Validators.required, Validators.minLength(8)]],
     password_confirmation: ['', [Validators.required]],
   });
@@ -65,7 +64,10 @@ export class RegisterInternal {
       return;
     }
 
-    const payload = this.registerForm.getRawValue();
+    const payload = {
+      ...this.registerForm.getRawValue(),
+      role: 'publisher' as const,
+    };
 
     if (payload.password !== payload.password_confirmation) {
       this.apiFeedback.set({
@@ -94,7 +96,7 @@ export class RegisterInternal {
   }
 
   protected hasError(
-    controlName: 'name' | 'email' | 'role' | 'password' | 'password_confirmation',
+    controlName: 'name' | 'email' | 'password' | 'password_confirmation',
     errorCode: 'required' | 'email' | 'minlength'
   ): boolean {
     const control = this.registerForm.controls[controlName];

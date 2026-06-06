@@ -154,9 +154,13 @@ export class Users {
         return;
       }
 
-      const role = section === 'members' ? 'buyer' : payload.portalRole;
+      const role = section === 'members'
+        ? 'buyer'
+        : payload.category === 'child'
+          ? 'none'
+          : payload.portalRole;
 
-      if (role !== 'buyer' && role !== 'manager' && role !== 'publisher') {
+      if (role !== 'none' && role !== 'buyer' && role !== 'manager' && role !== 'publisher') {
         this.loadError.set('Perfil inválido para atualização.');
         return;
       }
@@ -269,11 +273,15 @@ export class Users {
     notes: string | null;
     role: 'buyer' | 'manager' | 'publisher' | 'none';
   }): UserMember {
+    const category = item.role === 'none' || item.role === 'buyer'
+      ? 'child'
+      : 'collaborator';
+
     return {
       id: item.id,
       fullName: item.fullName,
       phone: item.phone ?? '-',
-      category: item.role === 'buyer' ? 'child' : 'collaborator',
+      category,
       portalRole: item.role,
       address: item.address ?? undefined,
       notes: item.notes ?? '',

@@ -408,7 +408,7 @@ export interface RegisterMemberRequest {
 }
 
 export interface RegisterInternalRequest extends RegisterMemberRequest {
-  role: 'manager' | 'publisher';
+  role?: 'publisher';
 }
 
 export interface RegisterSuccessResponse {

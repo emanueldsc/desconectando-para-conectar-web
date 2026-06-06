@@ -48,14 +48,8 @@
       </div>
 
       <div class="register-form__field">
-        <label for="role">Perfil interno</label>
-        <select id="role" formControlName="role" [attr.aria-invalid]="hasError('role', 'required')">
-          <option value="manager">Gestor</option>
-          <option value="publisher">Publicador</option>
-        </select>
-        @if (hasError('role', 'required')) {
-          <p class="register-form__error">Selecione o perfil do colaborador.</p>
-        }
+        <label>Perfil interno</label>
+        <input type="text" value="Publicador" readonly aria-readonly="true" />
       </div>
 
       <div class="register-form__field">

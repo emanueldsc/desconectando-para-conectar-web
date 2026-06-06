@@ -46,7 +46,19 @@ export class App {
     this.isDashboard() ? 'dashboard' : 'public'
   );
 
-  protected readonly activeMenuItems = computed(() => this.menuItems());
+  protected readonly activeMenuItems = computed(() => {
+    this.currentUrl();
+
+    const items = this.menuItems();
+    const authRole = this.readAuthUser()?.role?.trim().toLowerCase();
+
+    if (authRole !== 'publisher') {
+      return items;
+    }
+
+    const blockedIds = new Set(['dash-cms', 'dash-users', 'dash-donations']);
+    return items.filter((item) => !blockedIds.has(item.id));
+  });
   protected readonly internalMenuItems = computed(() =>
     this.activeMenuItems().filter((item) => item.scope === 'dashboard')
   );
