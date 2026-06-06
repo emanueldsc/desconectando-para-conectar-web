@@ -2,7 +2,7 @@ import { DatePipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, finalize, firstValueFrom, map, of } from 'rxjs';
+import { catchError, firstValueFrom, map, of } from 'rxjs';
 import {
     RaffleDetailResponse,
     RaffleListItem,
@@ -37,7 +37,10 @@ interface PendingReservation {
   reservationCode: string;
   reservedUntil: string;
   receiptFile: File | null;
-  sendingReceipt: boolean;
+  selectedFileName: string | null;
+  isDragOver: boolean;
+  uploadStatus: 'idle' | 'file-selected' | 'uploading' | 'success' | 'error';
+  uploadError: string | null;
 }
 
 interface AuthUserStorage {
@@ -56,6 +59,7 @@ export class Raffle {
   private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly receiptSuccessTimers = new Map<number, ReturnType<typeof setTimeout>>();
 
   readonly loading = signal(true);
   readonly initialRaffleSlug = signal<string | null>(null);
@@ -92,6 +96,7 @@ export class Raffle {
   openRaffle(item: RaffleListItem, index?: number): void {
     this.actionMessage.set(null);
     this.selectedNumbers.set([]);
+    this.clearReceiptSuccessTimers();
     this.pendingReservations.set([]);
 
     if (index !== undefined) {
@@ -183,25 +188,52 @@ export class Raffle {
 
   onReceiptSelected(number: number, event: Event): void {
     const input = event.target as HTMLInputElement;
-    const file = input.files?.item(0);
+    const file = input.files?.item(0) ?? null;
 
-    if (!file) {
-      input.value = '';
-      return;
-    }
-
-    this.pendingReservations.update((reservations) =>
-      reservations.map((reservation) =>
-        reservation.number === number
-          ? {
-              ...reservation,
-              receiptFile: file,
-            }
-          : reservation
-      )
-    );
+    this.assignReceiptFile(number, file);
 
     input.value = '';
+  }
+
+  onReceiptDragOver(number: number, event: DragEvent): void {
+    event.preventDefault();
+    this.updatePendingReservation(number, (reservation) => ({
+      ...reservation,
+      isDragOver: true,
+    }));
+  }
+
+  onReceiptDragLeave(number: number, event: DragEvent): void {
+    event.preventDefault();
+    this.updatePendingReservation(number, (reservation) => ({
+      ...reservation,
+      isDragOver: false,
+    }));
+  }
+
+  onReceiptDrop(number: number, event: DragEvent): void {
+    event.preventDefault();
+    const file = event.dataTransfer?.files?.item(0) ?? null;
+    this.assignReceiptFile(number, file);
+    this.updatePendingReservation(number, (reservation) => ({
+      ...reservation,
+      isDragOver: false,
+    }));
+  }
+
+  clearSelectedReceiptFile(number: number, event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    this.clearReceiptSuccessTimer(number);
+    this.updatePendingReservation(number, (reservation) => ({
+      ...reservation,
+      receiptFile: null,
+      selectedFileName: null,
+      uploadStatus: 'idle',
+      uploadError: null,
+      isDragOver: false,
+    }));
   }
 
   async reserveSelectedNumbers(): Promise<void> {
@@ -232,7 +264,10 @@ export class Raffle {
           reservationCode: response.data.reservationCode,
           reservedUntil: response.data.reservedUntil,
           receiptFile: null,
-          sendingReceipt: false,
+          selectedFileName: null,
+          isDragOver: false,
+          uploadStatus: 'idle',
+          uploadError: null,
         });
       } catch {
         failed++;
@@ -260,7 +295,7 @@ export class Raffle {
     const raffle = this.selectedRaffle();
     const reservation = this.pendingReservations().find((entry) => entry.number === number);
 
-    if (!raffle || !reservation || !reservation.receiptFile || reservation.sendingReceipt) {
+    if (!raffle || !reservation || !reservation.receiptFile || reservation.uploadStatus === 'uploading') {
       return;
     }
 
@@ -269,49 +304,101 @@ export class Raffle {
       return;
     }
 
-    this.pendingReservations.update((reservations) =>
-      reservations.map((entry) =>
-        entry.number === number
-          ? {
-              ...entry,
-              sendingReceipt: true,
-            }
-          : entry
-      )
-    );
-
-    this.actionMessage.set(null);
+    this.clearReceiptSuccessTimer(number);
+    this.updatePendingReservation(number, (entry) => ({
+      ...entry,
+      uploadStatus: 'uploading',
+      uploadError: null,
+    }));
 
     this.raffleApi
       .uploadReservationReceipt(raffle.id, number, reservation.reservationCode, reservation.receiptFile)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => {
-          this.pendingReservations.update((reservations) =>
-            reservations.map((entry) =>
-              entry.number === number
-                ? {
-                    ...entry,
-                    sendingReceipt: false,
-                  }
-                : entry
-            )
-          );
-        })
-      )
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.pendingReservations.update((reservations) =>
-            reservations.filter((entry) => entry.number !== number)
-          );
+          this.updatePendingReservation(number, (entry) => ({
+            ...entry,
+            uploadStatus: 'success',
+            uploadError: null,
+          }));
 
-          this.actionMessage.set('Comprovante enviado com sucesso. Aguarde a confirmação do administrador.');
+          const timerId = setTimeout(() => {
+            this.pendingReservations.update((reservations) =>
+              reservations.filter((entry) => entry.number !== number)
+            );
+            this.receiptSuccessTimers.delete(number);
+          }, 2200);
+
+          this.receiptSuccessTimers.set(number, timerId);
           this.refreshSelectedRaffle();
         },
         error: () => {
-          this.actionMessage.set('Nao foi possivel enviar o comprovante deste ponto.');
+          this.updatePendingReservation(number, (entry) => ({
+            ...entry,
+            uploadStatus: 'error',
+            uploadError: 'Nao foi possivel enviar o comprovante deste ponto. Tente novamente.',
+          }));
         },
       });
+  }
+
+  private updatePendingReservation(number: number, updater: (reservation: PendingReservation) => PendingReservation): void {
+    this.pendingReservations.update((reservations) =>
+      reservations.map((reservation) =>
+        reservation.number === number
+          ? updater(reservation)
+          : reservation
+      )
+    );
+  }
+
+  private assignReceiptFile(number: number, file: File | null): void {
+    if (!file) {
+      return;
+    }
+
+    if (!this.isSupportedReceiptFile(file)) {
+      this.updatePendingReservation(number, (reservation) => ({
+        ...reservation,
+        receiptFile: null,
+        selectedFileName: null,
+        uploadStatus: 'error',
+        uploadError: 'Formato invalido. Envie JPG, PNG ou WEBP.',
+      }));
+      return;
+    }
+
+    this.clearReceiptSuccessTimer(number);
+    this.updatePendingReservation(number, (reservation) => ({
+      ...reservation,
+      receiptFile: file,
+      selectedFileName: file.name,
+      uploadStatus: 'file-selected',
+      uploadError: null,
+    }));
+  }
+
+  private isSupportedReceiptFile(file: File): boolean {
+    return ['image/jpeg', 'image/png', 'image/webp'].includes(file.type);
+  }
+
+  private clearReceiptSuccessTimer(number: number): void {
+    const timer = this.receiptSuccessTimers.get(number);
+
+    if (!timer) {
+      return;
+    }
+
+    clearTimeout(timer);
+    this.receiptSuccessTimers.delete(number);
+  }
+
+  private clearReceiptSuccessTimers(): void {
+    for (const timer of this.receiptSuccessTimers.values()) {
+      clearTimeout(timer);
+    }
+
+    this.receiptSuccessTimers.clear();
   }
 
   private loadRaffles(): void {

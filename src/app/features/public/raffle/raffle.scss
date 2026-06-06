@@ -306,7 +306,16 @@
 }
 
 .raffle-detail__action-btn--secondary {
-  background: #d35400;
+  background: linear-gradient(135deg, #be4d00, #d96818);
+  border: 1px solid #a84200;
+  box-shadow: 0 6px 14px rgba(190, 77, 0, 0.28);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+.raffle-detail__action-btn--secondary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+  box-shadow: 0 9px 20px rgba(190, 77, 0, 0.34);
 }
 
 .raffle-detail__receipt-box {
@@ -324,6 +333,131 @@
   padding: 0.65rem;
   display: grid;
   gap: 0.45rem;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.raffle-detail__upload-zone {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 0.3rem;
+  border: 2px dashed #bf8e75;
+  background: #fff6f1;
+  border-radius: 0.7rem;
+  min-height: 104px;
+  padding: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+
+  &:hover,
+  &.raffle-detail__upload-zone--dragging {
+    border-color: #2d5a27;
+    background: #eef8e8;
+  }
+
+  input[type='file'] {
+    display: none;
+  }
+
+  small {
+    color: #594238;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+}
+
+.raffle-detail__upload-zone--has-file {
+  border-color: #2d5a27;
+  background: #eef8e8;
+}
+
+.raffle-detail__upload-zone-title {
+  color: #2d5a27;
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.raffle-detail__upload-zone-file {
+  color: #20431c;
+  font-size: 0.92rem;
+  font-weight: 800;
+  max-width: 100%;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.raffle-detail__upload-zone-remove {
+  border: 1px solid #8b2d22;
+  background: #fff;
+  color: #8b2d22;
+  border-radius: 999px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.raffle-detail__upload-zone-remove:hover {
+  background: #fff0ee;
+}
+
+.raffle-detail__receipt-item--uploading {
+  border-color: #3d6f90;
+  background: #edf7ff;
+}
+
+.raffle-detail__receipt-item--success {
+  border-color: #2d7a2e;
+  background: #eef9ea;
+}
+
+.raffle-detail__receipt-item--error {
+  border-color: #b03e2f;
+  background: #fff0ee;
+}
+
+.raffle-detail__receipt-file {
+  margin: 0;
+  font-size: 0.84rem;
+  color: #594238;
+}
+
+.raffle-detail__receipt-status {
+  margin: 0;
+  font-size: 0.84rem;
+  color: #3d6f90;
+  font-weight: 700;
+}
+
+.raffle-detail__receipt-status--success {
+  color: #23501e;
+}
+
+.raffle-detail__receipt-status--error {
+  color: #8b2d22;
+}
+
+.raffle-detail__btn-spinner {
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  animation: raffle-upload-spin 0.7s linear infinite;
+}
+
+.raffle-detail__action-btn--secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+@keyframes raffle-upload-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .raffle-detail__receipt-box p {

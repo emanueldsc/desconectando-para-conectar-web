@@ -108,14 +108,76 @@
             @if (pendingReservations().length > 0) {
               <div class="raffle-detail__receipt-box">
                 @for (reservation of pendingReservations(); track reservation.number) {
-                  <div class="raffle-detail__receipt-item">
+                  <div
+                    class="raffle-detail__receipt-item"
+                    [class.raffle-detail__receipt-item--uploading]="reservation.uploadStatus === 'uploading'"
+                    [class.raffle-detail__receipt-item--success]="reservation.uploadStatus === 'success'"
+                    [class.raffle-detail__receipt-item--error]="reservation.uploadStatus === 'error'"
+                    [attr.aria-busy]="reservation.uploadStatus === 'uploading'"
+                  >
                     <p><strong>Ponto {{ reservation.number }}</strong></p>
                     <p><strong>Código da reserva:</strong> {{ reservation.reservationCode }}</p>
                     <p><strong>Validade:</strong> {{ reservation.reservedUntil }}</p>
-                    <input type="file" accept="image/png,image/jpeg,image/webp" (change)="onReceiptSelected(reservation.number, $event)" />
-                    <button type="button" class="raffle-detail__action-btn raffle-detail__action-btn--secondary" [disabled]="!reservation.receiptFile || reservation.sendingReceipt" (click)="sendReceipt(reservation.number)">
-                      {{ reservation.sendingReceipt ? 'Enviando...' : 'Enviar comprovante deste ponto' }}
+
+                    <label
+                      class="raffle-detail__upload-zone"
+                      [class.raffle-detail__upload-zone--dragging]="reservation.isDragOver"
+                      [class.raffle-detail__upload-zone--has-file]="!!reservation.selectedFileName"
+                      (dragover)="onReceiptDragOver(reservation.number, $event)"
+                      (dragleave)="onReceiptDragLeave(reservation.number, $event)"
+                      (drop)="onReceiptDrop(reservation.number, $event)"
+                    >
+                      @if (reservation.selectedFileName) {
+                        <span class="raffle-detail__upload-zone-file" role="status" aria-live="polite">
+                          {{ reservation.selectedFileName }}
+                        </span>
+                        <button
+                          type="button"
+                          class="raffle-detail__upload-zone-remove"
+                          (click)="clearSelectedReceiptFile(reservation.number, $event)"
+                        >
+                          Remover arquivo
+                        </button>
+                      } @else {
+                        <span class="raffle-detail__upload-zone-title">Arraste a imagem do comprovante ou clique para anexar</span>
+                        <small>Formatos aceitos: JPG, PNG e WEBP</small>
+                      }
+                      <input type="file" accept="image/png,image/jpeg,image/webp" (change)="onReceiptSelected(reservation.number, $event)" />
+                    </label>
+
+                    <button
+                      type="button"
+                      class="raffle-detail__action-btn raffle-detail__action-btn--secondary"
+                      [disabled]="!reservation.receiptFile || reservation.uploadStatus === 'uploading' || reservation.uploadStatus === 'success'"
+                      (click)="sendReceipt(reservation.number)"
+                    >
+                      @if (reservation.uploadStatus === 'uploading') {
+                        <span class="raffle-detail__btn-spinner" aria-hidden="true"></span>
+                        <span>Enviando comprovante...</span>
+                      } @else if (reservation.uploadStatus === 'success') {
+                        <span>Comprovante enviado</span>
+                      } @else {
+                        <span>Enviar comprovante deste ponto</span>
+                      }
                     </button>
+
+                    @if (reservation.uploadStatus === 'uploading') {
+                      <p class="raffle-detail__receipt-status" role="status" aria-live="polite">
+                        Estamos processando o upload deste comprovante...
+                      </p>
+                    }
+
+                    @if (reservation.uploadStatus === 'success') {
+                      <p class="raffle-detail__receipt-status raffle-detail__receipt-status--success" role="status" aria-live="polite">
+                        Comprovante enviado com sucesso. Aguarde a confirmação do administrador.
+                      </p>
+                    }
+
+                    @if (reservation.uploadStatus === 'error' && reservation.uploadError) {
+                      <p class="raffle-detail__receipt-status raffle-detail__receipt-status--error" role="alert">
+                        {{ reservation.uploadError }}
+                      </p>
+                    }
                   </div>
                 }
               </div>
