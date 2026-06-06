@@ -13,11 +13,23 @@
     <label class="create-raffle__field">
       <span>Título da Rifa</span>
       <input type="text" formControlName="title" placeholder="Ex: Rifa Solidária da Capela" />
+      @if (form.controls.title.touched && form.controls.title.hasError('required')) {
+        <small class="create-raffle__field-error">Informe o título da rifa.</small>
+      }
+      @if (form.controls.title.touched && form.controls.title.hasError('minlength')) {
+        <small class="create-raffle__field-error">O título deve ter ao menos 3 caracteres.</small>
+      }
     </label>
 
     <label class="create-raffle__field">
       <span>Descrição</span>
       <textarea rows="3" formControlName="description" placeholder="Conte a história por trás desta iniciativa..."></textarea>
+      @if (form.controls.description.touched && form.controls.description.hasError('required')) {
+        <small class="create-raffle__field-error">Informe uma descrição para a rifa.</small>
+      }
+      @if (form.controls.description.touched && form.controls.description.hasError('minlength')) {
+        <small class="create-raffle__field-error">A descrição deve ter ao menos 12 caracteres.</small>
+      }
     </label>
 
     <div class="create-raffle__image-upload">
@@ -47,21 +59,39 @@
       <label class="create-raffle__field">
         <span>Início do Intervalo</span>
         <input type="number" formControlName="rangeStart" />
+        @if (form.controls.rangeStart.touched && form.controls.rangeStart.hasError('min')) {
+          <small class="create-raffle__field-error">O início deve ser maior ou igual a 1.</small>
+        }
       </label>
       <label class="create-raffle__field">
         <span>Fim do Intervalo</span>
         <input type="number" formControlName="rangeEnd" />
+        @if (form.controls.rangeEnd.touched && form.controls.rangeEnd.hasError('min')) {
+          <small class="create-raffle__field-error">O fim deve ser maior ou igual a 1.</small>
+        }
       </label>
     </div>
+    @if ((form.controls.rangeStart.touched || form.controls.rangeEnd.touched) && form.hasError('rangeInvalid')) {
+      <small class="create-raffle__field-error">O fim do intervalo deve ser maior ou igual ao início.</small>
+    }
 
     <label class="create-raffle__field">
       <span>Valor por Bilhete (R$)</span>
       <input type="number" step="0.01" formControlName="ticketPrice" />
+      @if (form.controls.ticketPrice.touched && form.controls.ticketPrice.hasError('min')) {
+        <small class="create-raffle__field-error">O valor por bilhete deve ser no mínimo R$ 1,00.</small>
+      }
     </label>
 
     <label class="create-raffle__field">
       <span>Tempo de Reserva (minutos)</span>
       <input type="number" min="1" max="10080" formControlName="reservationTimeoutMinutes" />
+      @if (form.controls.reservationTimeoutMinutes.touched && form.controls.reservationTimeoutMinutes.hasError('min')) {
+        <small class="create-raffle__field-error">O tempo mínimo de reserva é 1 minuto.</small>
+      }
+      @if (form.controls.reservationTimeoutMinutes.touched && form.controls.reservationTimeoutMinutes.hasError('max')) {
+        <small class="create-raffle__field-error">O tempo máximo de reserva é 10080 minutos.</small>
+      }
     </label>
 
     <label class="create-raffle__field">
@@ -79,9 +109,9 @@
 
     <div class="create-raffle__actions">
       <button type="button" class="create-raffle__cancel" (click)="cancel.emit()">Cancelar</button>
-      <button type="submit" class="create-raffle__submit">
+      <button type="submit" class="create-raffle__submit" [disabled]="isSaving() || isUploadingImage()">
         <mat-icon aria-hidden="true">add_circle</mat-icon>
-        {{ editingRaffle() ? 'Salvar Alterações' : 'Criar Rifa' }}
+        {{ isSaving() ? 'Salvando...' : editingRaffle() ? 'Salvar Alterações' : 'Criar Rifa' }}
       </button>
     </div>
   </form>

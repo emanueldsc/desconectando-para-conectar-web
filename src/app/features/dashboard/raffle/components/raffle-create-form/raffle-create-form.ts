@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, effect, inject, input, output, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { finalize } from 'rxjs';
 import { AdminRaffleApiService } from '../../../../../shared/services/admin-raffle-api.service';
@@ -19,6 +19,7 @@ export class RaffleCreateForm {
   private readonly destroyRef = inject(DestroyRef);
 
   readonly editingRaffle = input<RaffleCampaign | null>(null);
+  readonly isSaving = input(false);
   readonly cancel = output<void>();
   readonly save = output<CreateRafflePayload>();
   protected readonly uploadedImageUrl = signal<string | null>(null);
@@ -34,7 +35,7 @@ export class RaffleCreateForm {
     reservationTimeoutMinutes: [30, [Validators.required, Validators.min(1), Validators.max(10080)]],
     drawDate: [''],
     drawDateUndefined: [false],
-  });
+  }, { validators: [rangeValidator] });
 
   protected readonly heading = computed(() =>
     this.editingRaffle() ? 'Editar Ação Entre Amigos' : 'Nova Ação Entre Amigos'
@@ -46,37 +47,40 @@ export class RaffleCreateForm {
       : 'Crie sua rifa inspirada na força do sertão.'
   );
 
-  protected ngOnChanges(): void {
-    const raffle = this.editingRaffle();
-    if (!raffle) {
-      this.form.reset({
-        title: '',
-        description: '',
-        rangeStart: 1,
-        rangeEnd: 100,
-        ticketPrice: 10,
-        reservationTimeoutMinutes: 30,
-        drawDate: '',
-        drawDateUndefined: false,
-      });
-      this.uploadedImageUrl.set(null);
-      this.uploadError.set(null);
-      return;
-    }
+  private readonly syncEditingState = effect(
+    () => {
+      const raffle = this.editingRaffle();
+      if (!raffle) {
+        this.form.reset({
+          title: '',
+          description: '',
+          rangeStart: 1,
+          rangeEnd: 100,
+          ticketPrice: 10,
+          reservationTimeoutMinutes: 30,
+          drawDate: '',
+          drawDateUndefined: false,
+        });
+        this.uploadedImageUrl.set(null);
+        this.uploadError.set(null);
+        return;
+      }
 
-    this.form.reset({
-      title: raffle.title,
-      description: raffle.description,
-      rangeStart: raffle.rangeStart,
-      rangeEnd: raffle.rangeEnd,
-      ticketPrice: raffle.ticketPrice,
-      reservationTimeoutMinutes: raffle.reservationTimeoutMinutes,
-      drawDate: this.toDateInputValue(raffle.drawDate),
-      drawDateUndefined: raffle.drawDate == null,
-    });
-    this.uploadedImageUrl.set(raffle.imageUrl ?? null);
-    this.uploadError.set(null);
-  }
+      this.form.reset({
+        title: raffle.title,
+        description: raffle.description,
+        rangeStart: raffle.rangeStart,
+        rangeEnd: raffle.rangeEnd,
+        ticketPrice: raffle.ticketPrice,
+        reservationTimeoutMinutes: raffle.reservationTimeoutMinutes,
+        drawDate: this.toDateInputValue(raffle.drawDate),
+        drawDateUndefined: raffle.drawDate == null,
+      });
+      this.uploadedImageUrl.set(raffle.imageUrl ?? null);
+      this.uploadError.set(null);
+    },
+    { allowSignalWrites: true }
+  );
 
   protected onImageSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -116,7 +120,7 @@ export class RaffleCreateForm {
 
     const payload = this.form.getRawValue();
 
-    if (!payload.drawDateUndefined && payload.drawDate.trim() === '') {
+    if (!payload.drawDateUndefined && (payload.drawDate ?? '').trim() === '') {
       this.form.controls.drawDate.setErrors({ required: true });
       this.form.controls.drawDate.markAsTouched();
       return;
@@ -141,4 +145,15 @@ export class RaffleCreateForm {
 
     return parsed.toISOString().slice(0, 10);
   }
+}
+
+function rangeValidator(control: AbstractControl): ValidationErrors | null {
+  const rangeStart = Number(control.get('rangeStart')?.value ?? 0);
+  const rangeEnd = Number(control.get('rangeEnd')?.value ?? 0);
+
+  if (Number.isNaN(rangeStart) || Number.isNaN(rangeEnd)) {
+    return null;
+  }
+
+  return rangeEnd < rangeStart ? { rangeInvalid: true } : null;
 }

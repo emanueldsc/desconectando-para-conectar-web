@@ -26,6 +26,7 @@
 	@if (view() === 'create') {
 		<dashboard-raffle-create-form
 			[editingRaffle]="editingRaffle()"
+			[isSaving]="isSaving()"
 			(cancel)="backToList()"
 			(save)="saveRaffle($event)"
 		></dashboard-raffle-create-form>

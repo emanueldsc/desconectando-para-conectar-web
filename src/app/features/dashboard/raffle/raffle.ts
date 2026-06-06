@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { RaffleCreateForm } from './components/raffle-create-form/raffle-create-form';
@@ -97,11 +98,54 @@ export class Raffle {
       }
 
       this.backToList();
-    } catch {
-      this.drawError.set('Nao foi possivel salvar a rifa no backend.');
+    } catch (error: unknown) {
+      this.drawError.set(this.resolveSaveErrorMessage(error));
     } finally {
       this.isSaving.set(false);
     }
+  }
+
+  private resolveSaveErrorMessage(error: unknown): string {
+    if (!(error instanceof HttpErrorResponse)) {
+      return 'Nao foi possivel salvar a rifa no backend.';
+    }
+
+    if (error.status === 422) {
+      const backendMessage = this.readValidationMessage(error.error);
+      return backendMessage ?? 'Dados invalidos. Revise os campos da rifa e tente novamente.';
+    }
+
+    if (error.status === 401) {
+      return 'Sessao expirada. Faca login novamente.';
+    }
+
+    if (error.status === 403) {
+      return 'Usuario sem permissao para gerenciar rifas.';
+    }
+
+    return 'Nao foi possivel salvar a rifa no backend.';
+  }
+
+  private readValidationMessage(errorBody: unknown): string | null {
+    if (!this.isRecord(errorBody)) {
+      return null;
+    }
+
+    const fieldErrors = errorBody['errors'];
+    if (this.isRecord(fieldErrors)) {
+      for (const value of Object.values(fieldErrors)) {
+        if (Array.isArray(value) && value.length > 0 && typeof value[0] === 'string') {
+          return value[0];
+        }
+      }
+    }
+
+    const message = errorBody['message'];
+    return typeof message === 'string' && message.trim().length > 0 ? message : null;
+  }
+
+  private isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null;
   }
 
   protected requestDelete(id: number): void {
