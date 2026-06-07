@@ -99,9 +99,10 @@ export class AdminBlogApiService {
       return throwError(() => new Error('Sessão expirada. Faça login novamente.'));
     }
 
+    const headers = this.authorizationHeaders(token).set('X-HTTP-Method-Override', 'DELETE');
+
     return this.http.post<AdminBlogMutationResponse>(`${this.baseUrl}/admin/content/posts/${postId}`, {
-      headers: this.authorizationHeaders(token),
-      method: 'DELETE'
+      headers
     }).pipe(
       catchError((error: unknown) => {
         if (error instanceof HttpErrorResponse && error.status === 0) {
