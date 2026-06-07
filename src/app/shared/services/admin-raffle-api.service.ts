@@ -130,9 +130,11 @@ export class AdminRaffleApiService {
       return throwError(() => new Error('Sessão expirada. Faça login novamente.'));
     }
 
+    const headers = this.authorizationHeaders(token).set('X-HTTP-Method-Override', 'DELETE');
+
     return this.http
-      .delete<AdminRaffleDeleteResponse>(`${this.baseUrl}/admin/raffles/${raffleId}`, {
-        headers: this.authorizationHeaders(token),
+      .post<AdminRaffleDeleteResponse>(`${this.baseUrl}/admin/raffles/${raffleId}`, null, {
+        headers,
       })
       .pipe(map(() => undefined));
   }

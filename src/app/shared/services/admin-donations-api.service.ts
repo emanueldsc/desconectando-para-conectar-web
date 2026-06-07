@@ -74,9 +74,11 @@ export class AdminDonationsApiService {
   }
 
   deleteDonation(id: number): Observable<AdminDonationMutationResponse> {
-    return this.http.delete<AdminDonationMutationResponse>(
+    const headers = this.authHeaders().set('X-HTTP-Method-Override', 'DELETE');
+    return this.http.post<AdminDonationMutationResponse>(
       `${this.baseUrl}/admin/donations/${id}`,
-      { headers: this.authHeaders() }
+      null,
+      { headers }
     );
   }
 }
