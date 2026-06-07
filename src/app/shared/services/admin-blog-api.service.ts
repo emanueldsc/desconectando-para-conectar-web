@@ -99,8 +99,9 @@ export class AdminBlogApiService {
       return throwError(() => new Error('Sessão expirada. Faça login novamente.'));
     }
 
-    return this.http.delete<AdminBlogMutationResponse>(`${this.baseUrl}/admin/content/posts/${postId}`, {
-      headers: this.authorizationHeaders(token)
+    return this.http.post<AdminBlogMutationResponse>(`${this.baseUrl}/admin/content/posts/${postId}`, {
+      headers: this.authorizationHeaders(token),
+      method: 'DELETE'
     }).pipe(
       catchError((error: unknown) => {
         if (error instanceof HttpErrorResponse && error.status === 0) {
