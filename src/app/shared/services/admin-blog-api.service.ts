@@ -101,7 +101,7 @@ export class AdminBlogApiService {
 
     const headers = this.authorizationHeaders(token).set('X-HTTP-Method-Override', 'DELETE');
 
-    return this.http.post<AdminBlogMutationResponse>(`${this.baseUrl}/admin/content/posts/${postId}`, {
+    return this.http.post<AdminBlogMutationResponse>(`${this.baseUrl}/admin/content/posts/${postId}`, null, {
       headers
     }).pipe(
       catchError((error: unknown) => {
