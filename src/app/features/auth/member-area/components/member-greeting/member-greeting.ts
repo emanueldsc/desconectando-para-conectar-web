@@ -1,11 +1,11 @@
-import { NgOptimizedImage } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 @Component({
   selector: 'auth-member-greeting',
-  imports: [NgOptimizedImage],
+  imports: [CommonModule],
   templateUrl: './member-greeting.html',
-  styleUrl: './member-greeting.scss',
+  styleUrls: ['./member-greeting.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MemberGreeting {

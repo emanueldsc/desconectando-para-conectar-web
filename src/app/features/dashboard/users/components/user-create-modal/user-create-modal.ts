@@ -19,6 +19,7 @@ export class UserCreateModal {
   readonly section = input.required<UsersSection>();
   readonly cancel = output<void>();
   readonly save = output<CreateMemberPayload>();
+  readonly deleteUser = output<void>();
   protected readonly submitted = signal(false);
   private readonly selectedCategory = signal<CreateMemberPayload['category']>('child');
 
@@ -60,11 +61,25 @@ export class UserCreateModal {
   protected readonly needsCredentials = computed(() =>
     this.isUsersSection() && !this.isEditing() && !this.isChildCategory()
   );
+  protected readonly canDeleteUser = computed(() =>
+    this.isUsersSection() && this.isEditing() && !this.member()?.isDefault
+  );
+  protected readonly isProtectedDefaultUser = computed(() =>
+    this.isUsersSection() && this.isEditing() && !!this.member()?.isDefault
+  );
   protected readonly memberContextLabel = computed(() =>
     this.isEditing()
       ? 'Este registro pertence à área de membros compradores de rifa.'
       : 'Este cadastro será criado como membro comprador de rifa.'
   );
+
+  protected requestDeleteUser(): void {
+    if (!this.canDeleteUser()) {
+      return;
+    }
+
+    this.deleteUser.emit();
+  }
 
   protected onCategoryChange(event: Event): void {
     const select = event.target as HTMLSelectElement | null;

@@ -5,7 +5,7 @@
         <mat-icon aria-hidden="true">{{ headerIcon() }}</mat-icon>
         {{ title() }}
       </h3>
-      <button type="button" aria-label="Fechar" (click)="cancel.emit()">
+      <button class="top-button" type="button" aria-label="Fechar" (click)="cancel.emit()">
         <mat-icon aria-hidden="true">close</mat-icon>
       </button>
     </header>
@@ -116,7 +116,19 @@
 
       <footer class="member-modal__actions">
         <button type="button" class="member-modal__btn member-modal__btn--ghost" (click)="cancel.emit()">Cancelar</button>
-        <button type="submit" class="member-modal__btn member-modal__btn--primary">{{ submitLabel() }}</button>
+        @if (isUsersSection() && isEditing()) {
+          <button
+            type="button"
+            class="member-modal__btn member-modal__btn--danger"
+            [disabled]="!canDeleteUser()"
+            [attr.aria-disabled]="!canDeleteUser()"
+            [title]="isProtectedDefaultUser() ? 'Usuário administrador padrão não pode ser excluído.' : null"
+            (click)="requestDeleteUser()"
+          >
+            Excluir Usuário
+          </button>
+        }
+        <button type="submit" class="member-modal__btn member-modal__btn--primary member-modal__btn--full-width">{{ submitLabel() }}</button>
       </footer>
     </form>
   </section>

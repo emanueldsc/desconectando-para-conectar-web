@@ -12,6 +12,7 @@ export interface AdminUserRecord {
   notes: string | null;
   role: 'buyer' | 'manager' | 'publisher' | 'none';
   status: 'active' | 'inactive';
+  isDefault: boolean;
   createdAt: string | null;
 }
 
@@ -42,6 +43,11 @@ export interface AdminUserMutationResponse {
   success: boolean;
   message: string;
   data: AdminUserRecord;
+}
+
+export interface AdminUserDeleteResponse {
+  success: boolean;
+  message: string;
 }
 
 @Injectable({
@@ -83,6 +89,18 @@ export class AdminUsersApiService {
     }
 
     return this.http.post<AdminUserMutationResponse>(`${this.baseUrl}/admin/users`, payload, {
+      headers: this.authorizationHeaders(token)
+    });
+  }
+
+  public deleteUser(userId: number): Observable<AdminUserDeleteResponse> {
+    const token = this.readAuthToken();
+
+    if (!token) {
+      return throwError(() => new Error('Sessão expirada. Faça login novamente.'));
+    }
+
+    return this.http.delete<AdminUserDeleteResponse>(`${this.baseUrl}/admin/users/${userId}`, {
       headers: this.authorizationHeaders(token)
     });
   }

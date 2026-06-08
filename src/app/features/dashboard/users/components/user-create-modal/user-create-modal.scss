@@ -161,7 +161,7 @@
     letter-spacing: 0.04em;
     font-weight: 700;
     cursor: pointer;
-
+    
     &--ghost {
       background: transparent;
       border: 1px solid #8c7166;
@@ -172,6 +172,22 @@
       background: #d35400;
       color: #fff;
       box-shadow: 0 2px 8px rgba(211, 84, 0, 0.2);
+    }
+
+    &--danger {
+      background: #ba1a1a;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(186, 26, 26, 0.24);
+    }
+
+    &--full-width {
+      grid-column: 1 / -1;
+    }
+
+    &:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      box-shadow: none;
     }
   }
 }

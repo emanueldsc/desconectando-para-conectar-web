@@ -8,6 +8,7 @@ export interface UserMember {
   phone: string;
   category: MemberCategory;
   portalRole: PortalRole;
+  isDefault: boolean;
   address?: string;
   notes?: string;
 }

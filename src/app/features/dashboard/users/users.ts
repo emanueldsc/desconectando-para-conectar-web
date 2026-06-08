@@ -242,6 +242,39 @@ export class Users {
     return;
   }
 
+  protected deleteEditingUser(): void {
+    const editingId = this.editingMemberId();
+    const editingMember = this.editingMember();
+
+    if (editingId === null || !editingMember || this.activeSection() !== 'users') {
+      return;
+    }
+
+    if (editingMember.isDefault) {
+      this.loadError.set('O usuário administrador padrão não pode ser excluído.');
+      return;
+    }
+
+    if (this.saving()) {
+      return;
+    }
+
+    this.saving.set(true);
+
+    this.usersApi
+      .deleteUser(editingId)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.saving.set(false))
+      )
+      .subscribe({
+        next: () => this.closeCreateModal(),
+        error: (error: unknown) => {
+          this.loadError.set(this.extractErrorMessage(error));
+        }
+      });
+  }
+
   protected reload(): void {
     this.loadUsersFromApi();
   }
@@ -272,6 +305,7 @@ export class Users {
     address: string | null;
     notes: string | null;
     role: 'buyer' | 'manager' | 'publisher' | 'none';
+    isDefault: boolean;
   }): UserMember {
     const category = item.role === 'none' || item.role === 'buyer'
       ? 'child'
@@ -283,6 +317,7 @@ export class Users {
       phone: item.phone ?? '-',
       category,
       portalRole: item.role,
+      isDefault: item.isDefault,
       address: item.address ?? undefined,
       notes: item.notes ?? '',
     };
