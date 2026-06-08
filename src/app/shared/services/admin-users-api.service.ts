@@ -101,8 +101,9 @@ export class AdminUsersApiService {
       return throwError(() => new Error('Sessão expirada. Faça login novamente.'));
     }
 
-    return this.http.delete<AdminUserDeleteResponse>(`${this.baseUrl}/admin/users/${userId}`, {
-      headers: this.authorizationHeaders(token)
+    const headers = this.authorizationHeaders(token).set('X-HTTP-Method-Override', 'DELETE');
+    return this.http.post<AdminUserDeleteResponse>(`${this.baseUrl}/admin/users/${userId}`, null, {
+      headers
     });
   }
 
