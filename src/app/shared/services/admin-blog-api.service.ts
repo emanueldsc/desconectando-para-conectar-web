@@ -69,12 +69,11 @@ export class AdminBlogApiService {
       return throwError(() => new Error('Sessão expirada. Faça login novamente.'));
     }
 
+    const headers = this.authorizationHeaders(token).set('X-HTTP-Method-Override', 'POST');
     return this.http.post<AdminBlogMutationResponse>(`${this.baseUrl}/admin/content/posts`, {
       ...payload,
       status,
-    }, {
-      headers: this.authorizationHeaders(token)
-    });
+    }, { headers });
   }
 
   public updatePost(postId: number, payload: PublicationPayload, status: AdminBlogPostStatus): Observable<AdminBlogMutationResponse> {
@@ -84,12 +83,11 @@ export class AdminBlogApiService {
       return throwError(() => new Error('Sessão expirada. Faça login novamente.'));
     }
 
-    return this.http.put<AdminBlogMutationResponse>(`${this.baseUrl}/admin/content/posts/${postId}`, {
+    const headers = this.authorizationHeaders(token).set('X-HTTP-Method-Override', 'PUT');
+    return this.http.post<AdminBlogMutationResponse>(`${this.baseUrl}/admin/content/posts/${postId}`, {
       ...payload,
       status,
-    }, {
-      headers: this.authorizationHeaders(token)
-    });
+    }, { headers });
   }
 
   public deletePost(postId: number): Observable<AdminBlogMutationResponse> {
