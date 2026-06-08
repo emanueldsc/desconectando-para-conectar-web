@@ -72,6 +72,7 @@ export interface HomePageResponse {
   hero: HeroData;
   impactPhrases: string[];
   realitySection: HomeRealitySection;
+  contact?: CmsContact;
   socials?: {
     instagram?: string;
     facebook?: string;

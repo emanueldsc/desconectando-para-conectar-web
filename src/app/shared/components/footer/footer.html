@@ -50,11 +50,17 @@
       </ul>
     </section>
 
-    <section class="footer__column" aria-labelledby="footer-help-title">
+    <section class="footer__column" aria-labelledby="footer-contact-title">
+      <h3 id="footer-contact-title" class="footer__column-title">INFORMAÇÕES PARA CONTATO</h3>
+      <div class="footer__contact" aria-label="Informações de contato">
+        <p class="footer__contact-line">{{ contact().email }}</p>
+        <p class="footer__contact-line">{{ contact().phone }}</p>
+      </div>
+
       <h3 id="footer-help-title" class="footer__column-title">AJUDA</h3>
       <a
         class="footer__whatsapp"
-        href="https://wa.me/5581999999999"
+        [href]="whatsappHref()"
         target="_blank"
         rel="noopener noreferrer"
       >
@@ -64,6 +70,7 @@
         </svg>
         <span>WhatsApp</span>
       </a>
+      <p class="footer__contact-line">{{ contact().whatsapp }}</p>
     </section>
   </div>
 
