@@ -421,7 +421,7 @@ export class Raffle {
           } else {
             const requestedSlug = this.initialRaffleSlug();
             const selectedByQuery = requestedSlug
-              ? raffles.find((item) => item.slug === requestedSlug) ?? null
+              ? raffles.find((item) => item.slug === requestedSlug || String(item.id) === requestedSlug) ?? null
               : null;
 
             const selected = selectedByQuery ?? (raffles[0] ?? null);

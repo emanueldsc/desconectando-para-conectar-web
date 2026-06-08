@@ -63,10 +63,25 @@
   border: 2px solid;
 }
 
+.rifa-card__media {
+  margin: -1.75rem -1.75rem 0;
+  border-radius: 18px 18px 0 0;
+  overflow: hidden;
+  background: #efe2d5;
+  aspect-ratio: 16 / 9;
+}
+
+.rifa-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .rifa-card__badge {
   position: absolute;
   padding: 0 8px;
-  top: 1.25rem;
+  top: 1rem;
   left: 1.25rem;
   display: inline-block;
   background: #fff9f0;
@@ -90,7 +105,7 @@
   font-weight: 700;
   color: #251913;
   margin: 0;
-  padding-top: 2rem;
+  padding-top: 1.25rem;
 }
 
 .rifa-card__description {
@@ -168,5 +183,9 @@
 
   .rifa-card__badge {
     top: 1rem;
+  }
+
+  .rifa-card__media {
+    margin: -1.75rem -1.75rem 0;
   }
 }
