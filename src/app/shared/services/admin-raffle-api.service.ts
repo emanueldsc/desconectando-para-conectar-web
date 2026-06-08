@@ -116,9 +116,11 @@ export class AdminRaffleApiService {
       return throwError(() => new Error('Sessão expirada. Faça login novamente.'));
     }
 
+    const headers = this.authorizationHeaders(token).set('X-HTTP-Method-Override', 'PUT');
+
     return this.http
-      .put<AdminRaffleMutationResponse>(`${this.baseUrl}/admin/raffles/${raffleId}`, payload, {
-        headers: this.authorizationHeaders(token),
+      .post<AdminRaffleMutationResponse>(`${this.baseUrl}/admin/raffles/${raffleId}`, payload, {
+        headers,
       })
       .pipe(map((response) => response.data));
   }
@@ -206,9 +208,11 @@ export class AdminRaffleApiService {
       return throwError(() => new Error('Sessão expirada. Faça login novamente.'));
     }
 
+    const headers = this.authorizationHeaders(token).set('X-HTTP-Method-Override', 'PUT');
+
     return this.http
-      .put<AdminRaffleMutationResponse>(`${this.baseUrl}/admin/raffles/${raffleId}/reservation-timeout`, payload, {
-        headers: this.authorizationHeaders(token),
+      .post<AdminRaffleMutationResponse>(`${this.baseUrl}/admin/raffles/${raffleId}/reservation-timeout`, payload, {
+        headers,
       })
       .pipe(map((response) => response.data));
   }

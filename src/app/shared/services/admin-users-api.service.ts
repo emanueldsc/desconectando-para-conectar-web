@@ -76,8 +76,9 @@ export class AdminUsersApiService {
       return throwError(() => new Error('Sessão expirada. Faça login novamente.'));
     }
 
-    return this.http.put<AdminUserMutationResponse>(`${this.baseUrl}/admin/users/${userId}`, payload, {
-      headers: this.authorizationHeaders(token)
+    const headers = this.authorizationHeaders(token).set('X-HTTP-Method-Override', 'PUT');
+    return this.http.post<AdminUserMutationResponse>(`${this.baseUrl}/admin/users/${userId}`, payload, {
+      headers
     });
   }
 

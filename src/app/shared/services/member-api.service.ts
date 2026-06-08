@@ -54,8 +54,9 @@ export class MemberApiService {
   }
 
   updateMemberProfile(payload: UpdateMemberProfilePayload): Observable<MemberProfile> {
-    return this.http.put<{ success: boolean; data: MemberProfile }>(`${this.baseUrl}/member/profile`, payload, {
-      headers: this.getAuthHeaders(),
+    const headers = this.getAuthHeaders().set('X-HTTP-Method-Override', 'PUT');
+    return this.http.post<{ success: boolean; data: MemberProfile }>(`${this.baseUrl}/member/profile`, payload, {
+      headers,
     }).pipe(
       map((res) => res.data)
     );

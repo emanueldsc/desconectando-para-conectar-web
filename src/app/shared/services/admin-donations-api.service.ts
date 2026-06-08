@@ -66,10 +66,11 @@ export class AdminDonationsApiService {
     id: number,
     payload: AdminDonationPayload
   ): Observable<AdminDonationMutationResponse> {
-    return this.http.put<AdminDonationMutationResponse>(
+    const headers = this.authHeaders().set('X-HTTP-Method-Override', 'PUT');
+    return this.http.post<AdminDonationMutationResponse>(
       `${this.baseUrl}/admin/donations/${id}`,
       payload,
-      { headers: this.authHeaders() }
+      { headers }
     );
   }
 
