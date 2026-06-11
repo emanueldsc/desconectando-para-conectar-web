@@ -6,7 +6,7 @@
     </div>
 
     <ul class="rifas__grid" role="list">
-      @for (rifa of rifas(); track rifa.id) {
+      @for (rifa of rifasParaExibir(); track rifa.id) {
         <li class="rifa-card">
           <div class="rifa-card__media">
             <img class="rifa-card__image" [src]="rifa.image" [alt]="'Prêmio da rifa ' + rifa.title" loading="lazy" />
@@ -25,14 +25,16 @@
 
           <div class="rifa-card__footer">
             <span class="rifa-card__point-price">{{ rifa.current }} de {{ rifa.goal }} pontos</span>
-            <button
-              type="button"
-              class="rifa-card__btn"
-              [routerLink]="['/public/raffles']"
-              [queryParams]="{ raffle: rifa.id }"
-            >
-              Participar
-            </button>
+            @if (rifa.status !== 'finished') {
+              <button
+                type="button"
+                class="rifa-card__btn"
+                [routerLink]="['/public/raffles']"
+                [queryParams]="{ raffle: rifa.id }"
+              >
+                Participar
+              </button>
+            }
           </div>
         </li>
       }

@@ -1,10 +1,10 @@
 <mat-card class="blog-card" appearance="raised">
   <img
     class="blog-card__image"
-    ngSrc="{{ post().image }}"
+    [ngSrc]="post().image"
     [alt]="post().imageAlt"
-    width="380"
-    height="216"
+    fill
+    sizes="(max-width: 700px) 100vw, 33vw"
   />
   <div class="blog-card__overlay" aria-hidden="true"></div>
   <mat-card-content class="blog-card__content">

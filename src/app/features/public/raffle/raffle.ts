@@ -413,35 +413,66 @@ export class Raffle {
       )
       .subscribe({
         next: (raffles) => {
-          this.activeRaffles.set(raffles);
-
-          if (raffles.length === 0) {
-            this.error.set('Nenhuma rifa disponivel no momento.');
+          if (raffles.length > 0) {
+            this.applyInitialSelection(raffles);
             this.loading.set(false);
-          } else {
-            const requestedSlug = this.initialRaffleSlug();
-            const selectedByQuery = requestedSlug
-              ? raffles.find((item) => item.slug === requestedSlug || String(item.id) === requestedSlug) ?? null
-              : null;
-
-            const selected = selectedByQuery ?? (raffles[0] ?? null);
-
-            if (selected) {
-              const selectedIndex = raffles.findIndex((item) => item.slug === selected.slug);
-              this.currentRaffleIndex.set(selectedIndex >= 0 ? selectedIndex : 0);
-              this.openRaffle(selected, selectedIndex >= 0 ? selectedIndex : 0);
-            }
-
-            this.loading.set(false);
+            void this.loadFinishedRaffles(1);
+            return;
           }
 
-          void this.loadFinishedRaffles(1);
+          this.raffleApi
+            .getRaffleList({ limit: 50, status: 'finished', includeOld: true, sort: 'newest' })
+            .pipe(
+              takeUntilDestroyed(this.destroyRef),
+              map((response) => response.data)
+            )
+            .subscribe({
+              next: (finishedRaffles) => {
+                if (finishedRaffles.length === 0) {
+                  this.activeRaffles.set([]);
+                  this.selectedRaffle.set(null);
+                  this.error.set('Nenhuma rifa disponivel no momento.');
+                  this.loading.set(false);
+                  return;
+                }
+
+                this.applyInitialSelection(finishedRaffles);
+                this.loading.set(false);
+                void this.loadFinishedRaffles(1);
+              },
+              error: () => {
+                this.error.set('Nao foi possivel carregar os dados das rifas.');
+                this.loading.set(false);
+              }
+            });
+
         },
         error: () => {
           this.error.set('Nao foi possivel carregar os dados das rifas.');
           this.loading.set(false);
         }
       });
+  }
+
+  private applyInitialSelection(raffles: RaffleListItem[]): void {
+    this.activeRaffles.set(raffles);
+
+    const requestedSlug = this.initialRaffleSlug();
+    const selectedByQuery = requestedSlug
+      ? raffles.find((item) => item.slug === requestedSlug || String(item.id) === requestedSlug) ?? null
+      : null;
+
+    const selected = selectedByQuery ?? (raffles[0] ?? null);
+
+    if (!selected) {
+      this.selectedRaffle.set(null);
+      return;
+    }
+
+    const selectedIndex = raffles.findIndex((item) => item.slug === selected.slug);
+    const safeIndex = selectedIndex >= 0 ? selectedIndex : 0;
+    this.currentRaffleIndex.set(safeIndex);
+    this.openRaffle(selected, safeIndex);
   }
 
   private async loadFinishedRaffles(page: number): Promise<void> {
