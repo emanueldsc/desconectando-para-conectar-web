@@ -7,6 +7,15 @@ export interface RaffleNumberEntry {
   reservedUntil?: string;
   reservationReceiptUrl?: string;
   reservationPaymentStatus?: 'awaiting_receipt' | 'pending_review' | 'approved';
+  buyerUserId?: number | null;
+  buyerName?: string | null;
+  buyerPhone?: string | null;
+}
+
+export interface RaffleBuyerOption {
+  id: number;
+  fullName: string;
+  phone: string | null;
 }
 
 export interface RaffleCampaign {
@@ -48,4 +57,10 @@ export interface DrawRaffleResult {
 export interface DrawRafflePayload {
   winnerNumber: number;
   winnerName?: string;
+}
+
+export interface MarkNumberAsSoldPayload {
+  buyerUserId?: number;
+  buyerName?: string;
+  buyerPhone?: string;
 }

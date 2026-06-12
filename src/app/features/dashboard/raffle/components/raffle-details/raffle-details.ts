@@ -2,7 +2,7 @@ import { CurrencyPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { RaffleCampaign, RaffleNumberEntry } from '../../raffle.models';
+import { RaffleBuyerOption, RaffleCampaign, RaffleNumberEntry } from '../../raffle.models';
 
 @Component({
   selector: 'dashboard-raffle-details',
@@ -13,12 +13,21 @@ import { RaffleCampaign, RaffleNumberEntry } from '../../raffle.models';
 })
 export class RaffleDetails {
   readonly raffle = input.required<RaffleCampaign>();
+  readonly buyerOptions = input<RaffleBuyerOption[]>([]);
+  readonly isMarkingSold = input(false);
 
   readonly back = output<void>();
   readonly edit = output<number>();
   readonly delete = output<number>();
   readonly activate = output<number>();
   readonly confirmReservedPayment = output<{ raffleId: number; number: number; reservationCode?: string }>();
+  readonly markNumberAsSold = output<{
+    raffleId: number;
+    number: number;
+    buyerUserId?: number;
+    buyerName?: string;
+    buyerPhone?: string;
+  }>();
   readonly updateTimeout = output<{ raffleId: number; reservationTimeoutMinutes: number }>();
   readonly draw = output<number>();
 
@@ -60,6 +69,38 @@ export class RaffleDetails {
     this.updateTimeout.emit({
       raffleId: this.raffle().id,
       reservationTimeoutMinutes: Math.floor(parsed),
+    });
+  }
+
+  protected submitManualSale(event: Event): void {
+    const form = event.target as HTMLFormElement;
+
+    const numberInput = form.elements.namedItem('manualNumber') as HTMLInputElement | null;
+    const buyerUserIdInput = form.elements.namedItem('buyerUserId') as HTMLSelectElement | null;
+    const buyerNameInput = form.elements.namedItem('buyerName') as HTMLInputElement | null;
+    const buyerPhoneInput = form.elements.namedItem('buyerPhone') as HTMLInputElement | null;
+
+    const numberValue = Number(numberInput?.value ?? NaN);
+    const buyerUserIdRaw = (buyerUserIdInput?.value ?? '').trim();
+    const buyerName = (buyerNameInput?.value ?? '').trim();
+    const buyerPhone = (buyerPhoneInput?.value ?? '').trim();
+
+    if (!Number.isFinite(numberValue) || numberValue < this.raffle().rangeStart || numberValue > this.raffle().rangeEnd) {
+      return;
+    }
+
+    const buyerUserId = buyerUserIdRaw !== '' ? Number(buyerUserIdRaw) : undefined;
+
+    if (buyerUserId === undefined && buyerName === '') {
+      return;
+    }
+
+    this.markNumberAsSold.emit({
+      raffleId: this.raffle().id,
+      number: Math.floor(numberValue),
+      buyerUserId: Number.isFinite(buyerUserId ?? NaN) ? buyerUserId : undefined,
+      buyerName: buyerUserId === undefined ? buyerName : undefined,
+      buyerPhone: buyerPhone !== '' ? buyerPhone : undefined,
     });
   }
 }

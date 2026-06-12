@@ -157,6 +157,47 @@
     }
   }
 
+  &__manual-sale {
+    border: 1px solid #e0c0b2;
+    border-radius: 0.75rem;
+    padding: 0.75rem;
+    background: #fff8f6;
+
+    h3 {
+      margin: 0;
+      color: #251913;
+      font-size: 1rem;
+    }
+
+    p {
+      margin: 0.35rem 0 0.6rem;
+      color: #594238;
+      font-size: 0.82rem;
+    }
+
+    form {
+      display: grid;
+      gap: 0.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      align-items: end;
+    }
+
+    input,
+    select {
+      border: 1px solid #d9b7a5;
+      border-radius: 0.5rem;
+      padding: 0.45rem 0.55rem;
+      min-height: 2.25rem;
+      font: inherit;
+      color: #251913;
+      background: #fff;
+    }
+
+    button {
+      justify-self: start;
+    }
+  }
+
   &__reserved-list {
     border: 1px solid #e0c0b2;
     border-radius: 0.75rem;

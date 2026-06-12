@@ -51,6 +51,53 @@
     </form>
   </section>
 
+  <section class="raffle-details__manual-sale">
+    <h3>Marcar ponto vendido presencialmente</h3>
+    <p>Selecione um usuário comprador ou informe o nome da pessoa e telefone (opcional).</p>
+
+    <form (ngSubmit)="submitManualSale($event)">
+      <input
+        type="number"
+        name="manualNumber"
+        [attr.min]="raffle().rangeStart"
+        [attr.max]="raffle().rangeEnd"
+        [value]="raffle().rangeStart"
+        required
+        placeholder="Número do ponto"
+      />
+
+      <select name="buyerUserId">
+        <option value="">Comprador não cadastrado</option>
+        @for (buyer of buyerOptions(); track buyer.id) {
+          <option [value]="buyer.id">
+            {{ buyer.fullName }}
+            @if (buyer.phone) {
+              - {{ buyer.phone }}
+            }
+          </option>
+        }
+      </select>
+
+      <input
+        type="text"
+        name="buyerName"
+        maxlength="120"
+        placeholder="Nome do comprador (obrigatório se não selecionar usuário)"
+      />
+
+      <input
+        type="text"
+        name="buyerPhone"
+        maxlength="40"
+        placeholder="Telefone do comprador (opcional)"
+      />
+
+      <button type="submit" class="raffle-details__btn raffle-details__btn--primary" [disabled]="isMarkingSold()">
+        {{ isMarkingSold() ? 'Marcando...' : 'Marcar ponto como vendido' }}
+      </button>
+    </form>
+  </section>
+
   @if (reservedNumbers().length > 0) {
     <section class="raffle-details__reserved-list" aria-label="Pontos reservados aguardando confirmação">
       <h3>Pontos reservados aguardando aprovação</h3>

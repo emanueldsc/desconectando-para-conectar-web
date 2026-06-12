@@ -1,12 +1,13 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
+import { AdminUsersApiService } from '../../../shared/services/admin-users-api.service';
 import { RaffleCreateForm } from './components/raffle-create-form/raffle-create-form';
 import { RaffleDetails } from './components/raffle-details/raffle-details';
 import { RaffleDrawConfirm } from './components/raffle-draw-confirm/raffle-draw-confirm';
 import { RaffleEmptyState } from './components/raffle-empty-state/raffle-empty-state';
 import { RaffleList } from './components/raffle-list/raffle-list';
-import { CreateRafflePayload, DrawRafflePayload, RaffleStatus } from './raffle.models';
+import { CreateRafflePayload, DrawRafflePayload, RaffleBuyerOption, RaffleStatus } from './raffle.models';
 import { RaffleStore } from './raffle.store';
 
 type RaffleView = 'empty' | 'list' | 'create' | 'details';
@@ -20,6 +21,7 @@ type RaffleView = 'empty' | 'list' | 'create' | 'details';
 })
 export class Raffle {
   private readonly raffleStore = inject(RaffleStore);
+  private readonly adminUsersApi = inject(AdminUsersApiService);
 
   protected readonly raffles = this.raffleStore.raffles;
   protected readonly view = signal<RaffleView>('list');
@@ -30,12 +32,14 @@ export class Raffle {
   protected readonly drawId = signal<number | null>(null);
   protected readonly deleteId = signal<number | null>(null);
   protected readonly drawError = signal<string | null>(null);
+  protected readonly buyerOptions = signal<RaffleBuyerOption[]>([]);
   protected readonly isDrawing = signal(false);
   protected readonly isSaving = signal(false);
   protected readonly isDeleting = signal(false);
   protected readonly isActivating = signal(false);
   protected readonly isUpdatingTimeout = signal(false);
   protected readonly isConfirmingPayment = signal(false);
+  protected readonly isMarkingSold = signal(false);
 
   protected readonly editingRaffle = computed(() => {
     const id = this.editingId();
@@ -59,6 +63,7 @@ export class Raffle {
 
   public constructor() {
     this.loadRaffles();
+    this.loadBuyerOptions();
   }
 
   protected openCreate(): void {
@@ -234,6 +239,31 @@ export class Raffle {
     }
   }
 
+  protected async markNumberAsSold(payload: {
+    raffleId: number;
+    number: number;
+    buyerUserId?: number;
+    buyerName?: string;
+    buyerPhone?: string;
+  }): Promise<void> {
+    this.isMarkingSold.set(true);
+    this.drawError.set(null);
+
+    try {
+      await firstValueFrom(
+        this.raffleStore.markNumberAsSold(payload.raffleId, payload.number, {
+          buyerUserId: payload.buyerUserId,
+          buyerName: payload.buyerName,
+          buyerPhone: payload.buyerPhone,
+        })
+      );
+    } catch {
+      this.drawError.set('Nao foi possivel marcar o ponto como vendido.');
+    } finally {
+      this.isMarkingSold.set(false);
+    }
+  }
+
   protected closeDraw(): void {
     this.drawId.set(null);
     this.drawError.set(null);
@@ -265,6 +295,23 @@ export class Raffle {
     } catch {
       this.drawError.set('Nao foi possivel carregar as rifas do backend.');
       this.view.set(this.hasRaffles() ? 'list' : 'empty');
+    }
+  }
+
+  private async loadBuyerOptions(): Promise<void> {
+    try {
+      const response = await firstValueFrom(this.adminUsersApi.getUsers());
+      const buyers = response.data
+        .filter((user) => user.role === 'buyer' && user.status === 'active')
+        .map((user) => ({
+          id: user.id,
+          fullName: user.fullName,
+          phone: user.phone,
+        }));
+
+      this.buyerOptions.set(buyers);
+    } catch {
+      this.buyerOptions.set([]);
     }
   }
 }

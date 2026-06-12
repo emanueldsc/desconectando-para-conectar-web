@@ -35,11 +35,14 @@
 	@if (view() === 'details' && detailsRaffle(); as raffleDetails) {
 		<dashboard-raffle-details
 			[raffle]="raffleDetails"
+			[buyerOptions]="buyerOptions()"
+			[isMarkingSold]="isMarkingSold()"
 			(back)="backToList()"
 			(edit)="openEdit($event)"
 			(delete)="requestDelete($event)"
 			(activate)="activateRaffle($event)"
 			(confirmReservedPayment)="confirmReservedPayment($event)"
+			(markNumberAsSold)="markNumberAsSold($event)"
 			(updateTimeout)="updateReservationTimeout($event)"
 			(draw)="openDraw($event)"
 		></dashboard-raffle-details>

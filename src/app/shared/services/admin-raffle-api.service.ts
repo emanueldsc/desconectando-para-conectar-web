@@ -5,6 +5,7 @@ import {
     CreateRafflePayload,
     DrawRafflePayload,
     DrawRaffleResult,
+    MarkNumberAsSoldPayload,
     RaffleCampaign,
 } from '../../features/dashboard/raffle/raffle.models';
 import { API_BASE_URL } from './api.config';
@@ -190,6 +191,28 @@ export class AdminRaffleApiService {
     return this.http
       .post<AdminRaffleMutationResponse>(
         `${this.baseUrl}/admin/raffles/${raffleId}/numbers/${number}/confirm-payment`,
+        payload,
+        {
+          headers: this.authorizationHeaders(token),
+        }
+      )
+      .pipe(map((response) => response.data));
+  }
+
+  public markNumberAsSold(
+    raffleId: number,
+    number: number,
+    payload: MarkNumberAsSoldPayload
+  ): Observable<RaffleCampaign> {
+    const token = this.readAuthToken();
+
+    if (!token) {
+      return throwError(() => new Error('Sessão expirada. Faça login novamente.'));
+    }
+
+    return this.http
+      .post<AdminRaffleMutationResponse>(
+        `${this.baseUrl}/admin/raffles/${raffleId}/numbers/${number}/mark-sold`,
         payload,
         {
           headers: this.authorizationHeaders(token),

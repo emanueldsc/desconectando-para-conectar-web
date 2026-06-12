@@ -1,7 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { AdminRaffleApiService } from '../../../shared/services/admin-raffle-api.service';
-import { CreateRafflePayload, DrawRafflePayload, DrawRaffleResult, RaffleCampaign } from './raffle.models';
+import { CreateRafflePayload, DrawRafflePayload, DrawRaffleResult, MarkNumberAsSoldPayload, RaffleCampaign } from './raffle.models';
 
 @Injectable({ providedIn: 'root' })
 export class RaffleStore {
@@ -70,6 +70,16 @@ export class RaffleStore {
 
   updateReservationTimeout(id: number, reservationTimeoutMinutes: number): Observable<RaffleCampaign> {
     return this.raffleApi.updateReservationTimeout(id, { reservationTimeoutMinutes }).pipe(
+      tap((updated) => {
+        this.rafflesState.update((items) =>
+          items.map((raffle) => (raffle.id === id ? updated : raffle))
+        );
+      })
+    );
+  }
+
+  markNumberAsSold(id: number, number: number, payload: MarkNumberAsSoldPayload): Observable<RaffleCampaign> {
+    return this.raffleApi.markNumberAsSold(id, number, payload).pipe(
       tap((updated) => {
         this.rafflesState.update((items) =>
           items.map((raffle) => (raffle.id === id ? updated : raffle))

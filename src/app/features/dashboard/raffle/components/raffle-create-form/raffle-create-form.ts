@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, effect, inject, input, output, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { finalize } from 'rxjs';
@@ -27,8 +27,8 @@ export class RaffleCreateForm {
   protected readonly isUploadingImage = signal(false);
 
   protected readonly form = this.fb.nonNullable.group({
-    title: ['', [Validators.required, Validators.minLength(3)]],
-    description: ['', [Validators.required, Validators.minLength(12)]],
+    title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(255)]],
+    description: ['', [Validators.required, Validators.minLength(12), Validators.maxLength(500)]],
     rangeStart: [1, [Validators.required, Validators.min(1)]],
     rangeEnd: [30, [Validators.required, Validators.min(1)]],
     ticketPrice: [5, [Validators.required, Validators.min(1)]],
@@ -36,6 +36,14 @@ export class RaffleCreateForm {
     drawDate: [''],
     drawDateUndefined: [false],
   }, { validators: [rangeValidator] });
+
+  protected readonly titleValue = toSignal(this.form.controls.title.valueChanges, { initialValue: this.form.controls.title.value });
+  protected readonly maxTitleCharacters = 255;
+  protected readonly titleCharacterCount = computed(() => (this.titleValue() || '').length);
+
+  protected readonly descriptionValue = toSignal(this.form.controls.description.valueChanges, { initialValue: this.form.controls.description.value });
+  protected readonly maxDescriptionCharacters = 500;
+  protected readonly descriptionCharacterCount = computed(() => (this.descriptionValue() || '').length);
 
   protected readonly heading = computed(() =>
     this.editingRaffle() ? 'Editar Ação Entre Amigos' : 'Nova Ação Entre Amigos'

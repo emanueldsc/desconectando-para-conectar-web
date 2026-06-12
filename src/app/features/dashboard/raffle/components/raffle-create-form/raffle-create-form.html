@@ -13,6 +13,10 @@
     <label class="create-raffle__field">
       <span>Título da Rifa</span>
       <input type="text" formControlName="title" placeholder="Ex: Rifa Solidária da Capela" />
+      <small style="text-align: right; display: block; font-size: 0.78rem; font-weight: 700;"
+             [style.color]="titleCharacterCount() > maxTitleCharacters ? '#ba1a1a' : '#8c7166'">
+        {{ titleCharacterCount() }} / {{ maxTitleCharacters }} caracteres
+      </small>
       @if (form.controls.title.touched && form.controls.title.hasError('required')) {
         <small class="create-raffle__field-error">Informe o título da rifa.</small>
       }
@@ -23,7 +27,11 @@
 
     <label class="create-raffle__field">
       <span>Descrição</span>
-      <textarea rows="3" formControlName="description" placeholder="Conte a história por trás desta iniciativa..."></textarea>
+      <textarea rows="3" formControlName="description" placeholder="Conte a história por trás desta iniciativa..." style="resize: vertical;"></textarea>
+      <small style="text-align: right; display: block; font-size: 0.78rem; font-weight: 700;"
+             [style.color]="descriptionCharacterCount() > maxDescriptionCharacters ? '#ba1a1a' : '#8c7166'">
+        {{ descriptionCharacterCount() }} / {{ maxDescriptionCharacters }} caracteres
+      </small>
       @if (form.controls.description.touched && form.controls.description.hasError('required')) {
         <small class="create-raffle__field-error">Informe uma descrição para a rifa.</small>
       }
